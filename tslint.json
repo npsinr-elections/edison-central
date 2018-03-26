@@ -1,0 +1,13 @@
+{
+  "extends": "tslint:recommended",
+  "rulesDirectory": ["node_modules/tslint-eslint-rules/dist/rules"],
+  "rules": {
+    "max-line-length": {
+      "options": [80]
+    },
+    "semicolon": [true, "always"],
+    "interface-name": [true, "never-prefix"],
+    "no-inferrable-types": true,
+    "trailing-comma": false
+  }
+}
