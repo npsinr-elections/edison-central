@@ -31,18 +31,16 @@ const launcherPaths = ["src/main.ts", "build"];
 
 function tsBuilder(paths) {
     return function builder(done) {
-        gulp.src(paths[SRC])
+        return gulp.src(paths[SRC])
             .pipe(ts.createProject("tsconfig.json")(ts.reporter.fullReporter))
             .pipe(gulp.dest(paths[DEST]));
-        done();
     };
 }
 
 function mover(paths) {
     return function mover(done) {
-        gulp.src(paths[SRC])
+        return gulp.src(paths[SRC])
             .pipe(gulp.dest(paths[DEST]));
-        done();
     };
 }
 
@@ -53,7 +51,7 @@ function clientTsBuilders() {
         entries.map((entry) => {
             return function tsBuilder (done) {
                 console.log(`Building ${entry}`);
-                browserify({
+                return browserify({
                     basedir: clientPaths.TS[SRC],
                     debug: true,
                     entries: [entry],
@@ -67,8 +65,6 @@ function clientTsBuilders() {
                         extname: ".bundle.js"
                     }))
                     .pipe(gulp.dest("build/client/assets/scripts"));
-
-                done();
             };
         })
     );
