@@ -18,9 +18,13 @@ const sharedPaths = {
 };
 
 const clientPaths = {
-    HTML: ["src/client/**/*.html", "build/client"],
-    CSS: ["src/client/**/*.css", "build/client"],
-    TS: ["src/client/scripts", "build/client/scripts"]
+    HTML: ["src/client/views/*.html", "build/client/views"],
+    CSS: ["src/client/assets/styles/*.css", "build/client/assets/styles"],
+    BootstrapCSS: ["node_modules/bootstrap/dist/css/bootstrap.min.css", "build/client/assets/styles"],
+    BootstrapJS: ["node_modules/bootstrap/dist/js/bootstrap.min.js", "build/client/assets/scripts"],
+    fonts: ["src/client/assets/fonts/*", "build/client/assets/fonts"],
+    images: ["src/client/assets/images/*", "build/client/assets/images"],
+    TS: ["src/client/assets/scripts", "build/client/assets/scripts"]
 };
 
 const launcherPaths = ["src/main.ts", "build"];
@@ -62,7 +66,7 @@ function clientTsBuilders() {
                     .pipe(rename({
                         extname: ".bundle.js"
                     }))
-                    .pipe(gulp.dest("build/client/scripts"));
+                    .pipe(gulp.dest("build/client/assets/scripts"));
 
                 done();
             };
@@ -77,7 +81,11 @@ gulp.task("server", gulp.parallel([
 
 gulp.task("client", gulp.parallel(
     clientTsBuilders(),
-    mover(clientPaths.HTML)
+    mover(clientPaths.HTML),
+    mover(clientPaths.CSS),
+    mover(clientPaths.fonts),
+    mover(clientPaths.BootstrapCSS),
+    mover(clientPaths.BootstrapJS)
 ));
 
 gulp.task("launcher", gulp.parallel(
