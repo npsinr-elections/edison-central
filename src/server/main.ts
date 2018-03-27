@@ -7,7 +7,7 @@ import * as homeRoute from "./routes/homeRoute";
 const app = express();
 
 app.set("views", path.join(__dirname, "../client/views"));
-console.log(app.get("views"));
+
 nunjucks.configure(app.get("views"), {
     autoescape: true,
     express: app
