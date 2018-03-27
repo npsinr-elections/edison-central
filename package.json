@@ -4,7 +4,6 @@
   "description": "Central computer for displaying messages to the audience.",
   "main": "build/main.js",
   "dependencies": {
-    "bootstrap": "^4.0.0",
     "express": "^4.16.3",
     "nunjucks": "^3.1.2",
     "opn": "^5.3.0"

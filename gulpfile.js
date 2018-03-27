@@ -20,8 +20,7 @@ const sharedPaths = {
 const clientPaths = {
     HTML: ["src/client/views/*.html", "build/client/views"],
     CSS: ["src/client/assets/styles/*.css", "build/client/assets/styles"],
-    BootstrapCSS: ["node_modules/bootstrap/dist/css/bootstrap.min.css", "build/client/assets/styles"],
-    BootstrapJS: ["node_modules/bootstrap/dist/js/bootstrap.min.js", "build/client/assets/scripts"],
+    JS: ["src/client/assets/scripts/*.js", "build/client/assets/scripts"],
     fonts: ["src/client/assets/fonts/*", "build/client/assets/fonts"],
     images: ["src/client/assets/images/*", "build/client/assets/images"],
     TS: ["src/client/assets/scripts", "build/client/assets/scripts"]
@@ -79,9 +78,8 @@ gulp.task("client", gulp.parallel(
     clientTsBuilders(),
     mover(clientPaths.HTML),
     mover(clientPaths.CSS),
-    mover(clientPaths.fonts),
-    mover(clientPaths.BootstrapCSS),
-    mover(clientPaths.BootstrapJS)
+    mover(clientPaths.JS),
+    mover(clientPaths.fonts)
 ));
 
 gulp.task("launcher", gulp.parallel(
