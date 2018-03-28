@@ -10,7 +10,7 @@ import * as usersRouter from "./routes/userRouter";
 function checkLoggedIn(req: express.Request,
                        res: express.Response,
                        next: express.NextFunction) {
-    // Check if the user has logged in the 'user' session variable is set.
+    // Check if the user has logged and the 'user' session variable is set.
     if (req.session.user) {
         next();
     } else {
@@ -24,6 +24,11 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     secret: crypto.randomBytes(64).toString("hex"),
+}));
+
+app.use(express.json());
+app.use(express.urlencoded({
+    extended: true
 }));
 
 app.set("views", path.join(__dirname, "../client/views"));

@@ -9,10 +9,11 @@
   <link rel="stylesheet" href="../assets/styles/login.css">
 </head>
 <body>-
-    <form action="/users/login" method="POST" class="form-signin">
+    <form action="/users/register" method="POST" class="form-signin">
         <h1 class="h2 mb-2 font-weight-normal">Edison Central</h1>
+        <h3 class="h3 mb-3 font-weight-normal">Create a new account</h3>
         {% if err %}
-        <div class="alert alert-info" role="alert">
+        <div class="alert alert-danger" role="alert">
           {{ message }}
         </div>
         {% endif %}
@@ -20,14 +21,7 @@
         <input type="text" name="username" id="inputUsername" class="form-control" autocomplete="off" placeholder="Username" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
-        <!-- <div class="checkbox mb-3">
-          <label>
-            <input type="checkbox" value="remember-me"> Remember me
-          </label>
-        </div> -->
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        <hr />
-        <p class="mt-5 mb-3 text-muted">Don't have an account? <a href="/users/register">Register</a></p>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
       </form>
 </body>
 </html>
