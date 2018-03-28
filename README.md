@@ -38,7 +38,7 @@ npm run dev
 This will automatically restart the server when any file in ./build is changed.
 
 ## Conventions:
-1. Use (semantic commit messages)[https://seesparkbox.com/foundry/semantic_commit_messages]
+1. Use [semantic commit messages](https://seesparkbox.com/foundry/semantic_commit_messages)
 2. Comment code when intention not obvious.
 3. Don't use javascript in ./src. Only code typescript.
 4. Ensure tslint is used before every commit. Recommend to use VSCode editor (with tslint extension) to automate this.
