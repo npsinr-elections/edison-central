@@ -5,11 +5,13 @@
   "main": "build/main.js",
   "dependencies": {
     "express": "^4.16.3",
+    "express-session": "^1.15.6",
     "nunjucks": "^3.1.2",
     "opn": "^5.3.0"
   },
   "devDependencies": {
     "@types/express": "^4.11.1",
+    "@types/express-session": "^1.15.8",
     "@types/nunjucks": "^3.0.0",
     "@types/opn": "^5.1.0",
     "browserify": "^16.1.1",
