@@ -26,7 +26,8 @@ const clientPaths = {
     TS: ["src/client/assets/scripts", "build/client/assets/scripts"]
 };
 
-const launcherPaths = ["src/main.ts", "build"];
+const launcherPath = ["src/main.ts", "build"];
+const configPath = ["src/config.ts", "build"];
 
 function tsBuilder(paths) {
     return function builder(done) {
@@ -83,7 +84,11 @@ gulp.task("client", gulp.parallel(
 ));
 
 gulp.task("launcher", gulp.parallel(
-    tsBuilder(launcherPaths)
+    tsBuilder(launcherPath)
 ));
 
-gulp.task("default", gulp.parallel(["server", "client", "launcher"]));
+gulp.task("config", gulp.parallel(
+    tsBuilder(configPath)
+));
+
+gulp.task("default", gulp.parallel(["server", "client", "launcher", "config"]));

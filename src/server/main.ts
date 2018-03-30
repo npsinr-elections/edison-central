@@ -2,7 +2,8 @@ import crypto = require("crypto");
 import express  = require("express");
 import session= require("express-session");
 import nunjucks = require("nunjucks");
-import path = require("path");
+
+import {config} from "../config";
 
 import * as homeRouter from "./routes/homeRouter";
 import * as usersRouter from "./routes/userRouter";
@@ -31,26 +32,24 @@ app.use(express.urlencoded({
     extended: true
 }));
 
-app.set("views", path.join(__dirname, "../client/views"));
+app.set("views", config.views);
 
 nunjucks.configure(app.get("views"), {
     autoescape: true,
     express: app
 });
 
-app.set("port", process.env.PORT || 3000);
-
-app.use("/assets", express.static(path.join(__dirname, "../client/assets")));
+app.use("/assets", express.static(config.assets));
 
 app.use("/users", usersRouter.router);
 
 app.use("/", checkLoggedIn, homeRouter.router);
 
-export function main(cb: () => void): void {
-    app.listen(app.get("port"), cb);
+export function runServer(cb: () => void): void {
+    app.listen(config.port, cb);
 }
 
 // Only for testing!!
 if (require.main === module) {
-    main(() => { console.log("Listening on Port", app.get("port")); });
+    runServer(() => { console.log("Listening on Port", config.port); });
 }

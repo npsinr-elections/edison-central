@@ -28,8 +28,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp",
-    "server": "node build/server/main.js",
-    "dev": "nodemon build/server/main.js"
+    "server": "node build/main.js",
+    "dev": "nodemon build/main.js",
+    "production": "NODE_ENV=production node build/main.js"
   },
   "repository": {
     "type": "git",
