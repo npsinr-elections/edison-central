@@ -1,12 +1,13 @@
 import crypto = require("crypto");
 import express  = require("express");
 import session= require("express-session");
+import fs = require("fs");
 import nunjucks = require("nunjucks");
-
-import {config} from "../config";
 
 import * as homeRouter from "./routes/homeRouter";
 import * as usersRouter from "./routes/userRouter";
+
+import {config} from "../config";
 
 function checkLoggedIn(req: express.Request,
                        res: express.Response,
@@ -45,7 +46,18 @@ app.use("/users", usersRouter.router);
 
 app.use("/", checkLoggedIn, homeRouter.router);
 
+function checkDataDir() {
+    if (!fs.existsSync(config.database.dir)) {
+        fs.mkdirSync(config.database.dir);
+    }
+
+    if (!fs.existsSync(config.database.users)) {
+        fs.writeFileSync(config.database.users, "{}", "utf8");
+    }
+}
+
 export function runServer(cb: () => void): void {
+    checkDataDir();
     app.listen(config.port, cb);
 }
 
