@@ -3,7 +3,6 @@ requests, like login and register */
 
 import express = require("express");
 import {checks, StringValidator} from "../../shared/StringValidator";
-
 export const router = express.Router();
 
 router.get("/login", (req, res) => {
@@ -48,10 +47,10 @@ router.post("/register", (req, res) => {
         req.body.password, checks.password);
 
     if (!username.valid || !password.valid) {
-        res.redirect("/users/register?err=true");
+        res.json({message: "Username/Password is invalid",
+                 status: "error"});
         return;
     }
-    // Mechanism to store username, password in database
 
     res.redirect("/login"); // User has registered, redirect.
 });
