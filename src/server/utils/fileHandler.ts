@@ -3,7 +3,12 @@
  */
 
 import fs = require("fs");
+import {promisify} from "util";
+
 import * as crypt from "./crypt";
+
+const readFilePromise = promisify(fs.readFile);
+const writeFilePromise = promisify(fs.writeFile);
 
 /**
  * Represents a job object stored by PathQueue
@@ -11,8 +16,8 @@ import * as crypt from "./crypt";
  * @interface
  */
 interface Job {
-    task: Promise<string>;
-    resolve: (dataPath: string) => any;
+    task: Promise<any>;
+    resolve: (value: any) => any;
     reject: (reason?: any) => any;
 }
 
@@ -46,9 +51,9 @@ class PathQueue {
 
     /**
      * Push a new job into the queue
-     * @param {Promise<string>} task The fs task to push in the queue
+     * @param {Promise<T>} task The fs task to push in the queue
      */
-    public pushNewJob(task: Promise<string>): Promise<string> {
+    public pushNewJob<T>(task: Promise<T>): Promise<T> {
         const self = this;
         return new Promise((resolve, reject) => {
             self.queue.push({task, resolve, reject});
@@ -59,26 +64,22 @@ class PathQueue {
     /**
      * Run the next job in the queue.
      */
-    private next() {
+    private async next() {
         if (this.taskRunning) {
             return false;
         }
 
         this.taskRunning = true;
         const currentJob: Job = this.queue.shift();
+        try {
+            const data: any = await currentJob.task;
+            currentJob.resolve(data);
+        } catch (error) {
+            currentJob.reject(error);
+        }
 
-        const self = this;
-        currentJob.task.then(
-            (data: string) => {
-                currentJob.resolve(data);
-                self.taskRunning = false;
-                self.next();
-            },
-        (err) => {
-            currentJob.reject(err);
-            self.taskRunning = false;
-            self.next();
-        });
+        this.taskRunning = false;
+        this.next();
     }
 }
 
@@ -93,7 +94,7 @@ const queue: Queue = {};
  * @param {Promise<string>} task The new fs task to run
  * @returns {Promise<string>} A promise which resolves when the job completes.
  */
-function newFileTask(dataPath: string, task: Promise<string>): Promise<string> {
+function newFileTask<T>(dataPath: string, task: Promise<T>): Promise<T> {
     if (!(dataPath in queue)) {
         queue[dataPath] = new PathQueue();
     }
@@ -106,22 +107,15 @@ function newFileTask(dataPath: string, task: Promise<string>): Promise<string> {
  * @param {string} cryptKey If Provided, the data is decrypted with this key.
  * @returns {Promise<string>} Promise that resolves with data from file.
  */
-export function readFile(dataPath: string,
-                         cryptKey?: string): Promise<string> {
-    return newFileTask(dataPath,
-        new Promise((resolve, reject) => {
-            fs.readFile(dataPath, "utf8", (err, data) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        if (cryptKey !== undefined) {
-                            data = crypt.decrypt(data, cryptKey);
-                        }
-                        resolve(data);
-                    }
-            });
-        })
-    );
+export async function readFile(dataPath: string,
+                               cryptKey?: string): Promise<string> {
+    let data: string = await newFileTask(dataPath,
+                                        readFilePromise(dataPath, "utf8"));
+    if (cryptKey !== undefined) {
+        data = crypt.decrypt(data, cryptKey);
+    }
+
+    return data;
 }
 
 /**
@@ -131,23 +125,15 @@ export function readFile(dataPath: string,
  * @param {string} data Data to write to file
  * @param {string} cryptKey If provided,
  * data is encrypted with this key before writing
- * @returns {Promise<string>} Promise that resolves with filePath.
+ * @returns {Promise<void>} Promise that resolves when file is written.
  */
-export function writeFile(dataPath: string,
-                          data: string,
-                          cryptKey?: string): Promise<string> {
+export async function writeFile(dataPath: string,
+                                data: string,
+                                cryptKey?: string): Promise<void> {
     if (cryptKey !== undefined) {
         data = crypt.encrypt(data, cryptKey);
     }
-    return newFileTask(dataPath,
-            new Promise((resolve, reject) => {
-                fs.writeFile(dataPath, data, "utf8", (err) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                    resolve(dataPath);
-                    }
-                });
-            })
-    );
+
+    return await newFileTask(dataPath,
+                             writeFilePromise(dataPath, data, "utf8"));
 }
