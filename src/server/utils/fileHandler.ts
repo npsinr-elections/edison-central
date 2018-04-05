@@ -65,8 +65,12 @@ class PathQueue {
      * Run the next job in the queue.
      */
     private async next() {
+        if (this.queue.length === 0) {
+            return;
+        }
+
         if (this.taskRunning) {
-            return false;
+            return;
         }
 
         this.taskRunning = true;
