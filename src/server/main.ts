@@ -16,7 +16,7 @@ function checkLoggedIn(req: express.Request,
     if (req.session.user) {
         next();
     } else {
-        res.redirect("/users/login?redirect=true");
+        res.redirect("/users/login");
     }
 }
 

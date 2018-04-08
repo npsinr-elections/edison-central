@@ -6,28 +6,28 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Log In - Edison Central </title>
   <link rel="stylesheet" href="../assets/styles/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/styles/open-iconic-bootstrap.min.css">
   <link rel="stylesheet" href="../assets/styles/login.css">
 </head>
-<body>-
+<body>
     <form action="/users/login" method="POST" class="form-signin">
         <h1 class="h2 mb-2 font-weight-normal">Edison Central</h1>
-        {% if err %}
-        <div class="alert alert-info" role="alert">
-          {{ message }}
+        <p>Enter your Password</p>
+        <div id="errorDisplay" class="alert alert-danger" role="alert">
+            <h6 id="errorTitle" class="alert-heading"></h5>
+            <button type="button" data-toggle="collapse" data-target="#errorDetail" id="showDetail" class="btn btn-sm btn-outline-danger">
+                <span class="oi oi-info"></span>
+            </button>
+          <div class="collapse" id="errorDetail">
+              <p></p>
+          </div>
         </div>
-        {% endif %}
-        <label for="inputUsername" class="sr-only">Username</label>
-        <input type="text" name="username" id="inputUsername" class="form-control" autocomplete="off" placeholder="Username" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
-        <!-- <div class="checkbox mb-3">
-          <label>
-            <input type="checkbox" value="remember-me"> Remember me
-          </label>
-        </div> -->
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        <hr />
-        <p class="mt-5 mb-3 text-muted">Don't have an account? <a href="/users/register">Register</a></p>
       </form>
+      <script src="../assets/scripts/jquery-3.3.1.min.js"></script>
+      <script src="../assets/scripts/bootstrap.min.js"></script>
+      <script src="../assets/scripts/passwordForm.bundle.js"></script>
 </body>
 </html>

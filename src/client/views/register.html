@@ -6,22 +6,29 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Log In - Edison Central </title>
   <link rel="stylesheet" href="../assets/styles/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/styles/open-iconic-bootstrap.min.css">
   <link rel="stylesheet" href="../assets/styles/login.css">
 </head>
-<body>-
+<body>
     <form action="/users/register" method="POST" class="form-signin">
         <h1 class="h2 mb-2 font-weight-normal">Edison Central</h1>
-        <h3 class="h3 mb-3 font-weight-normal">Create a new account</h3>
-        {% if err %}
-        <div class="alert alert-danger" role="alert">
-          {{ message }}
+        <h3 class="h4 mb-4 font-weight-normal">Setup a new Password</h3>
+        <p>Please setup a password to unlock this application in the future.</p>
+        <div id="errorDisplay" class="alert alert-danger" role="alert">
+            <h6 id="errorTitle" class="alert-heading"></h5>
+            <button type="button" data-toggle="collapse" data-target="#errorDetail" id="showDetail" class="btn btn-sm btn-outline-danger">
+                <span class="oi oi-info"></span>
+            </button>
+          <div class="collapse" id="errorDetail">
+              <p></p>
+          </div>
         </div>
-        {% endif %}
-        <label for="inputUsername" class="sr-only">Username</label>
-        <input type="text" name="username" id="inputUsername" class="form-control" autocomplete="off" placeholder="Username" required autofocus>
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
       </form>
+      <script src="../assets/scripts/jquery-3.3.1.min.js"></script>
+      <script src="../assets/scripts/bootstrap.min.js"></script>
+      <script src="../assets/scripts/passwordForm.bundle.js"></script>
 </body>
 </html>

@@ -7,7 +7,8 @@ function callBack() {
     // Runs after server has started
     console.log("Listening on Port", config.port);
 
-    if (process.env.NODE_ENV === "production") {
+    // App is in production mode by default
+    if (process.env.NODE_ENV !== "development") {
         opn("http://localhost:" + config.port);
     }
 }

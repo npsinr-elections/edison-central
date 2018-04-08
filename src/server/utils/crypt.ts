@@ -25,6 +25,9 @@ const config = {
   saltBytes: 16
 };
 
+export async function genEncryptKey() {
+  return (await randomBytes(config.keyLen)).toString();
+}
 /**
  * Encrypts given text with defined algorithm in config.
  * @param {string} text Text to encrypt

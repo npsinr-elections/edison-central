@@ -47,3 +47,21 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+#errorDisplay {
+  display: none;
+}
+
+#errorTitle {
+  display: inline;
+}
+
+#showDetail {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	margin-right: 2px;
+	margin-bottom: 2px;
+	background-color: inherit;
+	color: inherit;
+}

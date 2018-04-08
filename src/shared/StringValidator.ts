@@ -18,6 +18,10 @@ export class StringValidator {
         this.valid = this.validate();
     }
 
+    public getField() {
+        return this.field;
+    }
+
     public setField(field: string) {
         this.field = field;
     }
@@ -48,12 +52,6 @@ export class StringValidator {
     }
 }
 
-// Pre defined Checker Function definitions for specific fields:
-
-const username: CheckerFunc = (validator: StringValidator) => {
-    return validator.lengthBetween(5, 12);
-};
-
 const password: CheckerFunc = (validator: StringValidator) => {
     return validator.lengthBetween(5, 12)
         && validator.hasUpperCase()
@@ -61,4 +59,4 @@ const password: CheckerFunc = (validator: StringValidator) => {
         && validator.hasNumber();
 };
 
-export let checks: ChecksInterface = {username, password};
+export let checks: ChecksInterface = {password};

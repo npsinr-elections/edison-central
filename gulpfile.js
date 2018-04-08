@@ -45,7 +45,7 @@ function mover(paths) {
 }
 
 function clientTsBuilders() {
-    let entries = ["index.ts"];
+    let entries = ["index.ts", "passwordForm.ts"];
 
     return gulp.parallel(
         entries.map((entry) => {
