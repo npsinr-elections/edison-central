@@ -33,6 +33,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "./node_modules/.bin/tslint --project ./tsconfig.json",
     "build": "gulp",
+    "dist": "pkg package.json --out-path ./dist -t node9-linux-x86,node9-win-x86",
     "server": "node build/main.js",
     "dev": "NODE_ENV=development nodemon build/main.js",
     "production": "NODE_ENV=production node build/main.js"
