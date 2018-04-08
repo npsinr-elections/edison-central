@@ -5,6 +5,8 @@
     "max-line-length": {
       "options": [80]
     },
+    "completed-docs":true,
+    "object-literal-sort-keys": false,
     "semicolon": [true, "always"],
     "interface-name": [true, "never-prefix"],
     "no-inferrable-types": true,
