@@ -23,6 +23,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-typescript": "^4.0.1",
     "gulp-uglify": "^3.0.0",
+    "nodemon": "^1.17.3",
     "tsify": "^3.0.4",
     "tslint": "^5.9.1",
     "tslint-eslint-rules": "^5.1.0",
@@ -32,10 +33,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "./node_modules/.bin/tslint --project ./tsconfig.json",
-    "build": "gulp",
-    "dist": "pkg package.json --out-path ./dist -t node9-linux-x86,node9-win-x86",
+    "build": "./node_modules/.bin/gulp",
+    "dist": "./node_modules/.bin/pkg package.json --out-path ./dist -t node9-linux-x86,node9-win-x86",
     "server": "node build/main.js",
-    "dev": "NODE_ENV=development nodemon build/main.js",
+    "dev": "NODE_ENV=development ./node_modules/.bin/nodemon build/main.js",
     "production": "NODE_ENV=production node build/main.js"
   },
   "pkg": {
