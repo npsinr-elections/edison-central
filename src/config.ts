@@ -1,8 +1,21 @@
 import path = require("path");
 
-export let config: {[index: string]: any} = {};
+interface Config {
+    /** */
+    PROJECT_ROOT: string;
+    port: string | number;
+    views: string;
+    assets: string;
+    database: DatabaseConfig;
+}
 
-// Set project root as location of config file.
+interface DatabaseConfig {
+    dir: string;
+    users: string;
+}
+
+export let config: Config|any = {};
+
 config.PROJECT_ROOT = __dirname;
 
 config.port = process.env.PORT || 3000; // local server port
@@ -13,8 +26,8 @@ config.assets = path.join(config.PROJECT_ROOT, "/client/assets");
 
 // Defining data storage location paths.
 config.database = {};
-// User Data directory
-config.database.dir = path.join(config.PROJECT_ROOT, "/data");
-
-// File for user
-config.database.users = path.join(config.database.dir, "users.json");
+config.database.dir = path.join(process.env.APPDATA ||
+        (process.platform === "darwin" ?
+        path.join(process.env.HOME, "Library/Preferences") :
+        process.env.HOME), ".edison");
+config.database.users = path.join(config.database.dir, "user.json");
