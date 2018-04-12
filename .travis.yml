@@ -2,9 +2,10 @@ language: node_js
 node_js:
   - "node"
   - "lts/*"
+env:
+  - NODE_ENV=development
 install:
   - npm install
-  - npm install --dev
 script:
   - npm run build
   - npm run dist
