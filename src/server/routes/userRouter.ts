@@ -49,7 +49,8 @@ router.post("/login", asyncMiddleware(async (req, res) => {
     }
 
     if (await crypt.verifyPassword(password, userData.password)) {
-        req.session.user = crypt.decrypt(userData.key, password);
+        req.session.user = crypt.decryptMasterKey(
+            Buffer.from(userData.key, "hex"), Buffer.from(password));
         return JSONResponse.ResourceCreated(res, {
             type: "session",
             id: req.session.id
@@ -78,11 +79,11 @@ router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
     if (!passwordCheck.valid) {
         return JSONResponse.Error(res, ERRORS.UserErrors.InvalidPassword);
     } else {
-        const encryptKey: string = crypt.encrypt(await crypt.genEncryptKey(),
-                                         password);
+        const encryptKey: Buffer = await crypt.genEncryptKey();
         const passwordHash: string = await crypt.hashPassword(password);
 
-        userData.key = encryptKey;
+        userData.key = (await crypt.encryptMasterKey(encryptKey,
+                            Buffer.from(password))).toString("hex");
         userData.password = passwordHash;
         await fileHandler.writeFile(config.database.users,
                     JSON.stringify(userData));

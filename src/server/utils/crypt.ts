@@ -21,39 +21,96 @@ const config = {
   iterations: 70000,
   /** Encryption Key Length */
   keyLen: 32,
+  /** IV Length */
+  ivLen: 16,
   /** size of salt used */
   saltBytes: 16
 };
 
 export async function genEncryptKey() {
-  return (await randomBytes(config.keyLen)).toString();
+  return (await randomBytes(config.keyLen));
 }
+
 /**
- * Encrypts given text with defined algorithm in config.
+ * Derives an encryption key from user password, and encrypts
+ * the master key with this key. Returns the encrypted string
+ * in the following format:
+ * <saltLength><ivLength><salt><iv><encryptedMasterKey>
  * @param {string} text Text to encrypt
- * @param {string} password Encryption key to be used
+ * @param {string | Buffer} key Encryption key to be used
  * @returns {string} The encrypted text
  */
-export function encrypt(text: string, password: string) {
-  const cipher = crypto.createCipher(config.algorithm, password);
-  let crypted = cipher.update(text, "utf8", "hex");
-  crypted += cipher.final("hex");
-  return crypted;
+export async function encryptMasterKey(masterKey: Buffer, password: Buffer) {
+  const salt = await randomBytes(config.saltBytes);
+  const derivedKey = await pbkdf2(password,
+    salt,
+    config.iterations,
+    config.keyLen,
+    config.digest);
+
+  const iv = await randomBytes(config.ivLen);
+  const cipher = crypto.createCipheriv(config.algorithm, derivedKey, iv);
+
+  let crypted = cipher.update(masterKey);
+  crypted = Buffer.concat([crypted, cipher.final()]);
+
+  const lengths = new Buffer(8);
+
+  lengths.writeUInt32BE(salt.length, 0, true);
+  lengths.writeUInt32BE(iv.length, 4, true);
+
+  return Buffer.concat([lengths, salt, iv, crypted]);
 }
 
 /**
- * Decrypts given text with defined algorithm.
+ * Decrypts a master key from data encrypted using
+ * encryptMasterKey().
  * @param {string} text Text to decrypt
- * @param {string} password Key to decrypt text
+ * @param {string} key Key to decrypt text
  * @returns {string} The decrypted text
  */
-export function decrypt(text: string, password: string) {
-  const decipher = crypto.createDecipher(config.algorithm, password);
-  let dec = decipher.update(text, "hex", "utf8");
-  dec += decipher.final("utf8");
-  return dec;
+export async function decryptMasterKey(encrypted: Buffer, password: Buffer) {
+  const saltLen = encrypted.readUInt32BE(0);
+  const ivLen = encrypted.readUInt32BE(4);
+
+  const salt = encrypted.slice(8, 8 + saltLen);
+  const iv = encrypted.slice(8 + saltLen, 8 + saltLen + ivLen);
+  const encryptedText = encrypted.slice(8 + saltLen + ivLen);
+
+  const derivedKey = await pbkdf2(password,
+                            salt,
+                            config.iterations,
+                            config.hashBytes,
+                            config.digest);
+  const decipher = crypto.createDecipheriv(config.algorithm, derivedKey, iv);
+  const dec = decipher.update(encryptedText);
+  return Buffer.concat([dec, decipher.final()]);
 }
 
+export async function encryptText(text: Buffer,
+                                  masterKey: Buffer) {
+  const iv = await randomBytes(config.ivLen);
+  const cipher = crypto.createCipheriv(config.algorithm, masterKey, iv);
+
+  let crypted = cipher.update(text);
+  crypted = Buffer.concat([crypted, cipher.final()]);
+
+  const ivLength = new Buffer(4);
+  ivLength.writeUInt32BE(iv.length, 0, true);
+
+  return Buffer.concat([ivLength, iv, crypted]);
+}
+
+export function decryptText(text: Buffer,
+                            masterKey: Buffer) {
+  const ivLen = text.readUInt32BE(0);
+  const iv = text.slice(4, 4 + ivLen);
+  const encryptedText = text.slice(4 + ivLen);
+
+  const decipher = crypto.createDecipheriv(config.algorithm, masterKey, iv);
+  const dec = decipher.update(encryptedText);
+  return Buffer.concat([dec, decipher.final()]);
+}
 /**
  * Hashes password with pbkdf2. Returns a hex string in following format:
  * <saltlength><Iterations><salt><hash>
@@ -71,17 +128,15 @@ export async function hashPassword(password: string) {
                     config.hashBytes,
                     config.digest);
 
-  const combined = new Buffer(hash.length + salt.length + 8);
+  const lengths = new Buffer(8);
 
   // include the size of the salt so that we can, during verification,
   // figure out how much of the hash is salt
-  combined.writeUInt32BE(salt.length, 0, true);
+  lengths.writeUInt32BE(salt.length, 0, true);
   // similarly, include the iteration count
-  combined.writeUInt32BE(config.iterations, 4, true);
+  lengths.writeUInt32BE(config.iterations, 4, true);
 
-  salt.copy(combined, 8);
-  hash.copy(combined, salt.length + 8);
-  return combined.toString("hex");
+  return Buffer.concat([lengths, salt, hash]).toString("hex");
 }
 
 /**

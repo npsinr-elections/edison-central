@@ -10,13 +10,15 @@ import * as crypt from "./crypt";
 const readFilePromise = promisify(fs.readFile);
 const writeFilePromise = promisify(fs.writeFile);
 
+type promiseTask<T> = (...args: any[]) => Promise<T>;
 /**
  * Represents a job object stored by PathQueue
  *
  * @interface
  */
 interface Job {
-    task: Promise<any>;
+    task: promiseTask<any>;
+    args: any[];
     resolve: (value: any) => any;
     reject: (reason?: any) => any;
 }
@@ -53,10 +55,11 @@ class PathQueue {
      * Push a new job into the queue
      * @param {Promise<T>} task The fs task to push in the queue
      */
-    public pushNewJob<T>(task: Promise<T>): Promise<T> {
+    public pushNewJob<T>(task: promiseTask<T>,
+                         args: any[]): Promise<T> {
         const self = this;
         return new Promise((resolve, reject) => {
-            self.queue.push({task, resolve, reject});
+            self.queue.push({task, args, resolve, reject});
             self.next();
         });
     }
@@ -76,7 +79,7 @@ class PathQueue {
         this.taskRunning = true;
         const currentJob: Job = this.queue.shift();
         try {
-            const data: any = await currentJob.task;
+            const data: any = await currentJob.task(...(currentJob.args));
             currentJob.resolve(data);
         } catch (error) {
             currentJob.reject(error);
@@ -98,11 +101,13 @@ const queue: Queue = {};
  * @param {Promise<string>} task The new fs task to run
  * @returns {Promise<string>} A promise which resolves when the job completes.
  */
-function newFileTask<T>(dataPath: string, task: Promise<T>): Promise<T> {
+function newFileTask<T>(dataPath: string,
+                        task: promiseTask<T>,
+                        ...args: any[]): Promise<T> {
     if (!(dataPath in queue)) {
         queue[dataPath] = new PathQueue();
     }
-    return queue[dataPath].pushNewJob(task);
+    return queue[dataPath].pushNewJob(task, args);
 }
 
 /**
@@ -112,11 +117,12 @@ function newFileTask<T>(dataPath: string, task: Promise<T>): Promise<T> {
  * @returns {Promise<string>} Promise that resolves with data from file.
  */
 export async function readFile(dataPath: string,
-                               cryptKey?: string): Promise<string> {
-    let data: string = await newFileTask(dataPath,
-                                        readFilePromise(dataPath, "utf8"));
+                               cryptKey?: Buffer): Promise<string> {
+    let data: string = (await newFileTask(dataPath,
+                                readFilePromise, dataPath, "utf8")) as string;
     if (cryptKey !== undefined) {
-        data = crypt.decrypt(data, cryptKey);
+        data = crypt.decryptText(Buffer.from(data, "hex"), cryptKey)
+                    .toString("utf8");
     }
 
     return data;
@@ -133,11 +139,12 @@ export async function readFile(dataPath: string,
  */
 export async function writeFile(dataPath: string,
                                 data: string,
-                                cryptKey?: string): Promise<void> {
+                                cryptKey?: Buffer): Promise<void> {
     if (cryptKey !== undefined) {
-        data = crypt.encrypt(data, cryptKey);
+        data = (await crypt.encryptText(Buffer.from(data), cryptKey))
+                            .toString("hex");
     }
 
     return await newFileTask(dataPath,
-                             writeFilePromise(dataPath, data, "utf8"));
+                             writeFilePromise, dataPath, data, "utf8");
 }
