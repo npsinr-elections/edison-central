@@ -4,6 +4,10 @@ node_js:
   - "lts/*"
 env:
   - NODE_ENV=development
+before_install:
+  - sudo dpkg --add-architecture i386
+  - sudo apt-get update
+  - sudo apt-get install -y libc6:i386 libstdc++6:i386
 install:
   - npm install
 script:
