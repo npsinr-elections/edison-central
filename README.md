@@ -1,6 +1,7 @@
-# edison-central
+# edison-central 
 Central computer for displaying messages to the audience.
 Note: Project is currently in development.
+[![Build Status](https://travis-ci.org/npsinr-elections/edison-central.svg?branch=master)](https://travis-ci.org/npsinr-elections/edison-central)
 
 ## Development Guide
 (Only for developers working on project)
