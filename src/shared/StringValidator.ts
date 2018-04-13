@@ -1,9 +1,9 @@
 /* Implements a simple String Validation class
  with multiple validation rules */
 
-type CheckerFunc = (validator: StringValidator) => boolean;
+export type CheckerFunc = (validator: StringValidator) => boolean;
 
-interface ChecksInterface {
+export interface ChecksInterface {
     [index: string]: CheckerFunc;
 }
 
