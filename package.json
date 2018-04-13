@@ -2,8 +2,8 @@
   "name": "edison-central",
   "version": "1.0.0",
   "description": "Central computer for displaying messages to the audience.",
-  "main": "build/main",
-  "bin": "build/main",
+  "main": "build/main.js",
+  "bin": "build/main.js",
   "dependencies": {
     "express": "^4.16.3",
     "express-session": "^1.15.6",
