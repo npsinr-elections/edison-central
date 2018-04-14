@@ -12,5 +12,7 @@ install:
   - npm install
 script:
   - npm run build
+  - npm run server &
+  - sleep 3
   - npm run test
   - npm run dist
