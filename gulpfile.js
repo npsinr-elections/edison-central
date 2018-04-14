@@ -123,7 +123,7 @@ gulp.task('pre-test', function () {
   });
 
 gulp.task('test:cover', function() {
-    return gulp.src('./build/test/*.js') //take our transpiled test source
+    return gulp.src('./build/test/**/*.js') //take our transpiled test source
     .pipe(mocha({ui:'bdd'})) //runs tests
     .pipe(istanbul.writeReports({
         reporters: [ 'json' ] //this yields a basic non-sourcemapped coverage.json file
