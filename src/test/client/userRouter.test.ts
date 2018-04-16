@@ -18,7 +18,9 @@ describe("User Routes", function() {
 
     it("Redirects if not logged in", async () => {
         const res = await page.goto("http://localhost:3000");
-        expect(url.parse(res.url()).pathname).equals("/users/login");
+        expect(url.parse(res.url()).pathname).satisfies((route: string) => {
+            return (route === "/users/register" || route === "/users/login");
+        });
     });
 
     after(async () => {

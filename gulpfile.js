@@ -7,9 +7,7 @@ const gulp = require("gulp"),
     rename = require("gulp-rename"),
     sourcemaps = require("gulp-sourcemaps"),
     buffer = require("vinyl-buffer"),
-    mocha = require("gulp-mocha"),
-    istanbul = require("gulp-istanbul"),
-    remapIstanbul = require("remap-istanbul/lib/gulpRemapIstanbul");
+    mocha = require("gulp-mocha");
 
 const SRC = 0;
 const DEST = 1;
@@ -112,44 +110,10 @@ gulp.task("buildtest", gulp.parallel(
     tsBuilder(testPath)
 ));
 
-gulp.task('pre-test', function () {
-    return gulp.src(["./build/**/*.js", "!./build/client/assets/**/*.min.js", "!./node_modules/**/*"])
-      // Covering files
-      .pipe(istanbul({
-          includeUntested: true
-      }))
-      // Force `require` to return covered files
-      .pipe(istanbul.hookRequire());
-  });
-
-gulp.task('test:cover', function() {
+gulp.task('mocha-test', function() {
     return gulp.src('./build/test/**/*.js') //take our transpiled test source
     .pipe(mocha({ui:'bdd'})) //runs tests
-    .pipe(istanbul.writeReports({
-        reporters: [ 'json' ] //this yields a basic non-sourcemapped coverage.json file
-    })).on('end', remapCoverageFiles); //perform a remap
 });
 
-//using remap-istanbul we can point our coverage data back to the original ts files
-function remapCoverageFiles() {
-    const path = require("path");
-    return gulp.src('./coverage/coverage-final.json')
-    .pipe(remapIstanbul({
-        reports: {
-            'json': './coverage/coverage-final.json',
-            'html': './coverage/html'
-        },
-        exclude: function (filePath) {
-            return ((filePath.indexOf("node_modules/browser-pack") > -1) ||
-            (filePath.indexOf("build/test") > -1));
-        },
-        mapFileName: function (filepath) {
-            let srcPath = filepath.replace("build/", "src/");
-            let removeAbs = path.relative(path.resolve("."), srcPath);
-            return removeAbs;
-        }
-    }));
-}
-
 gulp.task("default", gulp.parallel(["server", "client", "launcher", "config"]));
-gulp.task("test", gulp.series(["buildtest", "pre-test", "test:cover"]));
+gulp.task("test", gulp.series(["buildtest", "mocha-test"]));
