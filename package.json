@@ -47,7 +47,7 @@
     "build": "gulp",
     "dist": "pkg package.json --out-path ./dist -t node9-linux-x86,node9-win-x86",
     "server": "node build/main.js",
-    "dev": "NODE_ENV=development nodemon build/main.js",
+    "dev": "NODE_ENV=development nodemon build/main.js -i \"build/test\"",
     "production": "NODE_ENV=production node build/main.js"
   },
   "pkg": {
