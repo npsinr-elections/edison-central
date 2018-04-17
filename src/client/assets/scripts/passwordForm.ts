@@ -1,5 +1,6 @@
 $(() => {
     const passwordForm = $(".form-signin") as JQuery<HTMLFormElement>;
+    const passwordInput = $("#inputPassword");
     const errorDisplay = $("#errorDisplay");
     const errorTitle = $("#errorTitle");
     const errorDetail = $("#errorDetail");
@@ -12,9 +13,11 @@ $(() => {
                 errorTitle.text(error.title);
                 errorDetail.text(error.detail);
                 errorDisplay.show("fast");
+                passwordInput.val("");
+                passwordInput.focus();
             },
             success: (_1) => {
-                window.location.href = "/";
+                window.location.href = "/"; // Redirect to home
             },
             type: "POST",
             url: passwordForm.attr("action"),
