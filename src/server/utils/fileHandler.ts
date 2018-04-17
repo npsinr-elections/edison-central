@@ -7,6 +7,10 @@ import {promisify} from "util";
 
 import * as crypt from "./crypt";
 
+import {config} from "../../config";
+
+const existsPromise = promisify(fs.exists);
+const mkdirPromise = promisify(fs.mkdir);
 const readFilePromise = promisify(fs.readFile);
 const writeFilePromise = promisify(fs.writeFile);
 
@@ -147,4 +151,28 @@ export async function writeFile(dataPath: string,
 
     return await newFileTask(dataPath,
                              writeFilePromise, dataPath, data, "utf8");
+}
+
+export async function checkDataDir() {
+    if (!(await existsPromise(config.database.dir))) {
+        await mkdirPromise(config.database.dir);
+    }
+
+    if (!(await existsPromise(config.database.users))) {
+        writeFile(config.database.users, "{}");
+    }
+}
+
+export async function getUserData() {
+    let data;
+    try {
+        data = JSON.parse(await readFile(
+            config.database.users));
+        } catch (error) {
+            if (error.code === "ENOENT") {
+                await checkDataDir();
+                data = {};
+            }
+        }
+    return data;
 }

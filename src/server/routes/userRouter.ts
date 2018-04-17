@@ -12,11 +12,6 @@ import {ERRORS, JSONResponse} from "../utils/JSONResponse";
 
 export const router = express.Router();
 
-async function getUserData() {
-    return JSON.parse(await fileHandler.readFile(
-        config.database.users));
-}
-
 function isRegistered(userData: any) {
     return userData.password !== undefined;
 }
@@ -30,7 +25,7 @@ router.use((req, res, next) => {
 });
 
 router.get("/login", asyncMiddleware(async (_1, res) => {
-    const userData = await getUserData();
+    const userData = await fileHandler.getUserData();
     if (!isRegistered(userData)) {
         return res.redirect("/users/register");
     }
@@ -39,7 +34,7 @@ router.get("/login", asyncMiddleware(async (_1, res) => {
 }));
 
 router.post("/login", asyncMiddleware(async (req, res) => {
-    const userData = await getUserData();
+    const userData = await fileHandler.getUserData();
     if (!isRegistered(userData)) {
         return JSONResponse.Error(res, ERRORS.UserErrors.NotRegistered);
     }
@@ -61,7 +56,7 @@ router.post("/login", asyncMiddleware(async (req, res) => {
 }));
 
 router.get("/register", asyncMiddleware(async (_1, res) => {
-    const userData = await getUserData();
+    const userData = await fileHandler.getUserData();
     if (isRegistered(userData)) {
         return res.redirect("/users/login");
     }
@@ -69,7 +64,7 @@ router.get("/register", asyncMiddleware(async (_1, res) => {
 }));
 
 router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
-    const userData = await getUserData();
+    const userData = await fileHandler.getUserData();
     if (isRegistered(userData)) {
         return JSONResponse.Error(res, ERRORS.UserErrors.IsRegistered);
     }

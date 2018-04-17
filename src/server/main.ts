@@ -1,11 +1,11 @@
 import crypto = require("crypto");
 import express  = require("express");
 import session= require("express-session");
-import fs = require("fs");
 import nunjucks = require("nunjucks");
 
 import * as homeRouter from "./routes/homeRouter";
 import * as usersRouter from "./routes/userRouter";
+import * as fileHandler from "./utils/fileHandler";
 
 import {config} from "../config";
 
@@ -46,18 +46,8 @@ app.use("/users", usersRouter.router);
 
 app.use("/", checkLoggedIn, homeRouter.router);
 
-function checkDataDir() {
-    if (!fs.existsSync(config.database.dir)) {
-        fs.mkdirSync(config.database.dir);
-    }
-
-    if (!fs.existsSync(config.database.users)) {
-        fs.writeFileSync(config.database.users, "{}", "utf8");
-    }
-}
-
-export function runServer(cb: () => void): void {
-    checkDataDir();
+export async function runServer(cb: () => void) {
+    await fileHandler.checkDataDir();
     app.listen(config.port, cb);
 }
 
