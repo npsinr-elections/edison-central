@@ -12,7 +12,8 @@ install:
   - npm install
 script:
   - npm run build
-  - npm run server &
+  - npm run dist
+  - cp ./node_modules/opn/xdg-open ./dist
+  - ./dist/edison-central-linux &
   - sleep 3
   - npm run test
-  - npm run dist
