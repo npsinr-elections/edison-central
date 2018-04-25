@@ -59,7 +59,7 @@ export async function encryptMasterKey(masterKey: Buffer, password: Buffer) {
   let crypted = cipher.update(masterKey);
   crypted = Buffer.concat([crypted, cipher.final()]);
 
-  const lengths = new Buffer(8);
+  const lengths = Buffer.alloc(8);
 
   lengths.writeUInt32BE(salt.length, 0, true);
   lengths.writeUInt32BE(iv.length, 4, true);
@@ -107,7 +107,7 @@ export async function encryptText(text: Buffer,
   let crypted = cipher.update(text);
   crypted = Buffer.concat([crypted, cipher.final()]);
 
-  const ivLength = new Buffer(4);
+  const ivLength = Buffer.alloc(4);
   ivLength.writeUInt32BE(iv.length, 0, true);
 
   return Buffer.concat([ivLength, iv, crypted]);
@@ -146,7 +146,7 @@ export async function hashPassword(password: string) {
                     config.hashBytes,
                     config.digest);
 
-  const lengths = new Buffer(8);
+  const lengths = Buffer.alloc(8);
 
   // include the size of the salt so that we can, during verification,
   // figure out how much of the hash is salt
@@ -168,7 +168,7 @@ export async function verifyPassword(
   combinedHash: string) {
 
   // generate buffer from hash string
-  const combined: Buffer = new Buffer(combinedHash, "hex");
+  const combined: Buffer = Buffer.from(combinedHash, "hex");
   // extract the salt and hash from the combined buffer
   const saltBytes = combined.readUInt32BE(0);
   const hashBytes = combined.length - saltBytes - 8;
