@@ -1,3 +1,8 @@
+/**
+ * Initializes the app's express server.
+ * @module server/main
+ */
+
 import crypto = require("crypto");
 import express  = require("express");
 import session= require("express-session");
@@ -9,10 +14,16 @@ import * as fileHandler from "./utils/fileHandler";
 
 import {config} from "../config";
 
+/**
+ * Express middleware to check whether the user is in an authenicated
+ * session or not. If not, then redirect to login
+ * @param req
+ * @param res
+ * @param next
+ */
 function checkLoggedIn(req: express.Request,
                        res: express.Response,
                        next: express.NextFunction) {
-    // Check if the user has logged and the 'user' session variable is set.
     if (req.session.user) {
         next();
     } else {
@@ -46,6 +57,11 @@ app.use("/users", usersRouter.router);
 
 app.use("/", checkLoggedIn, homeRouter.router);
 
+/**
+ * Starts the app express server and calls `cb` after the server
+ * has started.
+ * @param {function} cb Callback to call after server has started.
+ */
 export async function runServer(cb: () => void) {
     await fileHandler.checkDataDir();
     app.listen(config.port, cb);

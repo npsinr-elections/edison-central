@@ -1,5 +1,6 @@
 /**
  * Handles various fs tasks asynchronously in a thread-safe manner.
+ * @module servers/utils/fileHandler
  */
 
 import fs = require("fs");
@@ -14,7 +15,12 @@ const mkdirPromise = promisify(fs.mkdir);
 const readFilePromise = promisify(fs.readFile);
 const writeFilePromise = promisify(fs.writeFile);
 
+/**
+ * Represents an arbitrary async fs function modified to return
+ * a promise using `utils.promisify`
+ */
 type promiseTask<T> = (...args: any[]) => Promise<T>;
+
 /**
  * Represents a job object stored by PathQueue
  *
@@ -38,11 +44,16 @@ interface Queue {
 
 /**
  * Implements a Queue to store fs tasks for a path.
- *
+ * This class ensures that for a given path ONLY ONE job
+ * is allowed to run at an instant of time. This is important
+ * because multiple threads accessing/modifying the same file
+ * can lead to corrupted data.
  * @class
  */
 class PathQueue {
+    /** Queue of jobs */
     private queue: Job[];
+    /** Tells whether a job is currently running */
     private taskRunning: boolean;
 
     /**
@@ -57,7 +68,9 @@ class PathQueue {
 
     /**
      * Push a new job into the queue
-     * @param {Promise<T>} task The fs task to push in the queue
+     * @param {Promise} task The fs task to push in the queue
+     * @returns {Promise} A promise that resolves when the queued
+     * task has completed
      */
     public pushNewJob<T>(task: promiseTask<T>,
                          args: any[]): Promise<T> {
@@ -69,17 +82,22 @@ class PathQueue {
     }
 
     /**
-     * Run the next job in the queue.
+     * Run the next job in the queue, making sure only one
+     * job is running at a given time.
      */
     private async next() {
+        // Check whether the queue has no jobs
         if (this.queue.length === 0) {
             return;
         }
 
+        // Ensure that only one task can be run at a time
         if (this.taskRunning) {
             return;
         }
 
+        // If no other task is running and the queue is not empty,
+        // dequeue and run a task.
         this.taskRunning = true;
         const currentJob: Job = this.queue.shift();
         try {
@@ -153,6 +171,10 @@ export async function writeFile(dataPath: string,
                              writeFilePromise, dataPath, data, "utf8");
 }
 
+/**
+ * Checks whether the user data directory for the app
+ * has been initalized. If not, then initializes it
+ */
 export async function checkDataDir() {
     if (!(await existsPromise(config.database.dir))) {
         await mkdirPromise(config.database.dir);
@@ -163,6 +185,11 @@ export async function checkDataDir() {
     }
 }
 
+/**
+ * Reads `users.json` from its location, and returns
+ * its contents as an object
+ * @returns {object}
+ */
 export async function getUserData() {
     let data;
     try {

@@ -1,3 +1,8 @@
+/**
+ * Implements an asynchronous express request handler.
+ * @module server/utils/asyncMiddleware
+ */
+
 import { RequestHandler } from "express";
 
 /**

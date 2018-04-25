@@ -1,12 +1,22 @@
+/**
+ * Implements reponses compliant with JSON API.
+ * @module server/utils/JSONResponse
+ */
 import shortid = require("shortid");
 
 import { Response } from "express";
 
+/**
+ * Represents a JSON Api Data resource
+ */
 interface Data {
     id?: string;
     type: string;
 }
 
+/**
+ * Represents a JSON API error
+ */
 interface Error {
     id?: string;
     code: string;
@@ -14,7 +24,18 @@ interface Error {
     title: string;
     detail?: string;
 }
+
+/**
+ * Represents a JSON API compliant response from a server.
+ * @class
+ */
 export class JSONResponse {
+    /**
+     * Reponse when a resource has been created on the server in reponse
+     * to a user request.
+     * @param {Express.Response} res express response object for this request
+     * @param {object} [data] An object related to the resource created.
+     */
     public static ResourceCreated(res: Response, data?: Data) {
         if (data === undefined) {
             res.status(204);
@@ -25,6 +46,14 @@ export class JSONResponse {
         }
         return {data};
     }
+
+    /**
+     * Reponse when an error occured due to a user request on the server,
+     * @param  {Express.Response} res express response object for this request
+     * @param  {JSONResponse.Error} err describes the error that occured.
+     * Usually, this is a predefined error from `JSONResponse.ERRORS`. For
+     * example, `ERRORS.UserErrors.InvalidPassword`
+     */
     public static Error(res: Response, err: Error) {
         err.id = shortid.generate();
         res.status(err.status);
@@ -33,10 +62,19 @@ export class JSONResponse {
     }
 }
 
+/**
+ * Represents the list of predefined errors in the program.
+ */
 interface PresetErrors {
     [errorType: string]: {[errorName: string]: Error};
 }
 
+/**
+ * Predefined error response objects for the server. These are
+ * subdivided into objects that represent the type of error.
+ * For example, errors related to user register/login are stored in
+ * `ERRORS.UserErrors`
+ */
 export const ERRORS: PresetErrors = {
     UserErrors: {
         /** Password didn't follow format rules */

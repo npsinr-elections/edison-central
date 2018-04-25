@@ -1,5 +1,6 @@
 /**
  * Implements functions to encrypt, decrypt and hash text
+ * @module servers/utils/crypt
  */
 import crypto = require("crypto");
 import {promisify} from "util";
@@ -27,6 +28,10 @@ const config = {
   saltBytes: 16
 };
 
+/**
+ * Generates an AES cryptographic key.
+ * @returns {Promise<Buffer>} The random key bytes generated as a buffer.
+ */
 export async function genEncryptKey() {
   return (await randomBytes(config.keyLen));
 }
@@ -36,9 +41,9 @@ export async function genEncryptKey() {
  * the master key with this key. Returns the encrypted string
  * in the following format:
  * <saltLength><ivLength><salt><iv><encryptedMasterKey>
- * @param {string} text Text to encrypt
- * @param {string | Buffer} key Encryption key to be used
- * @returns {string} The encrypted text
+ * @param {Buffer} masterKey The key to be encrypted
+ * @param {Buffer} password password used to encrypt the key.
+ * @returns {Promise<Buffer>} The encrypted master key,
  */
 export async function encryptMasterKey(masterKey: Buffer, password: Buffer) {
   const salt = await randomBytes(config.saltBytes);
@@ -64,10 +69,10 @@ export async function encryptMasterKey(masterKey: Buffer, password: Buffer) {
 
 /**
  * Decrypts a master key from data encrypted using
- * encryptMasterKey().
- * @param {string} text Text to decrypt
- * @param {string} key Key to decrypt text
- * @returns {string} The decrypted text
+ * `encryptMasterKey()`.
+ * @param {Buffer} text The encrypted master key
+ * @param {Buffer} key The password used to encrypt the maser key
+ * @returns {Promise<Buffer>} Decrypted master key
  */
 export async function decryptMasterKey(encrypted: Buffer, password: Buffer) {
   const saltLen = encrypted.readUInt32BE(0);
@@ -87,6 +92,13 @@ export async function decryptMasterKey(encrypted: Buffer, password: Buffer) {
   return Buffer.concat([dec, decipher.final()]);
 }
 
+/**
+ * Encrypts utf-8 text, and returns the encrypted text
+ * as a buffer.
+ * @param {Buffer} text The utf-8 text to encrypt
+ * @param {Buffer} masterKey Key used to encrypt the text
+ * @returns {Promise<Buffer>} The encrypted text
+ */
 export async function encryptText(text: Buffer,
                                   masterKey: Buffer) {
   const iv = await randomBytes(config.ivLen);
@@ -101,6 +113,12 @@ export async function encryptText(text: Buffer,
   return Buffer.concat([ivLength, iv, crypted]);
 }
 
+/**
+ * Decrypts text encrypted using `encryptText()`
+ * @param {Buffer} text Encrypted text to decrypt
+ * @param {Buffer} masterKey Key for decrypting the text
+ * @returns {Promise<Buffer>} The decrypted text as a buffer
+ */
 export function decryptText(text: Buffer,
                             masterKey: Buffer) {
   const ivLen = text.readUInt32BE(0);

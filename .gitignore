@@ -60,4 +60,8 @@ typings/
 # Build files
 build
 
+# Generated executables
 dist
+
+# Project Documentation
+docs
