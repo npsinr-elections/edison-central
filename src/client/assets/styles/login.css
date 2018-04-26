@@ -63,5 +63,6 @@ body {
 	margin-right: 2px;
 	margin-bottom: 2px;
 	background-color: inherit;
-	color: inherit;
+  color: inherit;
+  border: none;
 }
