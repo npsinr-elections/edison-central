@@ -7,6 +7,19 @@ import shortid = require("shortid");
 import { Response } from "express";
 
 /**
+ * Toplevel attributes of a JSONAPI response.
+ * Note: One of data, errors or meta is required.
+ */
+interface JSONAPIResponse {
+    data?: any;
+    errors?: any;
+    meta?: any;
+    jsonapi?: any;
+    links?: any;
+    included?: any;
+}
+
+/**
  * Represents a JSON Api Data resource
  */
 interface Data {
@@ -35,8 +48,9 @@ export class JSONResponse {
      * to a user request.
      * @param {Express.Response} res express response object for this request
      * @param {object} [data] An object related to the resource created.
+     * @returns {JSONAPIResponse}
      */
-    public static ResourceCreated(res: Response, data?: Data) {
+    public static ResourceCreated(res: Response, data?: Data): JSONAPIResponse {
         if (data === undefined) {
             res.status(204);
             res.end();
@@ -53,12 +67,13 @@ export class JSONResponse {
      * @param  {JSONResponse.Error} err describes the error that occured.
      * Usually, this is a predefined error from `JSONResponse.ERRORS`. For
      * example, `ERRORS.UserErrors.InvalidPassword`
+     * @returns {JSONAPIResponse}
      */
-    public static Error(res: Response, err: Error) {
+    public static Error(res: Response, err: Error): JSONAPIResponse {
         err.id = shortid.generate();
         res.status(err.status);
         res.json({errors: [err]});
-        return err;
+        return {errors: err};
     }
 }
 

@@ -10,7 +10,8 @@ import * as puppeteer from "puppeteer";
  * @param  {puppeteer.Page} page
  * @param  {string} selector
  */
-export async function getElemText(page: puppeteer.Page, selector: string) {
+export async function getElemText(page: puppeteer.Page,
+                                  selector: string): Promise<string> {
     return await page.evaluate(
         (element) => document.querySelector(element).textContent, selector);
 }
@@ -19,7 +20,7 @@ export async function getElemText(page: puppeteer.Page, selector: string) {
  * Extract the url from a pupeteer response
  * @param  {puppeteer.Response} res
  */
-export function getURL(res: puppeteer.Response) {
+export function getURL(res: puppeteer.Response): string {
     const url = res.url();
     return url.endsWith("/") ? url.slice(0, -1) : url;
 }

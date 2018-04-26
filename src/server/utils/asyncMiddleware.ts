@@ -12,7 +12,7 @@ import { RequestHandler } from "express";
  * @param fn An async request handler function
  * @returns {function} Returns the wrapped request handler function.
  */
-export function asyncMiddleware(fn: RequestHandler) {
+export function asyncMiddleware(fn: RequestHandler): RequestHandler {
     const requestHandler: RequestHandler = (req, res, next) =>
         Promise.resolve(fn(req, res, next)).catch(next);
 

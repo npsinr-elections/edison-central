@@ -32,7 +32,7 @@ const config = {
  * Generates an AES cryptographic key.
  * @returns {Promise<Buffer>} The random key bytes generated as a buffer.
  */
-export async function genEncryptKey() {
+export async function genEncryptKey(): Promise<Buffer> {
   return (await randomBytes(config.keyLen));
 }
 
@@ -45,7 +45,8 @@ export async function genEncryptKey() {
  * @param {Buffer} password password used to encrypt the key.
  * @returns {Promise<Buffer>} The encrypted master key,
  */
-export async function encryptMasterKey(masterKey: Buffer, password: Buffer) {
+export async function encryptMasterKey(masterKey: Buffer,
+                                       password: Buffer): Promise<Buffer> {
   const salt = await randomBytes(config.saltBytes);
   const derivedKey = await pbkdf2(password,
     salt,
@@ -74,7 +75,8 @@ export async function encryptMasterKey(masterKey: Buffer, password: Buffer) {
  * @param {Buffer} key The password used to encrypt the maser key
  * @returns {Promise<Buffer>} Decrypted master key
  */
-export async function decryptMasterKey(encrypted: Buffer, password: Buffer) {
+export async function decryptMasterKey(encrypted: Buffer,
+                                       password: Buffer): Promise<Buffer> {
   const saltLen = encrypted.readUInt32BE(0);
   const ivLen = encrypted.readUInt32BE(4);
 
@@ -100,7 +102,7 @@ export async function decryptMasterKey(encrypted: Buffer, password: Buffer) {
  * @returns {Promise<Buffer>} The encrypted text
  */
 export async function encryptText(text: Buffer,
-                                  masterKey: Buffer) {
+                                  masterKey: Buffer): Promise<Buffer> {
   const iv = await randomBytes(config.ivLen);
   const cipher = crypto.createCipheriv(config.algorithm, masterKey, iv);
 
@@ -120,7 +122,7 @@ export async function encryptText(text: Buffer,
  * @returns {Promise<Buffer>} The decrypted text as a buffer
  */
 export function decryptText(text: Buffer,
-                            masterKey: Buffer) {
+                            masterKey: Buffer): Buffer {
   const ivLen = text.readUInt32BE(0);
   const iv = text.slice(4, 4 + ivLen);
   const encryptedText = text.slice(4 + ivLen);
@@ -133,9 +135,9 @@ export function decryptText(text: Buffer,
  * Hashes password with pbkdf2. Returns a hex string in following format:
  * <saltlength><Iterations><salt><hash>
  * @param {string} password Password to hash
- * @returns {string} The salted hash as a string
+ * @returns {Promise<string>} The salted hash as a string
  */
-export async function hashPassword(password: string) {
+export async function hashPassword(password: string): Promise<string> {
 
   // generate a salt for pbkdf2
   const salt = await randomBytes(config.saltBytes);
@@ -165,7 +167,7 @@ export async function hashPassword(password: string) {
  */
 export async function verifyPassword(
   password: string,
-  combinedHash: string) {
+  combinedHash: string): Promise<boolean> {
 
   // generate buffer from hash string
   const combined: Buffer = Buffer.from(combinedHash, "hex");

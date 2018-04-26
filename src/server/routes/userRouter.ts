@@ -32,7 +32,7 @@ export const router = express.Router();
  * @param userData userData json from users.json
  * @returns {boolean}
  */
-function isRegistered(userData: any) {
+function isRegistered(userData: any): boolean {
     return userData.password !== undefined;
 }
 
