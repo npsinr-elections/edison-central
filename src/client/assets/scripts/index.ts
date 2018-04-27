@@ -23,7 +23,10 @@ $(() => {
     // Event handlers for navigation links onclick
     navlinks.click((e) => {
         const link = $(e.currentTarget).attr("href");
-
+        if (link === "/users/logout") {
+            window.location.href = link;
+            return;
+        }
         // Push link in browser history
         window.history.pushState("", "", link);
 

@@ -43,7 +43,8 @@ function isRegistered(userData: any): boolean {
  * @function
  */
 router.use((req, res, next) => {
-    if (req.session.user) {
+    // If user is logged in, ONLY allow logout request
+    if (req.session.user && req.path !== "/logout") {
         res.redirect("/");
     } else {
         next();
@@ -85,8 +86,10 @@ router.post("/login", asyncMiddleware(async (req, res) => {
     // Verify password
     if (await crypt.verifyPassword(password, userData.password)) {
         // If password valid then set user session
-        req.session.user = crypt.decryptMasterKey(
-            Buffer.from(userData.key, "hex"), Buffer.from(password));
+        req.session.user = (await crypt.decryptMasterKey(
+                            Buffer.from(userData.key, "hex"),
+                            Buffer.from(password)))
+                            .toString("hex");
         return JSONResponse.ResourceCreated(res, {
             type: "session",
             id: req.session.id
@@ -141,3 +144,13 @@ router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
         return JSONResponse.ResourceCreated(res);
     }
 }));
+
+router.get("/logout", (req, res, next) => {
+    req.session.destroy((err) => {
+        if (err) {
+            next(err);
+        }
+        res.redirect("/users/login");
+    });
+
+});
