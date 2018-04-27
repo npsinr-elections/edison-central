@@ -1,3 +1,9 @@
+/**
+ * Handles user login/register requests, and display of errors.
+ *
+ * @module client/assets/scripts/passwordForm
+ */
+
 $(() => {
     const passwordForm = $(".form-signin") as JQuery<HTMLFormElement>;
     const passwordInput = $("#inputPassword");

@@ -5,12 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Home - Edison Central</title>
+    <script defer src="../assets/scripts/fontawesome-all.min.js"></script>
     <link rel="stylesheet" href="../assets/styles/bootstrap.min.css">
+    <link rel="stylesheet" href="../assets/styles/main.css">
 </head>
 <body>
-    <p>This is a protected page.</p>
-    <p>The date is {{ date }}.</p>
-
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="nav flex-column col-md-2 d-md-block">
+                <div class="sidebar bg-light border-right">
+                    <ul class="nav flex-column">
+                        <li class="nav-item brand">
+                            <h2 class="nav-link brand display-2">edison-central</h2>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/elections" class="nav-link">
+                                <i class="fab fa-dropbox nav-link-icon text-primary"></i>
+                                Elections
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/templates" class="nav-link">
+                                <i class="fas fa-file-alt nav-link-icon text-success"></i>
+                                Templates
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/results" class="nav-link">
+                                <i class="fas fa-history nav-link-icon text-danger"></i>
+                                Results
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/settings" class="nav-link">
+                                <i class="fas fa-cog nav-link-icon text-warning"></i>
+                                Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/users/logout" class="nav-link">
+                                <i class="fas fa-sign-out-alt nav-link-icon text-secondary"></i>
+                                Sign Out
+                            </a>
+                        </li>
+                    </ul> 
+                </div>
+            </nav>
+            <main class="col-md-9">
+            </main>
+        </div>
+    </div>
     <script src="../assets/scripts/jquery-3.3.1.min.js"></script>
     <script src="../assets/scripts/bootstrap.min.js"></script>
     <script src="../assets/scripts/index.bundle.js"></script>
