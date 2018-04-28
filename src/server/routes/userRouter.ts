@@ -141,6 +141,12 @@ router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
         userData.password = passwordHash;
         await fileHandler.writeFile(config.database.users,
                     JSON.stringify(userData));
+        await fileHandler.writeFile(config.database.dataFile,
+                    JSON.stringify({
+                        name: "",
+                        description: "",
+                        offices: []
+                    }), encryptKey);
         return JSONResponse.ResourceCreated(res);
     }
 }));

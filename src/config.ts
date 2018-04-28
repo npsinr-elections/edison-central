@@ -30,4 +30,6 @@ config.database.dir = path.join(process.env.APPDATA ||
         (process.platform === "darwin" ?
         path.join(process.env.HOME, "Library/Preferences") :
         process.env.HOME), ".edison");
+config.database.images = path.join(config.database.dir, "images");
 config.database.users = path.join(config.database.dir, "user.json");
+config.database.dataFile = path.join(config.database.dir, "data.json");

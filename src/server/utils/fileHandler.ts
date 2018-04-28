@@ -167,8 +167,8 @@ export async function writeFile(dataPath: string,
                             .toString("hex");
     }
 
-    return await newFileTask(dataPath,
-                             writeFilePromise, dataPath, data, "utf8");
+    return newFileTask(dataPath,
+                       writeFilePromise, dataPath, data, "utf8");
 }
 
 /**
@@ -176,12 +176,17 @@ export async function writeFile(dataPath: string,
  * has been initalized. If not, then initializes it
  */
 export async function checkDataDir() {
-    if (!(await existsPromise(config.database.dir))) {
-        await mkdirPromise(config.database.dir);
+    const dirs = [config.database.dir, config.database.images];
+    for (const dir of dirs) {
+        if (!(await existsPromise(dir))) {
+            await mkdirPromise(dir);
+        }
     }
-
-    if (!(await existsPromise(config.database.users))) {
-        writeFile(config.database.users, "{}");
+    const files = [config.database.users, config.database.dataFile];
+    for (const file of files) {
+        if (!(await existsPromise(file))) {
+            await writeFile(file, "{}");
+        }
     }
 }
 

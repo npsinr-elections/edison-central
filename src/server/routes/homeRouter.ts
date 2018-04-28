@@ -26,6 +26,6 @@ router.get("/pages/:pageName", (req, res) => {
  * @name get/:pageName
  * @function
  */
-router.get("/:pageName(elections|templates|results|settings)?", (_REQ, res) => {
+router.get("/:pageName(elections|results|settings)?", (_REQ, res) => {
     res.render("index.html");
 });
