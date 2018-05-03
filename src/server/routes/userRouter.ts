@@ -17,22 +17,23 @@
  */
 
 import express = require("express");
+import shortid = require("shortid");
 
-import {config} from "../../config";
 import {checks, StringValidator} from "../../shared/StringValidator";
 import {asyncMiddleware} from "../utils/asyncMiddleware";
 import * as crypt from "../utils/crypt";
-import * as fileHandler from "../utils/fileHandler";
+import * as database from "../utils/database";
 import {ERRORS, JSONResponse} from "../utils/JSONResponse";
 
 export const router = express.Router();
 
+let userData: database.UserData;
+
 /**
  * Check if user has registered a password in the app yet.
- * @param userData userData json from users.json
  * @returns {boolean}
  */
-function isRegistered(userData: any): boolean {
+function isRegistered(): boolean {
     return userData.password !== undefined;
 }
 
@@ -52,13 +53,22 @@ router.use((req, res, next) => {
 });
 
 /**
+ * Express middleware to read userData file and get its contents.
+ * @name readUserData
+ * @function
+ */
+router.use(asyncMiddleware(async (_1, _2, next) => {
+    userData = await database.getUserData();
+    next();
+}));
+
+/**
  * Route to serve login form
  * @name get/users/login
  * @function
  */
 router.get("/login", asyncMiddleware(async (_1, res) => {
-    const userData = await fileHandler.getUserData();
-    if (!isRegistered(userData)) {
+    if (!isRegistered()) {
         return res.redirect("/users/register");
     }
 
@@ -72,8 +82,7 @@ router.get("/login", asyncMiddleware(async (_1, res) => {
  * @param {string} password the password as a POST param
  */
 router.post("/login", asyncMiddleware(async (req, res) => {
-    const userData = await fileHandler.getUserData();
-    if (!isRegistered(userData)) {
+    if (!isRegistered()) {
         return JSONResponse.Error(res, ERRORS.UserErrors.NotRegistered);
     }
     const password: string = req.body.password;
@@ -105,8 +114,7 @@ router.post("/login", asyncMiddleware(async (req, res) => {
  * @function
  */
 router.get("/register", asyncMiddleware(async (_1, res) => {
-    const userData = await fileHandler.getUserData();
-    if (isRegistered(userData)) {
+    if (isRegistered()) {
         return res.redirect("/users/login");
     }
     res.render("register.html");
@@ -119,8 +127,7 @@ router.get("/register", asyncMiddleware(async (_1, res) => {
  * @param {string} password the password as a POST param
  */
 router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
-    const userData = await fileHandler.getUserData();
-    if (isRegistered(userData)) {
+    if (isRegistered()) {
         return JSONResponse.Error(res, ERRORS.UserErrors.IsRegistered);
     }
     const password: string = req.body.password;
@@ -139,14 +146,17 @@ router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
         userData.key = (await crypt.encryptMasterKey(encryptKey,
                             Buffer.from(password))).toString("hex");
         userData.password = passwordHash;
-        await fileHandler.writeFile(config.database.users,
-                    JSON.stringify(userData));
-        await fileHandler.writeFile(config.database.dataFile,
-                    JSON.stringify({
-                        name: "",
-                        description: "",
-                        offices: []
-                    }), encryptKey);
+        await database.writeUserData(userData);
+
+        const newElectionData: database.Election = {
+            id: shortid.generate(),
+            name: "",
+            description: "",
+            image: "",
+            color: "",
+            offices: []
+        };
+        await database.writeElectionData(newElectionData, encryptKey);
         return JSONResponse.ResourceCreated(res);
     }
 }));

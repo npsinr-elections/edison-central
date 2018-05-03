@@ -8,10 +8,6 @@ import {promisify} from "util";
 
 import * as crypt from "./crypt";
 
-import {config} from "../../config";
-
-const existsPromise = promisify(fs.exists);
-const mkdirPromise = promisify(fs.mkdir);
 const readFilePromise = promisify(fs.readFile);
 const writeFilePromise = promisify(fs.writeFile);
 
@@ -167,44 +163,6 @@ export async function writeFile(dataPath: string,
                             .toString("hex");
     }
 
-    return newFileTask(dataPath,
+    return await newFileTask(dataPath,
                        writeFilePromise, dataPath, data, "utf8");
-}
-
-/**
- * Checks whether the user data directory for the app
- * has been initalized. If not, then initializes it
- */
-export async function checkDataDir() {
-    const dirs = [config.database.dir, config.database.images];
-    for (const dir of dirs) {
-        if (!(await existsPromise(dir))) {
-            await mkdirPromise(dir);
-        }
-    }
-    const files = [config.database.users, config.database.dataFile];
-    for (const file of files) {
-        if (!(await existsPromise(file))) {
-            await writeFile(file, "{}");
-        }
-    }
-}
-
-/**
- * Reads `users.json` from its location, and returns
- * its contents as an object
- * @returns {object}
- */
-export async function getUserData() {
-    let data;
-    try {
-        data = JSON.parse(await readFile(
-            config.database.users));
-        } catch (error) {
-            if (error.code === "ENOENT") {
-                await checkDataDir();
-                data = {};
-            }
-        }
-    return data;
 }

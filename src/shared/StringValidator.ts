@@ -3,6 +3,8 @@
  * @module shared/StringValidator
  */
 
+import shortid = require("shortid");
+
 /**
  * Represents a function that uses StringValidator object methods
  * to determine if a string is valid
@@ -92,6 +94,14 @@ export class StringValidator {
     }
 
     /**
+     * Checks whether a string is a valid shortid
+     * @returns {boolean}
+     */
+    public isValidID() {
+        return shortid.isValid(this.field);
+    }
+
+    /**
      * Uses the object's `checkerFunc` to check if a string is valid
      * @returns {boolean}
      */
@@ -103,6 +113,7 @@ export class StringValidator {
 /**
  * A `checkerFunc` for a password field
  * @param {StringValidator} validator
+ * @returns {boolean}
  */
 const password: CheckerFunc = (validator: StringValidator) => {
     return validator.lengthBetween(5, 12)
@@ -111,5 +122,60 @@ const password: CheckerFunc = (validator: StringValidator) => {
         && validator.hasNumber();
 };
 
+/**
+ * A `checkerFunc` for a resource ID.
+ * @param {StringValidator} validator
+ * @returns {boolean}
+ */
+const id: CheckerFunc = (val: StringValidator) => {
+    return val.isValidID();
+};
+
+/**
+ * A `checkerFunc` for a resource name
+ * @param {StringValidator} validator
+ * @returns {boolean}
+ */
+const name: CheckerFunc = (val: StringValidator) => {
+    return val.lengthBetween(1, 20)
+        && !(val.hasSpecialChar());
+};
+
+/**
+ * A `checkerFunc` for a resource description
+ * @param {StringValidator} validator
+ * @returns {boolean}
+ */
+const description: CheckerFunc = (val: StringValidator) => {
+    return val.lengthBetween(0, 80);
+};
+
+/**
+ * A `checkerFunc` for a resource image
+ * @param {StringValidator} validator
+ * @returns {boolean}
+ */
+const image: CheckerFunc = (_1: StringValidator) => {
+    // To be implemented
+    return true;
+};
+
+/**
+ * A `checkerFunc` for a resource color
+ * @param {StringValidator} validator
+ * @returns {boolean}
+ */
+const color: CheckerFunc = (val: StringValidator) => {
+    return val.getField()[0] === "#" &&
+            val.lengthBetween(7, 7);
+};
+
 /** Predefined `checkerFuncs` for various fields */
-export let checks: ChecksInterface = {password};
+export let checks: ChecksInterface = {
+                                        password,
+                                        id,
+                                        name,
+                                        description,
+                                        image,
+                                        color
+                                    };

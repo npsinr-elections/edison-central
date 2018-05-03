@@ -10,7 +10,7 @@ import nunjucks = require("nunjucks");
 
 import * as homeRouter from "./routes/homeRouter";
 import * as usersRouter from "./routes/userRouter";
-import * as fileHandler from "./utils/fileHandler";
+import * as database from "./utils/database";
 
 import {config} from "../config";
 
@@ -63,7 +63,7 @@ app.use("/", checkLoggedIn, homeRouter.router);
  * @param {function} cb Callback to call after server has started.
  */
 export async function runServer(cb: () => void) {
-    await fileHandler.checkDataDir();
+    await database.checkDataDir();
     app.listen(config.port, cb);
 }
 
