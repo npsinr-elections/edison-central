@@ -75,7 +75,7 @@ export async function checkDataDir() {
             await mkdirPromise(dir);
         }
     }
-    const files = [config.database.users, config.database.dataFile];
+    const files = [config.database.users, config.database.elections];
     for (const file of files) {
         if (!(await existsPromise(file))) {
             await fileHandler.writeFile(file, "{}");
@@ -126,7 +126,7 @@ export async function writeUserData(data: UserData) {
  * @returns Promise<Election>
  */
 export async function getElectionData(cryptKey: Buffer): Promise<Election> {
-    return await getData(config.database.dataFile, cryptKey);
+    return await getData(config.database.elections, cryptKey);
 }
 
 /**
@@ -135,7 +135,7 @@ export async function getElectionData(cryptKey: Buffer): Promise<Election> {
  * @param cryptKey Key used to encrypt data file
  */
 export async function writeElectionData(data: Election, cryptKey: Buffer) {
-    return await fileHandler.writeFile(config.database.dataFile,
+    return await fileHandler.writeFile(config.database.elections,
                                         JSON.stringify(data),
                                         cryptKey);
 }
