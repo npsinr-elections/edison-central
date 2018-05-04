@@ -67,13 +67,13 @@ router.use(asyncMiddleware(async (_1, _2, next) => {
  * @name get/users/login
  * @function
  */
-router.get("/login", asyncMiddleware(async (_1, res) => {
+router.get("/login", (_1, res) => {
     if (!isRegistered()) {
         return res.redirect("/users/register");
     }
 
     res.render("login.html");
-}));
+});
 
 /**
  * Route to verify user password, and log in user if valid.
@@ -113,12 +113,12 @@ router.post("/login", asyncMiddleware(async (req, res) => {
  * @name get/users/register
  * @function
  */
-router.get("/register", asyncMiddleware(async (_1, res) => {
+router.get("/register", async (_1, res) => {
     if (isRegistered()) {
         return res.redirect("/users/login");
     }
     res.render("register.html");
-}));
+});
 
 /**
  * Route to register user password, if valid.
