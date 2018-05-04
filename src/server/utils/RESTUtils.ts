@@ -4,6 +4,7 @@ import * as database from "./database";
 import {Data, ERRORS, JSONResponse} from "./JSONResponse";
 
 import { Response } from "express";
+import shortid = require("shortid");
 
 type Resource = database.Election | database.Office | database.Candidate;
 
@@ -161,7 +162,7 @@ export function isResourceType(data: Data, type: string): boolean {
  */
 export function patchResource(res: Response, data: Data, resource: Resource) {
     // First check if ONLY valid attributes of a resource are being patched
-    const disallowedAttributes = ["offices", "candidates", "votes"];
+    const disallowedAttributes = ["offices", "candidates", "votes", "id"];
     for (const attr in data.attributes) {
         if (attr in resource && !(attr in disallowedAttributes)) {
             // If attribute name is valid, then validate its value
@@ -211,7 +212,7 @@ export function newResource(res: Response, data: Data) {
     // Ensure that data attributes have all attributes of resource
     // trying to be created. Currently, extra invalid attributes are
     // ignored.
-    const disallowedAttributes = ["offices", "candidates", "votes"];
+    const disallowedAttributes = ["offices", "candidates", "votes", "id"];
     for (const attr in resourceInterface) {
         if (attr in disallowedAttributes) {
             continue;
@@ -240,6 +241,7 @@ export function newResource(res: Response, data: Data) {
             newObj[attr] = data.attributes[attr];
         }
     }
+    newObj.id = shortid.generate();
 
     return JSONResponse.ResourceCreated(res,
         dataFromResource(data.type, newObj));
