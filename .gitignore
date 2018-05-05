@@ -65,3 +65,7 @@ dist
 
 # Project Documentation
 docs
+
+# Emacs autosave files
+\#*\#
+.\#*
