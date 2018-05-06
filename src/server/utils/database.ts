@@ -68,9 +68,17 @@ export interface Candidate {
  * Defines a result object
  * @interface
  */
-export interface Results {
+export interface Result {
     election: Election;
     date: string;
+}
+
+/**
+ * Defines structure of result json file
+ * @interface
+ */
+export interface Results {
+    results: Result[];
 }
 
 /**
