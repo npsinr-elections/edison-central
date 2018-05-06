@@ -5,9 +5,9 @@
  * @module server/utils/database
  */
 import fs = require("fs");
-import {promisify} from "util";
+import { promisify } from "util";
 
-import {config} from "../../config";
+import { config } from "../../config";
 import * as fileHandler from "./fileHandler";
 
 const existsPromise = promisify(fs.exists);
@@ -65,6 +65,15 @@ export interface Candidate {
 }
 
 /**
+ * Defines a result object
+ * @interface
+ */
+export interface Results {
+    election: Election;
+    date: string;
+}
+
+/**
  * Checks whether the user data directory for the app
  * has been initalized. If not, then initializes it
  */
@@ -91,16 +100,16 @@ export async function checkDataDir() {
  * @returns {object}
  */
 export async function getData(dataPath: string,
-                              cryptKey?: Buffer): Promise<any> {
+    cryptKey?: Buffer): Promise<any> {
     let data;
     try {
         data = JSON.parse(await fileHandler.readFile(dataPath, cryptKey));
-        } catch (error) {
-            if (error.code === "ENOENT") {
-                await checkDataDir();
-                data = {};
-            }
+    } catch (error) {
+        if (error.code === "ENOENT") {
+            await checkDataDir();
+            data = {};
         }
+    }
     return data;
 }
 
@@ -118,7 +127,7 @@ export async function getUserData(): Promise<UserData> {
  */
 export async function writeUserData(data: UserData) {
     return await fileHandler.writeFile(config.database.users,
-                                       JSON.stringify(data));
+        JSON.stringify(data));
 }
 /**
  * Reads election data and returns a json object
@@ -136,6 +145,6 @@ export async function getElectionData(cryptKey: Buffer): Promise<Election> {
  */
 export async function writeElectionData(data: Election, cryptKey: Buffer) {
     return await fileHandler.writeFile(config.database.elections,
-                                        JSON.stringify(data),
-                                        cryptKey);
+        JSON.stringify(data),
+        cryptKey);
 }
