@@ -36,21 +36,23 @@ const testPath = ["src/test/**/*.ts", "build/test"];
 function tsBuilder(paths) {
     return function builder(done) {
         let failed = false;
-        return gulp.src(paths[SRC])
+        gulp.src(paths[SRC])
             .pipe(sourcemaps.init())
             .pipe(ts.createProject("./tsconfig.json")(ts.reporter.fullReporter()))
             .once("error", function () {
                 this.once("finish", () => process.exit(1));
-              })
+            })
             .pipe(sourcemaps.write("."))
             .pipe(gulp.dest(paths[DEST]));
+        done();
     };
 }
 
 function mover(paths) {
     return function mover(done) {
-        return gulp.src(paths[SRC])
+        gulp.src(paths[SRC])
             .pipe(gulp.dest(paths[DEST]));
+        done();
     };
 }
 
@@ -59,25 +61,26 @@ function clientTsBuilders() {
 
     return gulp.parallel(
         entries.map((entry) => {
-            return function tsBuilder (done) {
+            return function tsBuilder(done) {
                 console.log(`Building ${entry}`);
-                return browserify({
+                browserify({
                     basedir: clientPaths.TS[SRC],
                     debug: true,
                     entries: [entry],
                     cache: {},
                     packageCache: {}
                 })
-                    .plugin(tsify, {files: []})
+                    .plugin(tsify, { files: [] })
                     .bundle()
                     .pipe(source(entry))
                     .pipe(buffer())
-                    .pipe(sourcemaps.init({loadMaps: true}))
+                    .pipe(sourcemaps.init({ loadMaps: true }))
                     .pipe(rename({
                         extname: ".bundle.js"
                     }))
-                    .pipe(sourcemaps.write(".", {sourceRoot: "src/client/assets/scripts"}))
+                    .pipe(sourcemaps.write(".", { sourceRoot: "src/client/assets/scripts" }))
                     .pipe(gulp.dest(clientPaths.TS[DEST]));
+                done();
             };
         })
     );
@@ -87,8 +90,6 @@ gulp.task("server", gulp.parallel([
     tsBuilder(serverPaths.TS),
     tsBuilder(sharedPaths.TS)
 ]));
-
-
 
 gulp.task("client", gulp.parallel(
     clientTsBuilders(),
@@ -110,9 +111,10 @@ gulp.task("buildtest", gulp.parallel(
     tsBuilder(testPath)
 ));
 
-gulp.task('mocha-test', function() {
-    return gulp.src('./build/test/**/*.js') //take our transpiled test source
-    .pipe(mocha({ui:'bdd'})) //runs tests
+gulp.task('mocha-test', function (done) {
+    gulp.src('./build/test/**/*.js') //take our transpiled test source
+        .pipe(mocha({ ui: 'bdd' })) //runs tests
+    done();
 });
 
 gulp.task("default", gulp.parallel(["server", "client", "launcher", "config"]));
