@@ -19,11 +19,11 @@
 import express = require("express");
 import shortid = require("shortid");
 
-import {checks, StringValidator} from "../../shared/StringValidator";
-import {asyncMiddleware} from "../utils/asyncMiddleware";
+import { checks, StringValidator } from "../../shared/StringValidator";
+import { asyncMiddleware } from "../utils/asyncMiddleware";
 import * as crypt from "../utils/crypt";
 import * as database from "../utils/database";
-import {ERRORS, JSONResponse} from "../utils/JSONResponse";
+import { ERRORS, JSONResponse } from "../utils/JSONResponse";
 
 export const router = express.Router();
 
@@ -34,7 +34,7 @@ let userData: database.UserData;
  * @returns {boolean}
  */
 function isRegistered(): boolean {
-    return userData.password !== undefined;
+  return userData.password !== undefined;
 }
 
 /**
@@ -44,12 +44,12 @@ function isRegistered(): boolean {
  * @function
  */
 router.use((req, res, next) => {
-    // If user is logged in, ONLY allow logout request
-    if (req.session.user && req.path !== "/logout") {
-        res.redirect("/");
-    } else {
-        next();
-    }
+  // If user is logged in, ONLY allow logout request
+  if (req.session.user && req.path !== "/logout") {
+    res.redirect("/");
+  } else {
+    next();
+  }
 });
 
 /**
@@ -58,8 +58,8 @@ router.use((req, res, next) => {
  * @function
  */
 router.use(asyncMiddleware(async (_1, _2, next) => {
-    userData = await database.getUserData();
-    next();
+  userData = await database.getUserData();
+  next();
 }));
 
 /**
@@ -68,11 +68,11 @@ router.use(asyncMiddleware(async (_1, _2, next) => {
  * @function
  */
 router.get("/login", (_1, res) => {
-    if (!isRegistered()) {
-        return res.redirect("/users/register");
-    }
+  if (!isRegistered()) {
+    return res.redirect("/users/register");
+  }
 
-    res.render("login.html");
+  res.render("login.html");
 });
 
 /**
@@ -82,30 +82,30 @@ router.get("/login", (_1, res) => {
  * @param {string} password the password as a POST param
  */
 router.post("/login", asyncMiddleware(async (req, res) => {
-    if (!isRegistered()) {
-        return JSONResponse.Error(res, ERRORS.UserErrors.NotRegistered);
-    }
-    const password: string = req.body.password;
+  if (!isRegistered()) {
+    return JSONResponse.Error(res, ERRORS.UserErrors.NotRegistered);
+  }
+  const password: string = req.body.password;
 
-    // Check if password field is provided
-    if (password === undefined) {
-        return JSONResponse.Error(res, ERRORS.UserErrors.LoginIncorrect);
-    }
+  // Check if password field is provided
+  if (password === undefined) {
+    return JSONResponse.Error(res, ERRORS.UserErrors.LoginIncorrect);
+  }
 
-    // Verify password
-    if (await crypt.verifyPassword(password, userData.password)) {
-        // If password valid then set user session
-        req.session.user = (await crypt.decryptMasterKey(
-                            Buffer.from(userData.key, "hex"),
-                            Buffer.from(password)))
-                            .toString("hex");
-        return JSONResponse.ResourceCreated(res, {
-            type: "session",
-            id: req.session.id
-        });
-    } else {
-        return JSONResponse.Error(res, ERRORS.UserErrors.LoginIncorrect);
-    }
+  // Verify password
+  if (await crypt.verifyPassword(password, userData.password)) {
+    // If password valid then set user session
+    req.session.user = (await crypt.decryptMasterKey(
+      Buffer.from(userData.key, "hex"),
+      Buffer.from(password)))
+      .toString("hex");
+    return JSONResponse.ResourceCreated(res, {
+      type: "session",
+      id: req.session.id
+    });
+  } else {
+    return JSONResponse.Error(res, ERRORS.UserErrors.LoginIncorrect);
+  }
 }));
 
 /**
@@ -114,10 +114,10 @@ router.post("/login", asyncMiddleware(async (req, res) => {
  * @function
  */
 router.get("/register", async (_1, res) => {
-    if (isRegistered()) {
-        return res.redirect("/users/login");
-    }
-    res.render("register.html");
+  if (isRegistered()) {
+    return res.redirect("/users/login");
+  }
+  res.render("register.html");
 });
 
 /**
@@ -127,46 +127,46 @@ router.get("/register", async (_1, res) => {
  * @param {string} password the password as a POST param
  */
 router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
-    if (isRegistered()) {
-        return JSONResponse.Error(res, ERRORS.UserErrors.IsRegistered);
-    }
-    const password: string = req.body.password;
-    const passwordCheck: StringValidator = new StringValidator(
-        req.body.password, checks.password);
+  if (isRegistered()) {
+    return JSONResponse.Error(res, ERRORS.UserErrors.IsRegistered);
+  }
+  const password: string = req.body.password;
+  const passwordCheck: StringValidator = new StringValidator(
+    req.body.password, checks.password);
 
-    // Check if password follows format rules
-    if (!passwordCheck.valid) {
-        return JSONResponse.Error(res, ERRORS.UserErrors.InvalidPassword);
-    } else {
-        // If password valid, then generate a new user encryption key,
-        // and store user password.
-        const encryptKey: Buffer = await crypt.genEncryptKey();
-        const passwordHash: string = await crypt.hashPassword(password);
+  // Check if password follows format rules
+  if (!passwordCheck.valid) {
+    return JSONResponse.Error(res, ERRORS.UserErrors.InvalidPassword);
+  } else {
+    // If password valid, then generate a new user encryption key,
+    // and store user password.
+    const encryptKey: Buffer = await crypt.genEncryptKey();
+    const passwordHash: string = await crypt.hashPassword(password);
 
-        userData.key = (await crypt.encryptMasterKey(encryptKey,
-                            Buffer.from(password))).toString("hex");
-        userData.password = passwordHash;
-        await database.writeUserData(userData);
+    userData.key = (await crypt.encryptMasterKey(encryptKey,
+      Buffer.from(password))).toString("hex");
+    userData.password = passwordHash;
+    await database.writeUserData(userData);
 
-        const newElectionData: database.Election = {
-            id: shortid.generate(),
-            name: "",
-            description: "",
-            image: "",
-            color: "",
-            offices: []
-        };
-        await database.writeElectionData(newElectionData, encryptKey);
-        return JSONResponse.ResourceCreated(res);
-    }
+    const newElectionData: database.Election = {
+      id: shortid.generate(),
+      name: "",
+      description: "",
+      image: "",
+      color: "",
+      offices: []
+    };
+    await database.writeElectionData(newElectionData, encryptKey);
+    return JSONResponse.ResourceCreated(res);
+  }
 }));
 
 router.get("/logout", (req, res, next) => {
-    req.session.destroy((err) => {
-        if (err) {
-            next(err);
-        }
-        res.redirect("/users/login");
-    });
+  req.session.destroy((err) => {
+    if (err) {
+      next(err);
+    }
+    res.redirect("/users/login");
+  });
 
 });

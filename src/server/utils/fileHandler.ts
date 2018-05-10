@@ -4,7 +4,7 @@
  */
 
 import fs = require("fs");
-import {promisify} from "util";
+import { promisify } from "util";
 
 import * as crypt from "./crypt";
 
@@ -23,10 +23,10 @@ type promiseTask<T> = (...args: any[]) => Promise<T>;
  * @interface
  */
 interface Job {
-    task: promiseTask<any>;
-    args: any[];
-    resolve: (value: any) => any;
-    reject: (reason?: any) => any;
+  task: promiseTask<any>;
+  args: any[];
+  resolve: (value: any) => any;
+  reject: (reason?: any) => any;
 }
 
 /**
@@ -35,7 +35,7 @@ interface Job {
  * @interface
  */
 interface Queue {
-    [dataPath: string]: PathQueue;
+  [dataPath: string]: PathQueue;
 }
 
 /**
@@ -47,65 +47,65 @@ interface Queue {
  * @class
  */
 class PathQueue {
-    /** Queue of jobs */
-    private queue: Job[];
-    /** Tells whether a job is currently running */
-    private taskRunning: boolean;
+  /** Queue of jobs */
+  private queue: Job[];
+  /** Tells whether a job is currently running */
+  private taskRunning: boolean;
 
-    /**
-     * Initalize a new PathQueue
-     *
-     * @constructor
-     */
-    constructor() {
-        this.queue = [];
-        this.taskRunning = false;
+  /**
+   * Initalize a new PathQueue
+   *
+   * @constructor
+   */
+  constructor() {
+    this.queue = [];
+    this.taskRunning = false;
+  }
+
+  /**
+   * Push a new job into the queue
+   * @param {Promise} task The fs task to push in the queue
+   * @returns {Promise} A promise that resolves when the queued
+   * task has completed
+   */
+  public pushNewJob<T>(task: promiseTask<T>,
+                       args: any[]): Promise<T> {
+    const self = this;
+    return new Promise((resolve, reject) => {
+      self.queue.push({ task, args, resolve, reject });
+      self.next();
+    });
+  }
+
+  /**
+   * Run the next job in the queue, making sure only one
+   * job is running at a given time.
+   */
+  private async next() {
+    // Check whether the queue has no jobs
+    if (this.queue.length === 0) {
+      return;
     }
 
-    /**
-     * Push a new job into the queue
-     * @param {Promise} task The fs task to push in the queue
-     * @returns {Promise} A promise that resolves when the queued
-     * task has completed
-     */
-    public pushNewJob<T>(task: promiseTask<T>,
-                         args: any[]): Promise<T> {
-        const self = this;
-        return new Promise((resolve, reject) => {
-            self.queue.push({task, args, resolve, reject});
-            self.next();
-        });
+    // Ensure that only one task can be run at a time
+    if (this.taskRunning) {
+      return;
     }
 
-    /**
-     * Run the next job in the queue, making sure only one
-     * job is running at a given time.
-     */
-    private async next() {
-        // Check whether the queue has no jobs
-        if (this.queue.length === 0) {
-            return;
-        }
-
-        // Ensure that only one task can be run at a time
-        if (this.taskRunning) {
-            return;
-        }
-
-        // If no other task is running and the queue is not empty,
-        // dequeue and run a task.
-        this.taskRunning = true;
-        const currentJob: Job = this.queue.shift();
-        try {
-            const data: any = await currentJob.task(...(currentJob.args));
-            currentJob.resolve(data);
-        } catch (error) {
-            currentJob.reject(error);
-        }
-
-        this.taskRunning = false;
-        this.next();
+    // If no other task is running and the queue is not empty,
+    // dequeue and run a task.
+    this.taskRunning = true;
+    const currentJob: Job = this.queue.shift();
+    try {
+      const data: any = await currentJob.task(...(currentJob.args));
+      currentJob.resolve(data);
+    } catch (error) {
+      currentJob.reject(error);
     }
+
+    this.taskRunning = false;
+    this.next();
+  }
 }
 
 /**
@@ -122,10 +122,10 @@ const queue: Queue = {};
 function newFileTask<T>(dataPath: string,
                         task: promiseTask<T>,
                         ...args: any[]): Promise<T> {
-    if (!(dataPath in queue)) {
-        queue[dataPath] = new PathQueue();
-    }
-    return queue[dataPath].pushNewJob(task, args);
+  if (!(dataPath in queue)) {
+    queue[dataPath] = new PathQueue();
+  }
+  return queue[dataPath].pushNewJob(task, args);
 }
 
 /**
@@ -136,14 +136,14 @@ function newFileTask<T>(dataPath: string,
  */
 export async function readFile(dataPath: string,
                                cryptKey?: Buffer): Promise<string> {
-    let data: string = (await newFileTask(dataPath,
-                                readFilePromise, dataPath, "utf8")) as string;
-    if (cryptKey !== undefined) {
-        data = crypt.decryptText(Buffer.from(data, "hex"), cryptKey)
-                    .toString("utf8");
-    }
+  let data: string = (await newFileTask(dataPath,
+    readFilePromise, dataPath, "utf8")) as string;
+  if (cryptKey !== undefined) {
+    data = crypt.decryptText(Buffer.from(data, "hex"), cryptKey)
+      .toString("utf8");
+  }
 
-    return data;
+  return data;
 }
 
 /**
@@ -158,11 +158,11 @@ export async function readFile(dataPath: string,
 export async function writeFile(dataPath: string,
                                 data: string,
                                 cryptKey?: Buffer): Promise<void> {
-    if (cryptKey !== undefined) {
-        data = (await crypt.encryptText(Buffer.from(data), cryptKey))
-                            .toString("hex");
-    }
+  if (cryptKey !== undefined) {
+    data = (await crypt.encryptText(Buffer.from(data), cryptKey))
+      .toString("hex");
+  }
 
-    return await newFileTask(dataPath,
-                       writeFilePromise, dataPath, data, "utf8");
+  return await newFileTask(dataPath,
+    writeFilePromise, dataPath, data, "utf8");
 }

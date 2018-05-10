@@ -12,8 +12,8 @@ import * as puppeteer from "puppeteer";
  */
 export async function getElemText(page: puppeteer.Page,
                                   selector: string): Promise<string> {
-    return await page.evaluate(
-        (element) => document.querySelector(element).textContent, selector);
+  return await page.evaluate(
+    (element) => document.querySelector(element).textContent, selector);
 }
 
 /**
@@ -21,8 +21,8 @@ export async function getElemText(page: puppeteer.Page,
  * @param  {puppeteer.Response} res
  */
 export function getURL(res: puppeteer.Response): string {
-    const url = res.url();
-    return url.endsWith("/") ? url.slice(0, -1) : url;
+  const url = res.url();
+  return url.endsWith("/") ? url.slice(0, -1) : url;
 }
 
 /**
@@ -30,11 +30,11 @@ export function getURL(res: puppeteer.Response): string {
  * @param  {number} ms
  */
 export function sleep(ms: number) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 }
 
 export const pageLoaded: puppeteer.NavigationOptions = {
-    waitUntil: ["domcontentloaded", "networkidle0"]
+  waitUntil: ["domcontentloaded", "networkidle0"]
 };

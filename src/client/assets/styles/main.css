@@ -1,27 +1,31 @@
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
 }
 
 .brand {
-    font-size: 2rem !important;
+  font-size: 2rem !important;
 }
 
 .brand:hover {
-    background-color: #f8f9fa !important;
+  background-color: #f8f9fa !important;
 }
+
 .nav-link {
-    display: block;
-    color: #333;
-    font-size: 1.2rem;
-    padding: .5rem 1rem;
+  display: block;
+  color: #333;
+  font-size: 1.2rem;
+  padding: .5rem 1rem;
 }
-.nav-link:hover, .active {
-    background-color: #f0f2f4;
+
+.nav-link:hover,
+.active {
+  background-color: #f0f2f4;
 }
-.nav-link-icon{
-    margin-right: 4px;
-    color: #999;
+
+.nav-link-icon {
+  margin-right: 4px;
+  color: #999;
 }

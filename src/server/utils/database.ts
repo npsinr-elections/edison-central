@@ -18,10 +18,10 @@ const mkdirPromise = promisify(fs.mkdir);
  * @interface
  */
 export interface UserData {
-    /** Encryption key encrypted itself, with the password */
-    key: string;
-    /** Hashed user password */
-    password: string;
+  /** Encryption key encrypted itself, with the password */
+  key: string;
+  /** Hashed user password */
+  password: string;
 }
 
 /**
@@ -29,13 +29,13 @@ export interface UserData {
  * @interface
  */
 export interface Election {
-    [key: string]: string | Office[];
-    id: string;
-    name: string;
-    description: string;
-    image: string;
-    color: string;
-    offices: Office[];
+  [key: string]: string | Office[];
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  color: string;
+  offices: Office[];
 }
 
 /**
@@ -43,13 +43,13 @@ export interface Election {
  * @interface
  */
 export interface Office {
-    [key: string]: string | Candidate[];
-    id: string;
-    name: string;
-    description: string;
-    image: string;
-    color: string;
-    candidates: Candidate[];
+  [key: string]: string | Candidate[];
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  color: string;
+  candidates: Candidate[];
 }
 
 /**
@@ -57,11 +57,11 @@ export interface Office {
  * @interface
  */
 export interface Candidate {
-    [key: string]: string | number;
-    id: string;
-    name: string;
-    image: string;
-    votes: number;
+  [key: string]: string | number;
+  id: string;
+  name: string;
+  image: string;
+  votes: number;
 }
 
 /**
@@ -69,8 +69,8 @@ export interface Candidate {
  * @interface
  */
 export interface Result {
-    election: Election;
-    date: string;
+  election: Election;
+  date: string;
 }
 
 /**
@@ -78,7 +78,7 @@ export interface Result {
  * @interface
  */
 export interface Results {
-    results: Result[];
+  results: Result[];
 }
 
 /**
@@ -86,18 +86,18 @@ export interface Results {
  * has been initalized. If not, then initializes it
  */
 export async function checkDataDir() {
-    const dirs = [config.database.dir, config.database.images];
-    for (const dir of dirs) {
-        if (!(await existsPromise(dir))) {
-            await mkdirPromise(dir);
-        }
+  const dirs = [config.database.dir, config.database.images];
+  for (const dir of dirs) {
+    if (!(await existsPromise(dir))) {
+      await mkdirPromise(dir);
     }
-    const files = [config.database.users, config.database.elections];
-    for (const file of files) {
-        if (!(await existsPromise(file))) {
-            await fileHandler.writeFile(file, "{}");
-        }
+  }
+  const files = [config.database.users, config.database.elections];
+  for (const file of files) {
+    if (!(await existsPromise(file))) {
+      await fileHandler.writeFile(file, "{}");
     }
+  }
 }
 
 /**
@@ -109,16 +109,16 @@ export async function checkDataDir() {
  */
 export async function getData(dataPath: string,
                               cryptKey?: Buffer): Promise<any> {
-    let data;
-    try {
-        data = JSON.parse(await fileHandler.readFile(dataPath, cryptKey));
-    } catch (error) {
-        if (error.code === "ENOENT") {
-            await checkDataDir();
-            data = {};
-        }
+  let data;
+  try {
+    data = JSON.parse(await fileHandler.readFile(dataPath, cryptKey));
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      await checkDataDir();
+      data = {};
     }
-    return data;
+  }
+  return data;
 }
 
 /**
@@ -126,7 +126,7 @@ export async function getData(dataPath: string,
  * @returns {database.UserData}
  */
 export async function getUserData(): Promise<UserData> {
-    return await getData(config.database.users);
+  return await getData(config.database.users);
 }
 
 /**
@@ -134,8 +134,8 @@ export async function getUserData(): Promise<UserData> {
  * @param data The data object as defined in `database.UserData`
  */
 export async function writeUserData(data: UserData) {
-    return await fileHandler.writeFile(config.database.users,
-        JSON.stringify(data));
+  return await fileHandler.writeFile(config.database.users,
+    JSON.stringify(data));
 }
 /**
  * Reads election data and returns a json object
@@ -143,7 +143,7 @@ export async function writeUserData(data: UserData) {
  * @returns Promise<Election>
  */
 export async function getElectionData(cryptKey: Buffer): Promise<Election> {
-    return await getData(config.database.elections, cryptKey);
+  return await getData(config.database.elections, cryptKey);
 }
 
 /**
@@ -152,7 +152,7 @@ export async function getElectionData(cryptKey: Buffer): Promise<Election> {
  * @param cryptKey Key used to encrypt data file
  */
 export async function writeElectionData(data: Election, cryptKey: Buffer) {
-    return await fileHandler.writeFile(config.database.elections,
-        JSON.stringify(data),
-        cryptKey);
+  return await fileHandler.writeFile(config.database.elections,
+    JSON.stringify(data),
+    cryptKey);
 }

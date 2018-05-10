@@ -5,8 +5,8 @@
  */
 import opn = require("opn");
 
-import {config} from "./config";
-import {runServer} from "./server/main";
+import { config } from "./config";
+import { runServer } from "./server/main";
 
 /**
  * Runs after server as started. If the app is not in
@@ -14,13 +14,13 @@ import {runServer} from "./server/main";
  * with the app's root page.
  */
 function callBack() {
-    // Runs after server has started
-    console.log("Listening on Port", config.port);
+  // Runs after server has started
+  console.log("Listening on Port", config.port);
 
-    // App is in production mode by default
-    if (process.env.NODE_ENV !== "development") {
-        opn("http://localhost:" + config.port);
-    }
+  // App is in production mode by default
+  if (process.env.NODE_ENV !== "development") {
+    opn("http://localhost:" + config.port);
+  }
 }
 
 runServer(callBack);

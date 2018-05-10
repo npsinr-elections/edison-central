@@ -1,7 +1,7 @@
-import {checks, StringValidator} from "../../shared/StringValidator";
+import { checks, StringValidator } from "../../shared/StringValidator";
 import * as database from "./database";
 
-import {Data, ERRORS, JSONResponse} from "./JSONResponse";
+import { Data, ERRORS, JSONResponse } from "./JSONResponse";
 
 import { Response } from "express";
 import shortid = require("shortid");
@@ -9,28 +9,28 @@ import shortid = require("shortid");
 type Resource = database.Election | database.Office | database.Candidate;
 
 const electionInterface: database.Election = {
-    id: "",
-    name: "",
-    description: "",
-    image: "",
-    color: "",
-    offices: []
+  id: "",
+  name: "",
+  description: "",
+  image: "",
+  color: "",
+  offices: []
 };
 
 const officeInterface: database.Office = {
-    id: "",
-    name: "",
-    description: "",
-    image: "",
-    color: "",
-    candidates: []
+  id: "",
+  name: "",
+  description: "",
+  image: "",
+  color: "",
+  candidates: []
 };
 
 const candidateInterface: database.Candidate = {
-    id: "",
-    name: "",
-    image: "",
-    votes: 0
+  id: "",
+  name: "",
+  image: "",
+  votes: 0
 };
 
 /**
@@ -40,15 +40,15 @@ const candidateInterface: database.Candidate = {
  * @returns Data
  */
 function dataFromResource(resourceType: string, resource: Resource): Data {
-    switch (resourceType) {
-        case "election":
-            return dataFromElection(resource as database.Election);
-        case "office":
-            return dataFromOffice(resource as database.Office);
-        case "candidate":
-            return dataFromCandidate(resource as database.Candidate);
-    }
-    return undefined;
+  switch (resourceType) {
+    case "election":
+      return dataFromElection(resource as database.Election);
+    case "office":
+      return dataFromOffice(resource as database.Office);
+    case "candidate":
+      return dataFromCandidate(resource as database.Candidate);
+  }
+  return undefined;
 }
 
 /**
@@ -57,19 +57,19 @@ function dataFromResource(resourceType: string, resource: Resource): Data {
  * @returns Data
  */
 function dataFromElection(election: database.Election): Data {
-    const {offices, id, ...rest} = election;
-    return {
-        type: "election",
-        id: id,
-        attributes: rest,
-        relationships: {
-            offices: {
-                links: {
-                    self: "/data/offices"
-                }
-            }
+  const { offices, id, ...rest } = election;
+  return {
+    type: "election",
+    id: id,
+    attributes: rest,
+    relationships: {
+      offices: {
+        links: {
+          self: "/data/offices"
         }
-    };
+      }
+    }
+  };
 }
 
 /**
@@ -78,19 +78,19 @@ function dataFromElection(election: database.Election): Data {
  * @returns Data
  */
 function dataFromOffice(office: database.Office): Data {
-    const {candidates, id,  ...rest} = office;
-    return {
-        type: "office",
-        id: id,
-        attributes: rest,
-        relationships: {
-            candidates: {
-                links: {
-                    self: "/data/candidates/" + id
-                }
-            }
+  const { candidates, id, ...rest } = office;
+  return {
+    type: "office",
+    id: id,
+    attributes: rest,
+    relationships: {
+      candidates: {
+        links: {
+          self: "/data/candidates/" + id
         }
-    };
+      }
+    }
+  };
 }
 
 /**
@@ -99,12 +99,12 @@ function dataFromOffice(office: database.Office): Data {
  * @returns Data
  */
 function dataFromCandidate(candidate: database.Candidate): Data {
-    const {id, ...rest} = candidate;
-    return {
-        type: "candidate",
-        id: id,
-        attributes: rest
-    };
+  const { id, ...rest } = candidate;
+  return {
+    type: "candidate",
+    id: id,
+    attributes: rest
+  };
 }
 
 /**
@@ -114,14 +114,14 @@ function dataFromCandidate(candidate: database.Candidate): Data {
  * @returns database.Office
  */
 export function getOfficeById(
-    id: string,
-    electionData: database.Election): database.Office {
-    for (const office of electionData.offices) {
-        if (office.id === id) {
-            return office;
-        }
+  id: string,
+  electionData: database.Election): database.Office {
+  for (const office of electionData.offices) {
+    if (office.id === id) {
+      return office;
     }
-    return undefined;
+  }
+  return undefined;
 }
 
 /**
@@ -132,15 +132,15 @@ export function getOfficeById(
  * @returns database.Candidate
  */
 export function getCandidateById(
-    candidateID: string,
-    officeID: string,
-    electionData: database.Election): database.Candidate {
-    const office = getOfficeById(officeID, electionData);
-    for (const candidate of office.candidates) {
-        if (candidate.id === candidateID) {
-            return candidate;
-        }
+  candidateID: string,
+  officeID: string,
+  electionData: database.Election): database.Candidate {
+  const office = getOfficeById(officeID, electionData);
+  for (const candidate of office.candidates) {
+    if (candidate.id === candidateID) {
+      return candidate;
     }
+  }
 }
 
 /**
@@ -150,7 +150,7 @@ export function getCandidateById(
  * @returns {boolean}
  */
 export function isResourceType(data: Data, type: string): boolean {
-    return data.type === type;
+  return data.type === type;
 }
 
 /**
@@ -161,30 +161,30 @@ export function isResourceType(data: Data, type: string): boolean {
  * @param  {Resource} resource
  */
 export function patchResource(res: Response, data: Data, resource: Resource) {
-    // First check if ONLY valid attributes of a resource are being patched
-    const disallowedAttributes = ["offices", "candidates", "votes", "id"];
-    for (const attr in data.attributes) {
-        if (attr in resource && !(attr in disallowedAttributes)) {
-            // If attribute name is valid, then validate its value
-            const validator = new StringValidator(data.attributes[attr],
-                                                  checks[attr]);
-            if (!validator.valid) {
-                return JSONResponse.Error(res,
-                ERRORS.dataErrors.invalidValue(validator.getField(), attr));
-            }
-        } else {
-            return JSONResponse.Error(res,
-                ERRORS.dataErrors.invalidAttribute(data.type, attr));
-        }
+  // First check if ONLY valid attributes of a resource are being patched
+  const disallowedAttributes = ["offices", "candidates", "votes", "id"];
+  for (const attr in data.attributes) {
+    if (attr in resource && !(attr in disallowedAttributes)) {
+      // If attribute name is valid, then validate its value
+      const validator = new StringValidator(data.attributes[attr],
+        checks[attr]);
+      if (!validator.valid) {
+        return JSONResponse.Error(res,
+          ERRORS.dataErrors.invalidValue(validator.getField(), attr));
+      }
+    } else {
+      return JSONResponse.Error(res,
+        ERRORS.dataErrors.invalidAttribute(data.type, attr));
     }
+  }
 
-    // If reached here then all patched attributes are valid!
-    for (const attr of Object.keys(data.attributes)) {
-        resource[attr] = data.attributes[attr];
-    }
+  // If reached here then all patched attributes are valid!
+  for (const attr of Object.keys(data.attributes)) {
+    resource[attr] = data.attributes[attr];
+  }
 
-    return JSONResponse.ResourceCreated(res,
-        dataFromResource(data.type, resource));
+  return JSONResponse.ResourceCreated(res,
+    dataFromResource(data.type, resource));
 }
 
 /**
@@ -193,56 +193,56 @@ export function patchResource(res: Response, data: Data, resource: Resource) {
  * @param  {Data} data
  */
 export function newResource(res: Response, data: Data) {
-    // First determine the type of resource
-    let resourceInterface: Resource;
-    switch (data.type) {
-        case "election":
-            resourceInterface = electionInterface;
-            break;
-        case "office":
-            resourceInterface = officeInterface;
-            break;
-        case "candidate":
-            resourceInterface = candidateInterface;
-            break;
-        default: // This case should be handled by something else before
-            return false;
-    }
+  // First determine the type of resource
+  let resourceInterface: Resource;
+  switch (data.type) {
+    case "election":
+      resourceInterface = electionInterface;
+      break;
+    case "office":
+      resourceInterface = officeInterface;
+      break;
+    case "candidate":
+      resourceInterface = candidateInterface;
+      break;
+    default: // This case should be handled by something else before
+      return false;
+  }
 
-    // Ensure that data attributes have all attributes of resource
-    // trying to be created. Currently, extra invalid attributes are
-    // ignored.
-    const disallowedAttributes = ["offices", "candidates", "votes", "id"];
-    for (const attr in resourceInterface) {
-        if (attr in disallowedAttributes) {
-            continue;
-        }
-        if (attr in data.attributes) {
-            const validator = new StringValidator(data.attributes[attr],
-                                                  checks[attr]);
-            if (!validator.valid) {
-                return JSONResponse.Error(res,
-                ERRORS.dataErrors.invalidValue(validator.getField(), attr));
-            }
-        } else {
-            return JSONResponse.Error(res,
-                ERRORS.dataErrors.missingAttribute(data.type, attr));
-        }
+  // Ensure that data attributes have all attributes of resource
+  // trying to be created. Currently, extra invalid attributes are
+  // ignored.
+  const disallowedAttributes = ["offices", "candidates", "votes", "id"];
+  for (const attr in resourceInterface) {
+    if (attr in disallowedAttributes) {
+      continue;
     }
-
-    // If reached here, then resource creation is VALID
-    const newObj = Object.assign({}, resourceInterface);
-    for (const attr of Object.keys(newObj)) {
-        // Arrays have to be cloned, or things will get messy with
-        // multiple new objects
-        if (Array.isArray(newObj[attr])) {
-            newObj[attr] = [];
-        } else if (!(attr in disallowedAttributes)) {
-            newObj[attr] = data.attributes[attr];
-        }
+    if (attr in data.attributes) {
+      const validator = new StringValidator(data.attributes[attr],
+        checks[attr]);
+      if (!validator.valid) {
+        return JSONResponse.Error(res,
+          ERRORS.dataErrors.invalidValue(validator.getField(), attr));
+      }
+    } else {
+      return JSONResponse.Error(res,
+        ERRORS.dataErrors.missingAttribute(data.type, attr));
     }
-    newObj.id = shortid.generate();
+  }
 
-    return JSONResponse.ResourceCreated(res,
-        dataFromResource(data.type, newObj));
+  // If reached here, then resource creation is VALID
+  const newObj = Object.assign({}, resourceInterface);
+  for (const attr of Object.keys(newObj)) {
+    // Arrays have to be cloned, or things will get messy with
+    // multiple new objects
+    if (Array.isArray(newObj[attr])) {
+      newObj[attr] = [];
+    } else if (!(attr in disallowedAttributes)) {
+      newObj[attr] = data.attributes[attr];
+    }
+  }
+  newObj.id = shortid.generate();
+
+  return JSONResponse.ResourceCreated(res,
+    dataFromResource(data.type, newObj));
 }

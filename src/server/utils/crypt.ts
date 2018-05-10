@@ -3,7 +3,7 @@
  * @module servers/utils/crypt
  */
 import crypto = require("crypto");
-import {promisify} from "util";
+import { promisify } from "util";
 
 const pbkdf2 = promisify(crypto.pbkdf2);
 const randomBytes = promisify(crypto.randomBytes);
@@ -13,7 +13,7 @@ const randomBytes = promisify(crypto.randomBytes);
  */
 const config = {
   /** Encryption Algorithm */
-  algorithm : "aes-256-ctr",
+  algorithm: "aes-256-ctr",
   /** Hash algorithm */
   digest: "sha512",
   /** size of the generated hash */
@@ -85,10 +85,10 @@ export async function decryptMasterKey(encrypted: Buffer,
   const encryptedText = encrypted.slice(8 + saltLen + ivLen);
 
   const derivedKey = await pbkdf2(password,
-                            salt,
-                            config.iterations,
-                            config.hashBytes,
-                            config.digest);
+    salt,
+    config.iterations,
+    config.hashBytes,
+    config.digest);
   const decipher = crypto.createDecipheriv(config.algorithm, derivedKey, iv);
   const dec = decipher.update(encryptedText);
   return Buffer.concat([dec, decipher.final()]);
@@ -143,10 +143,10 @@ export async function hashPassword(password: string): Promise<string> {
   const salt = await randomBytes(config.saltBytes);
 
   const hash = await pbkdf2(password,
-                    salt,
-                    config.iterations,
-                    config.hashBytes,
-                    config.digest);
+    salt,
+    config.iterations,
+    config.hashBytes,
+    config.digest);
 
   const lengths = Buffer.alloc(8);
 
@@ -180,10 +180,10 @@ export async function verifyPassword(
 
   // verify the salt and hash against the password
   const verify = await pbkdf2(password,
-                                   salt,
-                                   iterations,
-                                   hashBytes,
-                                   config.digest);
+    salt,
+    iterations,
+    hashBytes,
+    config.digest);
 
   return verify.toString("binary") === hash;
 
