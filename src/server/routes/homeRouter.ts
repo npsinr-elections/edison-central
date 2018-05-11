@@ -13,9 +13,9 @@ import express = require("express");
 export const router = express.Router();
 
 router.use((_REQ, res, next) => {
-    res.setHeader("Cache-Control", "no-cache,no-store, max-age=0," +
-        "must-revalidate");
-    next();
+  res.setHeader("Cache-Control", "no-cache,no-store, max-age=0," +
+    "must-revalidate");
+  next();
 });
 
 /**
@@ -24,7 +24,7 @@ router.use((_REQ, res, next) => {
  * @function
  */
 router.get("/pages/:pageName", (req, res) => {
-    res.render(req.params.pageName + ".html");
+  res.render(req.params.pageName + ".html");
 });
 
 /**
@@ -33,5 +33,5 @@ router.get("/pages/:pageName", (req, res) => {
  * @function
  */
 router.get("/:pageName(elections|results|settings)?", (_REQ, res) => {
-    res.render("index.html");
+  res.render("index.html");
 });
