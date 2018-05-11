@@ -10,7 +10,7 @@ import { RequestHandler } from "express";
  * on request. If the request handler returns an error, next()
  * is called to handle the error.
  * @param fn An async request handler function
- * @returns {function} Returns the wrapped request handler function.
+ * @returns Returns the wrapped request handler function.
  */
 export function asyncMiddleware(fn: RequestHandler): RequestHandler {
     const requestHandler: RequestHandler = (req, res, next) =>

@@ -58,7 +58,7 @@ export class JSONResponse {
    * Reponse when a resource has been created on the server in reponse
    * to a user request.
    * @param {Express.Response} res express response object for this request
-   * @param {object} [data] An object related to the resource created.
+   * @param [data] An object related to the resource created.
    * @returns JSONAPIResponse
    */
   public static ResourceCreated(res: Response, data?: Data): JSONAPIResponse {

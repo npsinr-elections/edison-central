@@ -31,7 +31,7 @@ let userData: database.UserData;
 
 /**
  * Check if user has registered a password in the app yet.
- * @returns {boolean}
+ * @returns
  */
 function isRegistered(): boolean {
   return userData.password !== undefined;
@@ -79,7 +79,7 @@ router.get("/login", (_1, res) => {
  * Route to verify user password, and log in user if valid.
  * @name post/users/login
  * @function
- * @param {string} password the password as a POST param
+ * @param password the password as a POST param
  */
 router.post("/login", asyncMiddleware(async (req, res) => {
   if (!isRegistered()) {
@@ -124,7 +124,7 @@ router.get("/register", async (_1, res) => {
  * Route to register user password, if valid.
  * @name post/users/register
  * @function
- * @param {string} password the password as a POST param
+ * @param password the password as a POST param
  */
 router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
   if (isRegistered()) {

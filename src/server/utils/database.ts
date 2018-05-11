@@ -105,7 +105,7 @@ export async function checkDataDir() {
  * its contents as an object. If the datafile doesn't
  * exist, it calls checkDataDir, to initalize missing
  * files and returns an empty object {}.
- * @returns {object}
+ * @returns
  */
 export async function getData(dataPath: string,
                               cryptKey?: Buffer): Promise<any> {
