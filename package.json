@@ -50,7 +50,8 @@
     "server": "node build/main.js",
     "dev": "NODE_ENV=development nodemon build/main.js -i \"build/test\"",
     "docs": "jsdoc -r ./build --readme ./README.md -d ./docs",
-    "production": "NODE_ENV=production node build/main.js"
+    "production": "NODE_ENV=production node build/main.js",
+    "reset:linux": "rm -rf ~/.edison"
   },
   "pkg": {
     "assets": [
