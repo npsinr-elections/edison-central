@@ -69,3 +69,6 @@ docs
 # Emacs autosave files
 \#*\#
 .\#*
+
+# VS Code settings
+.vscode
