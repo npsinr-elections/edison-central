@@ -1,6 +1,5 @@
 /**
  * Handles various fs tasks asynchronously in a thread-safe manner.
- * @module servers/utils/fileHandler
  */
 
 import fs = require("fs");
@@ -20,7 +19,6 @@ type promiseTask<T> = (...args: any[]) => Promise<T>;
 /**
  * Represents a job object stored by PathQueue
  *
- * @interface
  */
 interface Job {
   task: promiseTask<any>;
@@ -32,7 +30,6 @@ interface Job {
 /**
  * Represents a object which maps paths to their queue of tasks.
  *
- * @interface
  */
 interface Queue {
   [dataPath: string]: PathQueue;
@@ -64,8 +61,8 @@ class PathQueue {
 
   /**
    * Push a new job into the queue
-   * @param {Promise} task The fs task to push in the queue
-   * @returns {Promise} A promise that resolves when the queued
+   * @param task The fs task to push in the queue
+   * @returns A promise that resolves when the queued
    * task has completed
    */
   public pushNewJob<T>(task: promiseTask<T>,
@@ -115,9 +112,9 @@ const queue: Queue = {};
 
 /**
  * Function to add a new fs task to its path queue
- * @param {string} dataPath The Path which the task operates on
- * @param {Promise<string>} task The new fs task to run
- * @returns {Promise<string>} A promise which resolves when the job completes.
+ * @param dataPath The Path which the task operates on
+ * @param task The new fs task to run
+ * @returns A promise which resolves when the job completes.
  */
 function newFileTask<T>(dataPath: string,
                         task: promiseTask<T>,
@@ -130,9 +127,9 @@ function newFileTask<T>(dataPath: string,
 
 /**
  * A wrapper for fs.readFile to implement decryption and return a promise.
- * @param {string} dataPath Path to a file
- * @param {string} cryptKey If Provided, the data is decrypted with this key.
- * @returns {Promise<string>} Promise that resolves with data from file.
+ * @param dataPath Path to a file
+ * @param cryptKey If Provided, the data is decrypted with this key.
+ * @returns Promise that resolves with data from file.
  */
 export async function readFile(dataPath: string,
                                cryptKey?: Buffer): Promise<string> {
@@ -149,11 +146,11 @@ export async function readFile(dataPath: string,
 /**
  * A wrapper for fs.writeFile that supports data encryption,
  * and returns a promise
- * @param {string} dataPath Path to a file
- * @param {string} data Data to write to file
- * @param {string} cryptKey If provided,
+ * @param dataPath Path to a file
+ * @param data Data to write to file
+ * @param cryptKey If provided,
  * data is encrypted with this key before writing
- * @returns {Promise<void>} Promise that resolves when file is written.
+ * @returns Promise that resolves when file is written.
  */
 export async function writeFile(dataPath: string,
                                 data: string,

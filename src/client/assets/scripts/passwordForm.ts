@@ -1,7 +1,6 @@
 /**
  * Handles user login/register requests, and display of errors.
  *
- * @module client/assets/scripts/passwordForm
  */
 
 $(() => {

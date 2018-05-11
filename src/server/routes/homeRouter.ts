@@ -6,7 +6,6 @@
  * routes:
  *
  * GET /: Show home page
- * @module server/routes/homeRouter
  */
 import express = require("express");
 

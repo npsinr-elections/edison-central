@@ -1,6 +1,5 @@
 /**
  * Utility functions for running client tests.
- * @module test/client/utils
  */
 
 import * as puppeteer from "puppeteer";

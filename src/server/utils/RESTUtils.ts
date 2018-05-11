@@ -147,7 +147,7 @@ export function getCandidateById(
  *  Checks if `data` has a type field of `type`
  * @param  {Data} data
  * @param  {string} type
- * @returns {boolean}
+ * @returns
  */
 export function isResourceType(data: Data, type: string): boolean {
   return data.type === type;

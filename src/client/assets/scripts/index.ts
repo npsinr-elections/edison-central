@@ -1,6 +1,5 @@
 /**
  * Handles page navigation for loading views dynamically in the app.
- * @module client/assets/scripts/index
  */
 
 $(() => {

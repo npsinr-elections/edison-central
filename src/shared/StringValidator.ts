@@ -1,6 +1,5 @@
 /**
  * Implements utility functions for validating strings
- * @module shared/StringValidator
  */
 
 import shortid = require("shortid");
@@ -51,7 +50,7 @@ export class StringValidator {
    * Checks whether the length of the string is in [`low`, `high`]
    * @param  {number} low Lower limit for length
    * @param  {number} high Maximum limit for length
-   * @returns {boolean}
+   * @returns
    */
   public lengthBetween(low: number, high: number) {
     return this.field.length >= low && this.field.length <= high;
@@ -60,7 +59,7 @@ export class StringValidator {
   /**
    * Checks whether a string has atleast `count` digits.
    * @param  {number} count=1
-   * @returns {boolean}
+   * @returns
    */
   public hasNumber(count = 1) {
     return this.field.replace(/[^0-9]/g, "").length >= count;
@@ -68,7 +67,7 @@ export class StringValidator {
   /**
    * Checks whether a string has atleast `count` uppercase letters
    * @param  {} count=1
-   * @returns {boolean}
+   * @returns
    */
   public hasUpperCase(count = 1) {
     return this.field.replace(/[^A-Z]/g, "").length >= count;
@@ -77,7 +76,7 @@ export class StringValidator {
   /**
    * Checks whether a string has atleast `count` lowercase letters
    * @param  {} count=1
-   * @returns {boolean}
+   * @returns
    */
   public hasLowerCase(count = 1) {
     return this.field.replace(/[^a-z]/g, "").length >= count;
@@ -86,7 +85,7 @@ export class StringValidator {
   /**
    * Checks whether a string has atleast `count` special characters
    * @param  {} count=1
-   * @returns {boolean}
+   * @returns
    */
   public hasSpecialChar(count = 1) {
     return this.field.replace(
@@ -95,7 +94,7 @@ export class StringValidator {
 
   /**
    * Checks whether a string is a valid shortid
-   * @returns {boolean}
+   * @returns
    */
   public isValidID() {
     return shortid.isValid(this.field);
@@ -103,7 +102,7 @@ export class StringValidator {
 
   /**
    * Uses the object's `checkerFunc` to check if a string is valid
-   * @returns {boolean}
+   * @returns
    */
   private validate() {
     return this.checker(this);
@@ -112,8 +111,8 @@ export class StringValidator {
 
 /**
  * A `checkerFunc` for a password field
- * @param {StringValidator} validator
- * @returns {boolean}
+ * @param validator
+ * @returns
  */
 const password: CheckerFunc = (validator: StringValidator) => {
   return validator.lengthBetween(5, 12)
@@ -124,8 +123,8 @@ const password: CheckerFunc = (validator: StringValidator) => {
 
 /**
  * A `checkerFunc` for a resource ID.
- * @param {StringValidator} validator
- * @returns {boolean}
+ * @param validator
+ * @returns
  */
 const id: CheckerFunc = (val: StringValidator) => {
   return val.isValidID();
@@ -133,8 +132,8 @@ const id: CheckerFunc = (val: StringValidator) => {
 
 /**
  * A `checkerFunc` for a resource name
- * @param {StringValidator} validator
- * @returns {boolean}
+ * @param validator
+ * @returns
  */
 const name: CheckerFunc = (val: StringValidator) => {
   return val.lengthBetween(1, 20)
@@ -143,8 +142,8 @@ const name: CheckerFunc = (val: StringValidator) => {
 
 /**
  * A `checkerFunc` for a resource description
- * @param {StringValidator} validator
- * @returns {boolean}
+ * @param validator
+ * @returns
  */
 const description: CheckerFunc = (val: StringValidator) => {
   return val.lengthBetween(0, 80);
@@ -152,8 +151,8 @@ const description: CheckerFunc = (val: StringValidator) => {
 
 /**
  * A `checkerFunc` for a resource image
- * @param {StringValidator} validator
- * @returns {boolean}
+ * @param validator
+ * @returns
  */
 const image: CheckerFunc = (_1: StringValidator) => {
   // To be implemented
@@ -162,8 +161,8 @@ const image: CheckerFunc = (_1: StringValidator) => {
 
 /**
  * A `checkerFunc` for a resource color
- * @param {StringValidator} validator
- * @returns {boolean}
+ * @param validator
+ * @returns
  */
 const color: CheckerFunc = (val: StringValidator) => {
   return val.getField()[0] === "#" &&

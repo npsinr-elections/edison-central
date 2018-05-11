@@ -1,6 +1,5 @@
 /**
  * Initializes the app's express server.
- * @module server/main
  */
 
 import crypto = require("crypto");
@@ -60,7 +59,7 @@ app.use("/", checkLoggedIn, homeRouter.router);
 /**
  * Starts the app express server and calls `cb` after the server
  * has started.
- * @param {function} cb Callback to call after server has started.
+ * @param cb Callback to call after server has started.
  */
 export async function runServer(cb: () => void) {
   await database.checkDataDir();
