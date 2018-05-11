@@ -30,7 +30,6 @@
     "gulp-sourcemaps": "^2.6.4",
     "gulp-typescript": "^4.0.1",
     "gulp-uglify": "^3.0.0",
-    "jsdoc": "^3.5.5",
     "mocha": "^5.1.0",
     "nodemon": "^1.17.3",
     "pkg": "^4.3.1",
@@ -38,6 +37,7 @@
     "tsify": "^3.0.4",
     "tslint": "^5.9.1",
     "tslint-eslint-rules": "^5.1.0",
+    "typedoc": "^0.11.1",
     "typescript": "^2.7.2",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0"
@@ -49,7 +49,7 @@
     "dist": "pkg package.json --out-path ./dist -t node9-linux-x86,node9-win-x86",
     "server": "node build/main.js",
     "dev": "NODE_ENV=development nodemon build/main.js -i \"build/test\"",
-    "docs": "jsdoc -r ./build --readme ./README.md -d ./docs",
+    "docs": "./node_modules/.bin/typedoc ./src --mode file --out ./docs --module commonjs",
     "production": "NODE_ENV=production node build/main.js"
   },
   "pkg": {
