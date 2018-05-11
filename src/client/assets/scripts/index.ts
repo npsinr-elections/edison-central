@@ -4,18 +4,22 @@
  */
 
 $(() => {
+  // Page initially on the URL bar
+  let currentPath: string = window.location.pathname;
+
   const navlinks = $(".nav-link") as JQuery<HTMLAnchorElement>;
   const mainContent = $("main") as JQuery<HTMLMainElement>;
+  const currentNavlink =
+    $(`a[href="${currentPath}"]`) as JQuery<HTMLAnchorElement>;
 
-  // Load the page navigated to initally on the URL bar
-  let currentPath: string = window.location.pathname;
+  // Load the page navigated to initially on the URL bar
   if (currentPath === "/") {
     currentPath = "/elections";
   }
   loadPage(mainContent, currentPath);
-  $("a[href=\"" + currentPath + "\"]").addClass("active");
+  currentNavlink.addClass("active");
 
-  // When users press back button on browser, load previous page
+  // When users press the back button on browser, load previous page
   $(window).on("popstate", () => {
     loadPage(mainContent, window.location.pathname);
   });
@@ -27,11 +31,11 @@ $(() => {
       window.location.href = link;
       return;
     }
-    // Push link in browser history
+    // Push link into browser history
     window.history.pushState("", "", link);
 
-    // Set  only current navlink as "active" on display
-    navlinks.removeClass("active");
+    // Set only current navlink as "active" on display
+    currentNavlink.removeClass("active");
     $(e.currentTarget).addClass("active");
 
     loadPage(mainContent, link);
