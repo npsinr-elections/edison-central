@@ -12,6 +12,12 @@ import express = require("express");
 
 export const router = express.Router();
 
+router.use((_REQ, res, next) => {
+    res.setHeader("Cache-Control", "no-cache,no-store, max-age=0," +
+        "must-revalidate");
+    next();
+});
+
 /**
  * Route to return sections of other pages
  * @name get/pages/:pageName
