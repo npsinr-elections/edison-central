@@ -162,6 +162,9 @@ router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
 }));
 
 router.get("/logout", (req, res, next) => {
+  userData.key = undefined;
+  userData.password = undefined;
+
   req.session.destroy((err) => {
     if (err) {
       next(err);
