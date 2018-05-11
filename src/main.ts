@@ -1,7 +1,6 @@
 /**
  * Launches the application by starting up the server
  * and optionally opening a browser window with the app.
- * @module main
  */
 import opn = require("opn");
 

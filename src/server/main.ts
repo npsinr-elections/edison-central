@@ -1,6 +1,5 @@
 /**
  * Initializes the app's express server.
- * @module server/main
  */
 
 import crypto = require("crypto");

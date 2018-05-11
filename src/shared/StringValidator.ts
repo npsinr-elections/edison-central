@@ -1,6 +1,5 @@
 /**
  * Implements utility functions for validating strings
- * @module shared/StringValidator
  */
 
 import shortid = require("shortid");

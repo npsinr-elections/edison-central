@@ -1,6 +1,5 @@
 /**
  * Implements reponses compliant with JSON API.
- * @module server/utils/JSONResponse
  */
 import shortid = require("shortid");
 

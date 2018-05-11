@@ -13,7 +13,6 @@
  *
  * POST /register: Register user password
  *
- * @module server/routes/userRouter
  */
 
 import express = require("express");

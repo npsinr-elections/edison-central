@@ -1,6 +1,5 @@
 /**
  * Implements functions to encrypt, decrypt and hash text
- * @module servers/utils/crypt
  */
 import crypto = require("crypto");
 import { promisify } from "util";

@@ -2,7 +2,6 @@
  * Defines Database file json structures, and also utility functions
  * for read/write operations on these files.
  *
- * @module server/utils/database
  */
 import fs = require("fs");
 import { promisify } from "util";
@@ -15,7 +14,6 @@ const mkdirPromise = promisify(fs.mkdir);
 
 /**
  * Structure for user password file
- * @interface
  */
 export interface UserData {
   /** Encryption key encrypted itself, with the password */
@@ -26,7 +24,6 @@ export interface UserData {
 
 /**
  * Defines an election object
- * @interface
  */
 export interface Election {
   [key: string]: string | Office[];
@@ -40,7 +37,6 @@ export interface Election {
 
 /**
  * Defines an office object
- * @interface
  */
 export interface Office {
   [key: string]: string | Candidate[];
@@ -54,7 +50,6 @@ export interface Office {
 
 /**
  * Defines a candidate object
- * @interface
  */
 export interface Candidate {
   [key: string]: string | number;
@@ -66,7 +61,6 @@ export interface Candidate {
 
 /**
  * Defines a result object
- * @interface
  */
 export interface Result {
   election: Election;
@@ -75,7 +69,6 @@ export interface Result {
 
 /**
  * Defines structure of result json file
- * @interface
  */
 export interface Results {
   results: Result[];

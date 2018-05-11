@@ -1,6 +1,5 @@
 /**
  * Handles various fs tasks asynchronously in a thread-safe manner.
- * @module servers/utils/fileHandler
  */
 
 import fs = require("fs");
@@ -20,7 +19,6 @@ type promiseTask<T> = (...args: any[]) => Promise<T>;
 /**
  * Represents a job object stored by PathQueue
  *
- * @interface
  */
 interface Job {
   task: promiseTask<any>;
@@ -32,7 +30,6 @@ interface Job {
 /**
  * Represents a object which maps paths to their queue of tasks.
  *
- * @interface
  */
 interface Queue {
   [dataPath: string]: PathQueue;
