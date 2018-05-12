@@ -5,6 +5,7 @@
 import crypto = require("crypto");
 import express = require("express");
 import session = require("express-session");
+import morgan = require("morgan");
 import nunjucks = require("nunjucks");
 
 import * as homeRouter from "./routes/homeRouter";
@@ -20,9 +21,10 @@ import { config } from "../config";
  * @param res
  * @param next
  */
-function checkLoggedIn(req: express.Request,
-                       res: express.Response,
-                       next: express.NextFunction) {
+function checkLoggedIn(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction) {
   if (req.session.user) {
     next();
   } else {
@@ -31,6 +33,8 @@ function checkLoggedIn(req: express.Request,
 }
 
 const app = express();
+
+app.use(morgan("combined"));
 
 app.use(session({
   resave: false,

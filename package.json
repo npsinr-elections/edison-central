@@ -7,6 +7,7 @@
   "dependencies": {
     "express": "^4.16.3",
     "express-session": "^1.15.6",
+    "morgan": "^1.9.0",
     "nunjucks": "^3.1.2",
     "opn": "^5.3.0",
     "shortid": "^2.2.8"
@@ -17,6 +18,7 @@
     "@types/express-session": "^1.15.8",
     "@types/jquery": "^3.3.1",
     "@types/mocha": "^5.0.0",
+    "@types/morgan": "^1.7.35",
     "@types/nunjucks": "^3.0.0",
     "@types/opn": "^5.1.0",
     "@types/puppeteer": "^1.2.1",
@@ -49,7 +51,7 @@
     "dist": "pkg package.json --out-path ./dist -t node9-linux-x86,node9-win-x86",
     "server": "node build/main.js",
     "dev": "NODE_ENV=development nodemon build/main.js -i \"build/test\"",
-    "docs": "./node_modules/.bin/typedoc ./src --mode file --out ./docs --module commonjs",
+    "docs": "typedoc ./src --mode file --out ./docs --module commonjs",
     "production": "NODE_ENV=production node build/main.js",
     "reset:linux": "rm -rf ~/.edison"
   },
