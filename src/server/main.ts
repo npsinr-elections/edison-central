@@ -25,7 +25,7 @@ function checkLoggedIn(
   req: express.Request,
   res: express.Response,
   next: express.NextFunction) {
-  if (req.session.user) {
+  if (req.session.user || process.env.NO_LOGIN) {
     next();
   } else {
     res.redirect("/users/login");
