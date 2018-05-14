@@ -23,7 +23,7 @@ import { config } from "../config";
 function checkLoggedIn(req: express.Request,
                        res: express.Response,
                        next: express.NextFunction) {
-  if (req.session.user) {
+  if (req.session.user || config.dev_mode) {
     next();
   } else {
     res.redirect("/users/login");
@@ -55,6 +55,8 @@ app.use("/assets", express.static(config.assets));
 app.use("/users", usersRouter.router);
 
 app.use("/", checkLoggedIn, homeRouter.router);
+
+app.disable("view cache");
 
 /**
  * Starts the app express server and calls `cb` after the server

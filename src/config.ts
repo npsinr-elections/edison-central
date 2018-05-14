@@ -16,6 +16,8 @@ interface DatabaseConfig {
 
 export let config: Config | any = {};
 
+config.dev_mode = process.env.NODE_ENV === "development";
+
 config.PROJECT_ROOT = __dirname;
 
 config.port = process.env.PORT || 3000; // local server port
