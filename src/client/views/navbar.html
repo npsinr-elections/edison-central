@@ -1,0 +1,14 @@
+<nav class="navbar navbar-expand-md navbar-dark">
+  <a href="/" class="navbar-brand">{{ appName }}</a>
+  <ul class="navbar-nav mr-auto">
+    {% for link, name, faIcon in navlinks %}
+    <li class="nav-item">
+      <a href="{{ link }}" class="nav-link {% if currentURL === link %}active{% endif %}">
+        <i class="nav-link-icon {{ faIcon }}"></i>
+        {{ name }}
+        {{ currentUrl }}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</nav>
