@@ -34,7 +34,9 @@ function checkLoggedIn(
 
 const app = express();
 
-app.use(morgan("combined"));
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("combined"));
+}
 
 app.use(session({
   resave: false,

@@ -44,7 +44,7 @@
     "build-ts": "tsc",
     "bundle": "node bundleJS.js",
     "dist": "pkg package.json --out-path ./dist -t node9-linux-x86,node9-win-x86",
-    "server": "node build/main.js",
+    "server": "node src/main.js",
     "dev": "NODE_ENV=development NO_LOGIN=1 nodemon src/main.js",
     "docs": "typedoc ./src --mode file --out ./docs --module commonjs",
     "production": "NODE_ENV=production node src/main.js",
