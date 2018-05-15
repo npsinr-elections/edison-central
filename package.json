@@ -53,7 +53,7 @@
   },
   "pkg": {
     "assets": [
-      "./src/client/**/*"
+      "./build/client/**/*"
     ]
   },
   "bundle": {
