@@ -53,6 +53,7 @@ app.set("views", config.views);
 
 nunjucks.configure(app.get("views"), {
   autoescape: true,
+  noCache: process.env.NODE_ENV === "development",
   express: app
 });
 
