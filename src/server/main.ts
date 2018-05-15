@@ -5,6 +5,7 @@
 import crypto = require("crypto");
 import express = require("express");
 import session = require("express-session");
+import morgan = require("morgan");
 import nunjucks = require("nunjucks");
 
 import * as homeRouter from "./routes/homeRouter";
@@ -20,10 +21,11 @@ import { config } from "../config";
  * @param res
  * @param next
  */
-function checkLoggedIn(req: express.Request,
-                       res: express.Response,
-                       next: express.NextFunction) {
-  if (req.session.user || config.dev_mode) {
+function checkLoggedIn(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction) {
+  if (req.session.user || process.env.NO_LOGIN) {
     next();
   } else {
     res.redirect("/users/login");
@@ -31,6 +33,10 @@ function checkLoggedIn(req: express.Request,
 }
 
 const app = express();
+
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("tiny"));
+}
 
 app.use(session({
   resave: false,
@@ -47,6 +53,7 @@ app.set("views", config.views);
 
 nunjucks.configure(app.get("views"), {
   autoescape: true,
+  noCache: process.env.NODE_ENV === "development",
   express: app
 });
 
