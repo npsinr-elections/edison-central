@@ -9,15 +9,18 @@
   <script defer src="../assets/scripts/fontawesome-all.min.js"></script>
   <link rel="stylesheet" href="../assets/styles/bootstrap.min.css">
   <link rel="stylesheet" href="../assets/styles/elections.css">
+  {% block stylesheets %}{% endblock %}
 </head>
 
 <body>
   {% include "navbar.html" %}
 
-  {{pageTitle}}
+  {% block mainContent %}
+  {% endblock %}
 
   <script src="../assets/scripts/jquery-3.3.1.min.js"></script>
   <script src="../assets/scripts/bootstrap.min.js"></script>
+  {% block scripts %}{% endblock %}
   <!-- <script src="../assets/scripts/index.bundle.js"></script> -->
 
 </body>

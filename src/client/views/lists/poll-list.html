@@ -1,0 +1,25 @@
+{% macro table(polls) %}
+<div class="poll-list-container table-responsive">
+  <table class="poll-list-table table table-bordered">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Candidates</th>
+      </tr>
+    </thead>
+    {% for poll in polls %}
+    <tr>
+      <td>{{ poll.name }}</td>
+      <td>{{ poll.candidates.length }} candidates</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endmacro %}
+
+{% macro scripts() %}
+{% endmacro %}
+
+{% macro styles() %}
+<link rel="stylesheet" href="../assets/styles/poll-list.css">
+{% endmacro %}

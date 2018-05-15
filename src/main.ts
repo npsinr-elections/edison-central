@@ -17,7 +17,7 @@ function callBack() {
   console.log("Listening on Port", config.port);
 
   // App is in production mode by default
-  if (!config.dev_mode) {
+  if (!config.devMode) {
     opn("http://localhost:" + config.port);
   }
 }

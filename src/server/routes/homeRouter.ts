@@ -9,6 +9,8 @@
  */
 import express = require("express");
 
+import { config } from "../../config";
+
 export const router = express.Router();
 
 router.use((_REQ, res, next) => {
@@ -35,15 +37,59 @@ const navlinks: Array<[string, string, string]> = [
   ["/users/logout", "Log Out", "fas fa-sign-out-alt"]];
 
 /**
- * Route to display various app pages after logged in
- * @name get/:pageName
+ * Redirects requests to /elections from root
+ * @name /
  * @function
  */
-router.get("/:pageName(elections|settings)?", (req, res) => {
-  res.render("index.html", {
-    appName: "edison-central",
-    pageTitle: pageNames.get(req.params.pageName),
-    currentURL: `/${req.params.pageName}`,
-    navlinks: navlinks
+router.get("/", (_REQ, res) => {
+  res.redirect("/elections");
+});
+
+/**
+ * Route to display the elections page
+ * @name /elections
+ * @function
+ */
+router.get("/elections", (_REQ, res) => {
+  res.render("elections.html", {
+    appName: config.appName,
+    pageTitle: pageNames.get("elections"),
+    currentURL: "/elections",
+    navlinks: navlinks,
+    // Dummy data for elections.
+    // TODO replace with data from file
+    elections: [
+      {
+        name: "Best Superhero",
+        polls: [
+          {
+            name: "Best Cape",
+            candidates: [
+              {
+                name: "Superman"
+              },
+              {
+                name: "Batman"
+              }
+            ]
+          },
+        ]
+      }, {
+        name: "Best Superhero",
+        polls: [
+          {
+            name: "Best Cape",
+            candidates: [
+              {
+                name: "Superman"
+              },
+              {
+                name: "Batman"
+              }
+            ]
+          },
+        ]
+      }
+    ]
   });
 });

@@ -1,0 +1,27 @@
+{% import "./poll-list.html" as pollList %}
+  
+{% macro list(elections) %}
+<div class="election-list-container col-lg-10 mx-auto">
+  {% for election in elections %}
+  <div class="election-container card">
+    <div class="card-header">
+      <h3>{{ election.name }}</h3>
+    </div>
+    <div class="card-body">
+      <h4>Status</h4>
+      <p>{{ election.status }}</p>
+      <hr>
+      <h4>Polls</h4>
+      {{ pollList.table(election.polls) }}
+      <hr>
+      <div class="btn-group">
+        <button class="btn btn-primary">Start</button>
+        <button class="btn">Export</button>
+        <button class="btn">Edit</button>
+        <button class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}

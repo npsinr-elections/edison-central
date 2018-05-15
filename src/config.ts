@@ -16,7 +16,8 @@ interface DatabaseConfig {
 
 export let config: Config | any = {};
 
-config.dev_mode = process.env.NODE_ENV === "development";
+config.appName = "edison-central";
+config.devMode = process.env.NODE_ENV === "development";
 
 config.PROJECT_ROOT = __dirname;
 
