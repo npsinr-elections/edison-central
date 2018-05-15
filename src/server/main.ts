@@ -35,7 +35,7 @@ function checkLoggedIn(
 const app = express();
 
 if (process.env.NODE_ENV === "development") {
-  app.use(morgan("combined"));
+  app.use(morgan("tiny"));
 }
 
 app.use(session({
