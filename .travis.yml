@@ -9,8 +9,7 @@ before_install:
 install:
   - npm install
 script:
-  - npm run build-ts
-  - npm run bundle
+  - npm run build
   - npm run dist
   - cp ./node_modules/opn/xdg-open ./dist
   - ./dist/edison-central-linux &
