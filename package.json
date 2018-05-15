@@ -47,7 +47,7 @@
     "build-static": "cpx \"./src/client/**/*\" ./build/client",
     "dist": "pkg package.json --out-path ./dist -t node9-linux-x86,node9-win-x86",
     "start": "ts-node src/main.ts",
-    "dev": "NODE_ENV=development NO_LOGIN=1 ts-node-dev --respawn --transpileOnly src/main.ts",
+    "dev": "NODE_ENV=development NO_LOGIN=1 ts-node-dev --respawn src/main.ts",
     "docs": "typedoc ./src --mode file --out ./docs --module commonjs",
     "reset:linux": "rm -rf ~/.edison"
   },
