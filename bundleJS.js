@@ -5,14 +5,7 @@ var tsify = require("tsify");
 
 var packageJSON = require("./package.json");
 
-try {
-    var config = require("./src/config.js");
-} catch (ex) {
-    console.log("Failed to require config.js. Recommend to run \"npm run build-ts\" first");
-    process.exit(1);
-}
-
-var scriptsPath = path.join(config.config.assets, "scripts");
+var scriptsPath = "./src/client/assets/scripts";
 
 packageJSON.bundle.entries.map(entry => {
     var outFile = fs.createWriteStream(path.join(scriptsPath,
@@ -25,6 +18,6 @@ packageJSON.bundle.entries.map(entry => {
         .bundle()
         .pipe(outFile)
         .on("finish", () => {
-            console.log("Bundled " + entry + "succesfully!");
+            console.log("Bundled " + entry + " succesfully!");
         });
 });
