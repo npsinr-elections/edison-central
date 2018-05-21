@@ -2,11 +2,12 @@
  * Handles various fs tasks asynchronously in a thread-safe manner.
  */
 
+import { readFile as fsReadFile, writeFile as fsWriteFile } from "fs";
 import { promisify } from "util";
 import * as crypt from "./crypt";
 
-const readFilePromise = promisify(readFile);
-const writeFilePromise = promisify(writeFile);
+const readFilePromise = promisify(fsReadFile);
+const writeFilePromise = promisify(fsWriteFile);
 
 /**
  * Represents an arbitrary async fs function modified to return
