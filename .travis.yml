@@ -1,7 +1,6 @@
 language: node_js
 node_js:
   - "node"
-  - "lts/*"
 before_install:
   - sudo dpkg --add-architecture i386
   - sudo apt-get update
@@ -14,4 +13,4 @@ script:
   - cp ./node_modules/opn/xdg-open ./dist
   - ./dist/edison-central-linux &
   - sleep 3
-  - npm run test
+  - npm test
