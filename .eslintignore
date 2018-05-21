@@ -1,0 +1,14 @@
+# Build files
+build
+
+# Dist files
+dist
+
+# Library files
+src/client/assets/scripts/libraries
+
+# Bundled client files
+src/client/assets/scripts/*.bundle.js
+
+# Compiled server files
+src/server
