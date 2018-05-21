@@ -51,7 +51,7 @@
   },
   "scripts": {
     "test": "mocha \"src/test/**/*.ts\" --require ts-node/register",
-    "lint": "tslint --project ./tsconfig.json",
+    "lint": "tslint --project ./tsconfig.json && eslint .",
     "build": "npm run build-ts && npm run bundle && npm run build-static",
     "build-ts": "tsc",
     "bundle": "webpack --mode production",

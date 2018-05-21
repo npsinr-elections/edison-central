@@ -5,7 +5,6 @@
     "max-line-length": {
       "options": [80]
     },
-    "completed-docs":true,
     "object-literal-sort-keys": false,
     "object-literal-shorthand": false,
     "semicolon": [true, "always"],
