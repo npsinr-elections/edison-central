@@ -16,7 +16,8 @@
  */
 
 import express = require("express");
-import shortid from "shortid";
+import shortid = require("shortid");
+
 import { checks, StringValidator } from "../../shared/StringValidator";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
 import * as crypt from "../utils/crypt";
