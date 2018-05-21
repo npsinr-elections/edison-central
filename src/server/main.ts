@@ -8,8 +8,8 @@ import session = require("express-session");
 import morgan = require("morgan");
 import nunjucks = require("nunjucks");
 
-import * as homeRouter from "./routes/homeRouter";
-import * as usersRouter from "./routes/userRouter";
+import { router as homeRouter} from "./routes/homeRouter";
+import { router as userRouter } from "./routes/userRouter";
 import * as database from "./utils/database";
 
 import { config } from "../config";
@@ -59,9 +59,9 @@ nunjucks.configure(app.get("views"), {
 
 app.use("/assets", express.static(config.assets));
 
-app.use("/users", usersRouter.router);
+app.use("/users", userRouter);
 
-app.use("/", checkLoggedIn, homeRouter.router);
+app.use("/", checkLoggedIn, homeRouter);
 
 app.disable("view cache");
 

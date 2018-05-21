@@ -16,8 +16,7 @@
  */
 
 import express = require("express");
-import shortid = require("shortid");
-
+import shortid from "shortid";
 import { checks, StringValidator } from "../../shared/StringValidator";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
 import * as crypt from "../utils/crypt";
@@ -57,6 +56,7 @@ router.use((req, res, next) => {
  * @function
  */
 router.use(asyncMiddleware(async (_1, _2, next) => {
+  console.log("hello!");
   userData = await database.getUserData();
   next();
 }));
@@ -67,6 +67,7 @@ router.use(asyncMiddleware(async (_1, _2, next) => {
  * @function
  */
 router.get("/login", (_1, res) => {
+  console.log("Hello!");
   if (!isRegistered()) {
     return res.redirect("/users/register");
   }

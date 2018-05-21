@@ -2,13 +2,11 @@
  * Handles various fs tasks asynchronously in a thread-safe manner.
  */
 
-import fs = require("fs");
 import { promisify } from "util";
-
 import * as crypt from "./crypt";
 
-const readFilePromise = promisify(fs.readFile);
-const writeFilePromise = promisify(fs.writeFile);
+const readFilePromise = promisify(readFile);
+const writeFilePromise = promisify(writeFile);
 
 /**
  * Represents an arbitrary async fs function modified to return
@@ -154,11 +152,12 @@ export async function readFile(dataPath: string,
  */
 export async function writeFile(dataPath: string,
                                 data: string,
-                                cryptKey?: Buffer): Promise<void> {
+                                cryptKey?: Buffer): Promise<any> {
   if (cryptKey !== undefined) {
     data = (await crypt.encryptText(Buffer.from(data), cryptKey))
       .toString("hex");
   }
+  console.log("done encrypting");
 
   return await newFileTask(dataPath,
     writeFilePromise, dataPath, data, "utf8");
