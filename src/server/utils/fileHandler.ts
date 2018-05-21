@@ -158,7 +158,6 @@ export async function writeFile(dataPath: string,
     data = (await crypt.encryptText(Buffer.from(data), cryptKey))
       .toString("hex");
   }
-  console.log("done encrypting");
 
   return await newFileTask(dataPath,
     writeFilePromise, dataPath, data, "utf8");
