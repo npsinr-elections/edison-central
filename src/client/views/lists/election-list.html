@@ -5,7 +5,7 @@
   {% for election in elections %}
   <div class="election-container card">
     <div class="card-header">
-      <h3>{{ election.name }}</h3>
+      <h3 class="election-name">{{ election.name }}</h3>
     </div>
     <div class="card-body">
       <h4>Status</h4>
@@ -17,11 +17,15 @@
       <div class="btn-group">
         <button class="btn btn-primary">Start</button>
         <button class="btn">Export</button>
-        <button class="btn">Edit</button>
+        <a href="/elections/1/edit"><button class="btn">Edit</button></a>
         <button class="btn btn-danger">Delete</button>
       </div>
     </div>
   </div>
   {% endfor %}
 </div>
-{% endmacro %}
+{%- endmacro %}
+
+{% macro listStyle() %}
+<link rel="stylesheet" href="../assets/styles/election-list.css">
+{%- endmacro %}

@@ -3,9 +3,13 @@
 {% import "./lists/election-list.html" as electionList %}
 
 {% block mainContent %}
-  <div class="jumbotron">
-    <h1>Elections</h1>
-    <h3 class="text-muted">Handle all your elections</h3>
-  </div>
-  {{ electionList.list(elections) }}
-{% endblock %}
+<div class="jumbotron">
+  <h1>Elections</h1>
+  <h3 class="text-muted">Handle all your elections</h3>
+</div>
+{{ electionList.list(elections) }}
+{%- endblock %}
+
+{% block stylesheets %}
+{{ electionList.listStyle() }}
+{%- endblock %}

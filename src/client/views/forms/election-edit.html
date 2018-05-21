@@ -1,0 +1,25 @@
+{% extends "index.html" %}
+
+{% block mainContent %}
+{{ id }}
+<div class="election-form-container card">
+  <div class="card-body">
+    <form class="election-form" action="/elections/{{ currentURL }}">
+      <div class="form-group">
+        <label for="election-name-input">Enter the name</label>
+        <input class="form-control" type="text" name="name" id="election-name-input">
+      </div>
+    </form>
+    <form class="election-form" action="/elections/{{ currentURL }}" method="POST">
+      <div class="form-group">
+        <label for="election-caption-input">Enter the caption</label>
+        <input class="form-control" type="text" name="name" id="election-caption-input">
+      </div>
+    </form>
+  </div>
+</div>
+{%- endblock %}
+
+{% block scripts %}
+<script src="/assets/scripts/election-edit.js"></script>
+{%- endblock %}

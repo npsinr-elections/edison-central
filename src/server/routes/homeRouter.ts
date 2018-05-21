@@ -93,3 +93,23 @@ router.get("/elections", (_REQ, res) => {
     ]
   });
 });
+
+router.get("/elections/:electionID/edit", (req, res) => {
+  res.render("forms/election-edit.html", {
+    appName: config.appName,
+    pageTitle: "Edit Elections",
+    currentURL: req.url,
+    navlinks: navlinks,
+    id: req.params.electionID,
+    method: "PUT"
+  });
+});
+
+router.get("/settings", (_REQ, res) => {
+  res.render("settings.html", {
+    appName: config.appName,
+    pageTitle: pageNames.get("settings"),
+    currentURL: "Settings",
+    navlinks: navlinks
+  });
+});
