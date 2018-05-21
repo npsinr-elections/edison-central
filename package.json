@@ -26,6 +26,7 @@
     "@types/opn": "^5.1.0",
     "@types/puppeteer": "^1.2.1",
     "@types/shortid": "0.0.29",
+    "adm-zip": "^0.4.11",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "concurrently": "^3.5.1",
