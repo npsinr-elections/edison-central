@@ -14,7 +14,8 @@ let page: puppeteer.Page;
 const BASEURL = "http://localhost:3000";
 const ROUTES = {
   register: BASEURL + "/users/register",
-  login: BASEURL + "/users/login"
+  login: BASEURL + "/users/login",
+  home: BASEURL + "/elections"
 };
 
 describe("User Routes", function() {
@@ -107,7 +108,7 @@ describe("User Routes", function() {
     page.click("[type=\"submit\"]");
     // Redirect to home after login
     const res = await page.waitForNavigation();
-    expect(utils.getURL(res)).to.equal(BASEURL);
+    expect(utils.getURL(res)).to.equal(ROUTES.home);
   });
 
   after(async () => {
