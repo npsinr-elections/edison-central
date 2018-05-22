@@ -3,6 +3,7 @@ Central computer for displaying messages to the audience.
 Note: Project is currently in development.
 
 [![Build Status](https://travis-ci.org/npsinr-elections/edison-central.svg?branch=master)](https://travis-ci.org/npsinr-elections/edison-central)
+[![Build status](https://ci.appveyor.com/api/projects/status/7mkchi7hrh0yxlm7?svg=true)](https://ci.appveyor.com/project/npsinr-elections/edison-central)
 [![dependencies Status](https://david-dm.org/npsinr-elections/edison-central/status.svg)](https://david-dm.org/npsinr-elections/edison-central)
 [![devDependencies Status](https://david-dm.org/npsinr-elections/edison-central/dev-status.svg)](https://david-dm.org/npsinr-elections/edison-central?type=dev)
 
