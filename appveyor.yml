@@ -1,0 +1,21 @@
+# Install scripts. (runs after repo cloning)
+install:
+  - npm install
+
+# Post-install test scripts.
+test_script:
+  # Output useful info for debugging.
+  - node --version
+  - npm --version
+  - npm run lint
+  - npm run build
+  - npm run dist
+  - ps: Start-Process ./dist/edison-central-win.exe
+  - ps: Start-Sleep -s 3
+  # run tests
+  - npm test
+
+artifacts:
+  - path: ./dist/*
+# Don't actually build.
+build: off

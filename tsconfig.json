@@ -5,6 +5,7 @@
     "noUnusedParameters": true,
     "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
+    "allowJs": false,
     "declaration": false,
     "lib": [
       "es2015",
