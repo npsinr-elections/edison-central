@@ -40,7 +40,6 @@
     "ts-loader": "^4.3.0",
     "ts-node": "^6.0.3",
     "ts-node-dev": "^1.0.0-pre.22",
-    "tsify": "^4.0.0",
     "tslint": "^5.9.1",
     "tslint-eslint-rules": "^5.1.0",
     "typedoc": "^0.11.1",
