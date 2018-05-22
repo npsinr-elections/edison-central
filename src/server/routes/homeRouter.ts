@@ -109,7 +109,7 @@ router.get("/settings", (_REQ, res) => {
   res.render("settings.html", {
     appName: config.appName,
     pageTitle: pageNames.get("settings"),
-    currentURL: "Settings",
+    currentURL: "/settings",
     navlinks: navlinks
   });
 });
