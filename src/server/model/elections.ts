@@ -14,7 +14,7 @@ function dbfind(datastore: Datastore, query: any): Promise<any[]> {
 }
 
 class ElectionsDatastore {
-  private db: Datastore;
+  public db: Datastore;
   constructor() {
     this.db = new Datastore({
       filename: config.database.elections,
@@ -27,6 +27,7 @@ class ElectionsDatastore {
     for (const election of elections) {
       election.polls = await (this.getPolls(election.id));
     }
+    return elections;
   }
 
   private async getPolls(electionID: string) {
@@ -34,6 +35,7 @@ class ElectionsDatastore {
     for (const poll of polls) {
       poll.candidates = await this.getCandidates(poll.id);
     }
+    return polls;
   }
 
   private async getCandidates(pollID: string) {
