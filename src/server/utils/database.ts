@@ -6,8 +6,8 @@
 import fs = require("fs");
 import { promisify } from "util";
 
-import { createDummyData } from "../../../dummy/initDummyData";
 import { config } from "../../config";
+import { createDummyData } from "../../dummy/initDummyData";
 import { db } from "../model/elections";
 import * as fileHandler from "./fileHandler";
 

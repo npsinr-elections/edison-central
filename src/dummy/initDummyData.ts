@@ -1,4 +1,4 @@
-import { db, dbInsert } from "../src/server/model/elections";
+import { db, dbInsert } from "../server/model/elections";
 
 export async function createDummyData() {
     let id = 1;
