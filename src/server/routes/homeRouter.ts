@@ -45,6 +45,44 @@ router.get("/", (_REQ, res) => {
   res.redirect("/elections");
 });
 
+const dummyElections = [
+  {
+    name: "Best Superhero",
+    id: 1,
+    caption: "Save the World!",
+    polls: [
+      {
+        name: "Best Cape",
+        candidates: [
+          {
+            name: "Superman"
+          },
+          {
+            name: "Batman"
+          }
+        ]
+      },
+    ]
+  }, {
+    name: "Best Superhero",
+    id: 2,
+    polls: [
+      {
+        name: "Best Cape",
+        caption: "Save the World!",
+        candidates: [
+          {
+            name: "Superman"
+          },
+          {
+            name: "Batman"
+          }
+        ]
+      },
+    ]
+  }
+];
+
 /**
  * Route to display the elections page
  * @name /elections
@@ -58,39 +96,7 @@ router.get("/elections", (_REQ, res) => {
     navlinks: navlinks,
     // Dummy data for elections.
     // TODO replace with data from file
-    elections: [
-      {
-        name: "Best Superhero",
-        polls: [
-          {
-            name: "Best Cape",
-            candidates: [
-              {
-                name: "Superman"
-              },
-              {
-                name: "Batman"
-              }
-            ]
-          },
-        ]
-      }, {
-        name: "Best Superhero",
-        polls: [
-          {
-            name: "Best Cape",
-            candidates: [
-              {
-                name: "Superman"
-              },
-              {
-                name: "Batman"
-              }
-            ]
-          },
-        ]
-      }
-    ]
+    elections: dummyElections
   });
 });
 
@@ -100,9 +106,14 @@ router.get("/elections/:electionID/edit", (req, res) => {
     pageTitle: "Edit Elections",
     currentURL: req.url,
     navlinks: navlinks,
-    id: req.params.electionID,
+    election: dummyElections[0],
     method: "PUT"
   });
+});
+
+router.put("/elections/:electionID", (req, res) => {
+  console.log(req.body);
+  res.json({test: "Hello World!"});
 });
 
 router.get("/settings", (_REQ, res) => {
