@@ -9,7 +9,7 @@
       <h3>Edit election</h3>
     </div>
     <div class="card-body">
-      <form class="election-form" action="/elections/{{ election.id }}" enctype="multipart/form-data">
+      <form id="election-form" action="/elections/{{ election.id }}" enctype="multipart/form-data">
         <div class="form-group">
           <label for="election-name-input">Enter the name</label>
           <input class="form-control" type="text" name="name" id="election-name-input" value="{{ election.name }}">
