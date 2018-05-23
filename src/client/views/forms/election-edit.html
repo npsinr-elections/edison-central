@@ -1,25 +1,58 @@
+{% import "../lists/poll-list.html" as pollList %}
+
 {% extends "index.html" %}
 
 {% block mainContent %}
-{{ id }}
-<div class="election-form-container card">
-  <div class="card-body">
-    <form class="election-form" action="/elections/{{ currentURL }}">
-      <div class="form-group">
-        <label for="election-name-input">Enter the name</label>
-        <input class="form-control" type="text" name="name" id="election-name-input">
-      </div>
-    </form>
-    <form class="election-form" action="/elections/{{ currentURL }}" method="POST">
-      <div class="form-group">
-        <label for="election-caption-input">Enter the caption</label>
-        <input class="form-control" type="text" name="name" id="election-caption-input">
-      </div>
-    </form>
+<div class="election-edit-container col-lg-10 mx-auto">
+  <div class="election-form-container card">
+    <div class="card-header">
+      <h3>Edit election</h3>
+    </div>
+    <div class="card-body">
+      <form id="election-form" action="/elections/{{ election.id }}" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="election-name-input">Enter the name</label>
+          <input class="form-control" type="text" name="name" id="election-name-input" value="{{ election.name }}">
+        </div>
+        <div class="form-group">
+          <label for="election-caption-input">Enter the caption</label>
+          <input class="form-control" type="text" name="name" id="election-caption-input" value="{{ election.caption }}">
+        </div>
+        <div class="form-group">
+          <label for="election-group-input">Choose the type of election</label>
+          <select name="group" id="election-group-input" class="form-control">
+            <option value="prefect">Prefect</option>
+            <option value="house">House</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="election-color-input">Click to change the background color</label>
+          <input class="form-control" type="color" name="color" id="election-color-input" value="{{ election.color }}">
+        </div>
+        <div class="form-group">
+          <label for="election-image-input">Upload the image for this election</label>
+          <input type="file" class="form-control-file" name="image" id="election-image-input">
+          <img id="election-uploaded-image" class="uploaded-image" src="{{ election.image }}" alt="No Image Uploaded">
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i>&nbsp;Submit</button>
+      </form>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <h3>Polls</h3>
+    </div>
+    <div class="card-body">
+      {{ pollList.table(election.polls) }}
+    </div>
   </div>
 </div>
 {%- endblock %}
 
+{% block stylesheets %}
+<link rel="stylesheet" href="/assets/styles/election-edit.css">
+{%- endblock %}
+
 {% block scripts %}
-<script src="/assets/scripts/election-edit.js"></script>
+<script src="/assets/scripts/electionEdit.bundle.js"></script>
 {%- endblock %}
