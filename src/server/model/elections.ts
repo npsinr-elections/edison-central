@@ -1,9 +1,9 @@
 import Datastore = require("nedb");
 import { config } from "../../config";
 
-function dbfind(db: Datastore, query: any): Promise<any[]> {
+function dbfind(datastore: Datastore, query: any): Promise<any[]> {
   return new Promise((resolve, reject) => {
-    db.find(query, (err: any, docs: any[]) => {
+    datastore.find(query, (err: any, docs: any[]) => {
       if (err) {
         reject(err);
       } else {

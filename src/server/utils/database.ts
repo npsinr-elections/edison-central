@@ -101,7 +101,7 @@ export async function checkDataDir() {
  * @returns
  */
 export async function getData(dataPath: string,
-  cryptKey?: Buffer): Promise<any> {
+                              cryptKey?: Buffer): Promise<any> {
   let data;
   try {
     data = JSON.parse(await fileHandler.readFile(dataPath, cryptKey));
