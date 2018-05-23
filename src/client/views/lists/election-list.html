@@ -6,19 +6,24 @@
   <div class="election-container card">
     <div class="card-header">
       <h3 class="election-name">{{ election.name }}</h3>
+      {% if election.caption %}
+        <hr>
+        <h5 class="election-caption text-muted">{{ election.caption }}</h5>
+      {%- endif %}
     </div>
     <div class="card-body">
-      <h4>Status</h4>
-      <p>{{ election.status }}</p>
-      <hr>
       <h4>Polls</h4>
       {{ pollList.table(election.polls) }}
       <hr>
+      <h4>Colors</h4>
+      <div class="election-color-display" style="background-color: {{ election.color }}">
+        Sample Text
+      </div>
+      <hr>
       <div class="btn-group">
-        <button class="btn btn-primary">Start</button>
-        <button class="btn">Export</button>
-        <a href="/elections/1/edit"><button class="btn">Edit</button></a>
-        <button class="btn btn-danger">Delete</button>
+        <a href="/election/1/export" class="btn btn-light">Export</a>
+        <a href="/elections/1/edit" class="btn btn-light">Edit</a>
+        <button class="btn btn-danger btn-del-election" data-election-id="{{ election.id }}">Delete</button>
       </div>
     </div>
   </div>
@@ -27,5 +32,9 @@
 {%- endmacro %}
 
 {% macro listStyle() %}
-<link rel="stylesheet" href="../assets/styles/election-list.css">
+<link rel="stylesheet" href="/assets/styles/election-list.css">
+{%- endmacro %}
+
+{% macro listScript() %}
+<script src="/assets/scripts/electionList.bundle.js"></script>
 {%- endmacro %}

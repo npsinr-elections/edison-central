@@ -2,6 +2,8 @@
   margin-bottom: 1.25rem;
 }
 
-.election-name {
-  margin: 0;
+.election-color-display {
+  color: rgb(255, 255, 255);
+  padding: 1rem;
+  display: inline-block;
 }
