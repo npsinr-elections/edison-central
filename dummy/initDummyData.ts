@@ -1,18 +1,4 @@
-import nedb = require("nedb");
-
-import { db } from "../src/server/model/elections";
-
-function dbInsert(datastore: nedb, doc: any) {
-    return new Promise((resolve, reject) => {
-        datastore.insert(doc, (err: any, newDocs: any) => {
-            if (err) {
-                reject(err)
-            } else {
-                resolve(newDocs);
-            }
-        });
-    });
-}
+import { db, dbInsert } from "../src/server/model/elections";
 
 export async function createDummyData() {
     let id = 1;
@@ -52,4 +38,3 @@ export async function createDummyData() {
 
     }
 }
-
