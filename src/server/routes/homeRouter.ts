@@ -97,17 +97,17 @@ router.post("/polls/:pollID/candidates",
 
 // Requests for deleting resources
 
-router.delete("/elections:electionID",
+router.delete("/elections/:electionID",
               asyncMiddleware(async (req, res) => {
   JSONResponse.Data(res, await db.deleteElection(req.params.electionID));
 }));
 
-router.delete("/polls:pollID",
+router.delete("/polls/:pollID",
               asyncMiddleware(async (req, res) => {
   JSONResponse.Data(res, await db.deletePoll(req.params.pollID));
 }));
 
-router.delete("/candidates:candidateID",
+router.delete("/candidates/:candidateID",
               asyncMiddleware(async (req, res) => {
   JSONResponse.Data(res, await db.deleteCandidate(req.params.candidateID));
 }));
