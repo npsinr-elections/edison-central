@@ -6,38 +6,6 @@ import shortid = require("shortid");
 import { Response } from "express";
 
 /**
- * Toplevel attributes of a JSONAPI response.
- * Note: One of data, errors or meta is required.
- */
-interface JSONAPIResponse {
-  data?: any;
-  errors?: any;
-  meta?: any;
-  jsonapi?: any;
-  links?: any;
-  included?: any;
-}
-
-/**
- * Represents a JSON Api Data resource
- */
-export interface Data {
-  id: string;
-  type: string;
-  attributes?: any;
-  links?: Links;
-  relationships?: Relationships;
-}
-
-export interface Relationships {
-  [resourceType: string]: { links: Links };
-}
-
-export interface Links {
-  self?: string;
-  related?: string;
-}
-/**
  * Represents a JSON API error
  */
 interface Error {
@@ -53,44 +21,11 @@ interface Error {
  * @class
  */
 export class JSONResponse {
-  /**
-   * Reponse when a resource has been created on the server in reponse
-   * to a user request.
-   * @param {Express.Response} res express response object for this request
-   * @param [data] An object related to the resource created.
-   * @returns JSONAPIResponse
-   */
-  public static ResourceCreated(res: Response, data?: Data): JSONAPIResponse {
-    if (data === undefined) {
-      res.status(204);
-      res.end();
-    } else {
-      res.status(201);
-      res.json({ data });
-    }
-    return { data };
-  }
-  /**
-   * Response when a get request for a resource has been made
-   * @param  {Response} res express response object for this request
-   * @param  {Data|Data[]} resourceData The data requested
-   * @param  {string} selfLink A link linking back to the same request
-   * @returns JSONAPIResponse
-   */
-  public static getResource(res: Response,
-                            resourceData: Data | Data[],
-                            selfLink: string): JSONAPIResponse {
-    const response: JSONAPIResponse = {
-      data: resourceData,
-      links: {
-        self: selfLink
-      }
-    };
+  public static Data(res: Response, data: any) {
     res.status(200);
-    res.json(response);
-    return response;
+    res.json(data);
+    return data;
   }
-
   /**
    * Reponse when an error occured due to a user request on the server,
    * @param  {Express.Response} res express response object for this request
@@ -99,7 +34,7 @@ export class JSONResponse {
    * example, `ERRORS.UserErrors.InvalidPassword`
    * @returns JSONAPIResponse
    */
-  public static Error(res: Response, err: Error): JSONAPIResponse {
+  public static Error(res: Response, err: Error) {
     err.id = shortid.generate();
     res.status(err.status);
     res.json({ errors: [err] });
