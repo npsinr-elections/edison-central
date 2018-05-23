@@ -150,7 +150,7 @@ router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
     const newElectionData: database.Election = {
       id: shortid.generate(),
       name: "",
-      description: "",
+      caption: "",
       image: "",
       color: "",
       offices: []

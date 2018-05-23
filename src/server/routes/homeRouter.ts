@@ -11,6 +11,9 @@ import express = require("express");
 
 import { config } from "../../config";
 
+import { db } from "../model/elections";
+import { asyncMiddleware } from "../utils/asyncMiddleware";
+
 export const router = express.Router();
 
 router.use((_REQ, res, next) => {
@@ -88,7 +91,7 @@ const dummyElections = [
  * @name /elections
  * @function
  */
-router.get("/elections", (_REQ, res) => {
+router.get("/elections", asyncMiddleware(async (_REQ, res) => {
   res.render("elections.html", {
     appName: config.appName,
     pageTitle: pageNames.get("elections"),
@@ -96,9 +99,9 @@ router.get("/elections", (_REQ, res) => {
     navlinks: navlinks,
     // Dummy data for elections.
     // TODO replace with data from file
-    elections: dummyElections
+    elections: await db.getElections()
   });
-});
+}));
 
 router.get("/elections/:electionID/edit", (req, res) => {
   res.render("forms/election-edit.html", {
@@ -113,7 +116,7 @@ router.get("/elections/:electionID/edit", (req, res) => {
 
 router.put("/elections/:electionID", (req, res) => {
   console.log(req.body);
-  res.json({test: "Hello World!"});
+  res.json({ test: "Hello World!" });
 });
 
 router.get("/settings", (_REQ, res) => {
