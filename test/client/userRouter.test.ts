@@ -4,8 +4,8 @@ import { expect } from "chai";
 import * as fs from "fs";
 import "mocha";
 
-import { config } from "../../config";
-import { ERRORS } from "../../server/utils/JSONResponse";
+import { config } from "../../src/config";
+import { ERRORS } from "../../src/server/utils/JSONResponse";
 import * as utils from "./utils";
 
 let browser: puppeteer.Browser;

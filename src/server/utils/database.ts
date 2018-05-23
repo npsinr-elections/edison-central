@@ -7,9 +7,10 @@ import fs = require("fs");
 import { promisify } from "util";
 
 import { config } from "../../config";
+import { createDummyData } from "../../dummy/initDummyData";
+import { db } from "../model/elections";
 import * as fileHandler from "./fileHandler";
 
-const existsPromise = promisify(fs.exists);
 const mkdirPromise = promisify(fs.mkdir);
 
 /**
@@ -29,7 +30,7 @@ export interface Election {
   [key: string]: string | Office[];
   id: string;
   name: string;
-  description: string;
+  caption: string;
   image: string;
   color: string;
   offices: Office[];
@@ -42,7 +43,7 @@ export interface Office {
   [key: string]: string | Candidate[];
   id: string;
   name: string;
-  description: string;
+  caption: string;
   image: string;
   color: string;
   candidates: Candidate[];
@@ -76,20 +77,26 @@ export interface Results {
 
 /**
  * Checks whether the user data directory for the app
- * has been initalized. If not, then initializes it
+ * has been initialized. If not, then initializes it
  */
 export async function checkDataDir() {
   const dirs = [config.database.dir, config.database.images];
+  const files = [config.database.users];
+
   for (const dir of dirs) {
-    if (!(await existsPromise(dir))) {
+    if (!(fs.existsSync(dir))) {
       await mkdirPromise(dir);
     }
   }
-  const files = [config.database.users, config.database.elections];
+
   for (const file of files) {
-    if (!(await existsPromise(file))) {
+    if (!(fs.existsSync(file))) {
       await fileHandler.writeFile(file, "{}");
     }
+  }
+
+  if (config.devMode && ((await db.getElections()).length === 0)) {
+    await createDummyData();
   }
 }
 

@@ -98,7 +98,7 @@ router.post("/login", asyncMiddleware(async (req, res) => {
       Buffer.from(userData.key, "hex"),
       Buffer.from(password)))
       .toString("hex");
-    return JSONResponse.ResourceCreated(res, {
+    return JSONResponse.Data(res, {
       type: "session",
       id: req.session.id
     });
@@ -150,13 +150,13 @@ router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
     const newElectionData: database.Election = {
       id: shortid.generate(),
       name: "",
-      description: "",
+      caption: "",
       image: "",
       color: "",
       offices: []
     };
     await database.writeElectionData(newElectionData, encryptKey);
-    return JSONResponse.ResourceCreated(res);
+    return JSONResponse.Data(res, {});
   }
 }));
 
