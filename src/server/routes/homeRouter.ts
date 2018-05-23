@@ -13,6 +13,7 @@ import { config } from "../../config";
 
 import { db } from "../model/elections";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
+import {JSONResponse} from "../utils/JSONResponse";
 
 export const router = express.Router();
 
@@ -48,44 +49,6 @@ router.get("/", (_REQ, res) => {
   res.redirect("/elections");
 });
 
-const dummyElections = [
-  {
-    name: "Best Superhero",
-    id: 1,
-    caption: "Save the World!",
-    polls: [
-      {
-        name: "Best Cape",
-        candidates: [
-          {
-            name: "Superman"
-          },
-          {
-            name: "Batman"
-          }
-        ]
-      },
-    ]
-  }, {
-    name: "Best Superhero",
-    id: 2,
-    polls: [
-      {
-        name: "Best Cape",
-        caption: "Save the World!",
-        candidates: [
-          {
-            name: "Superman"
-          },
-          {
-            name: "Batman"
-          }
-        ]
-      },
-    ]
-  }
-];
-
 /**
  * Route to display the elections page
  * @name /elections
@@ -103,21 +66,58 @@ router.get("/elections", asyncMiddleware(async (_REQ, res) => {
   });
 }));
 
-router.get("/elections/:electionID/edit", (req, res) => {
+router.get("/elections/:electionID/edit", asyncMiddleware(async (req, res) => {
   res.render("forms/election-edit.html", {
     appName: config.appName,
     pageTitle: "Edit Elections",
     currentURL: req.url,
     navlinks: navlinks,
-    election: dummyElections[0],
+    election: await db.getElection(req.params.electionID),
     method: "PUT"
   });
-});
+}));
 
-router.put("/elections/:electionID", (req, res) => {
-  console.log(req.body);
-  res.json({ test: "Hello World!" });
-});
+// Requests for creating resources
+
+router.post("/elections", asyncMiddleware(async (req, res) => {
+  JSONResponse.Data(res, await db.createResource(req.body, "election"));
+}));
+
+router.post("/elections/:electionID/polls",
+            asyncMiddleware(async (req, res) => {
+  JSONResponse.Data(res, await db.createResource(req.body,
+    "poll", req.params.electionID));
+}));
+
+router.post("/polls/:pollID/candidates",
+            asyncMiddleware(async (req, res) => {
+  JSONResponse.Data(res, await db.createResource(req.body,
+    "candidate", req.params.pollID));
+}));
+
+// Requests for deleting resources
+
+router.delete("/elections:electionID",
+              asyncMiddleware(async (req, res) => {
+  JSONResponse.Data(res, await db.deleteElection(req.params.electionID));
+}));
+
+router.delete("/polls:pollID",
+              asyncMiddleware(async (req, res) => {
+  JSONResponse.Data(res, await db.deletePoll(req.params.pollID));
+}));
+
+router.delete("/candidates:candidateID",
+              asyncMiddleware(async (req, res) => {
+  JSONResponse.Data(res, await db.deleteCandidate(req.params.candidateID));
+}));
+
+// Requests for updating resources
+router.put("/:resourceType(elections|polls|candidates)/:resourceID",
+           asyncMiddleware(async (req, res) => {
+  JSONResponse.Data(res, await db.updateResource(req.params.resourceID,
+                                                 req.body));
+}));
 
 router.get("/settings", (_REQ, res) => {
   res.render("settings.html", {
