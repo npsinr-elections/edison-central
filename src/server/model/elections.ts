@@ -1,16 +1,19 @@
 import Datastore = require("nedb");
 import { config } from "../../config";
 
-interface Election {
+import {generate} from "shortid";
+
+export interface Election {
   id: string;
   type: string;
   name: string;
   caption: string;
   image: string;
   color: string;
+  polls?: Poll[];
 }
 
-interface Poll {
+export interface Poll {
   id: string;
   type: string;
   name: string;
@@ -18,9 +21,10 @@ interface Poll {
   color: string;
   parentID: string;
   group: string;
+  candidates?: Candidate[];
 }
 
-interface Candidate {
+export interface Candidate {
   id: string;
   type: string;
   name: string;
@@ -91,13 +95,33 @@ class ElectionsDatastore {
       autoload: true
     });
   }
-
+  // TODO: No await in loops
   public async getElections() {
     const elections = await dbfind(this.db, { type: "election" });
     for (const election of elections) {
       election.polls = await (this.getPolls(election.id));
     }
     return elections;
+  }
+
+  public async getPolls(electionID: string) {
+    const polls = await this.getChildren(electionID);
+    for (const poll of polls) {
+      poll.candidates = await this.getChildren(poll.id);
+    }
+    return polls;
+  }
+
+  public async getElection(electionID: string) {
+    const election = (await this.getResourceByID(electionID)) as Election;
+    election.polls = await this.getPolls(electionID);
+    return election;
+  }
+
+  public async getPoll(pollID: string) {
+    const poll = (await this.getResourceByID(pollID)) as Poll;
+    poll.candidates = await this.getChildren(poll.id);
+    return poll;
   }
 
   public async getResourceByID(id: string): Promise<Resource> {
@@ -108,26 +132,11 @@ class ElectionsDatastore {
     return (await dbfind(this.db, {parentID}));
   }
 
-  public async getPolls(electionID: string) {
-    const polls = await dbfind(this.db, { type: "poll", parentID: electionID });
-    for (const poll of polls) {
-      poll.candidates = await this.getCandidates(poll.id);
-    }
-    return polls;
-  }
-
-  public async getCandidates(pollID: string) {
-    return await dbfind(this.db, { type: "candidate", parentID: pollID });
-  }
-
-  public async getElection(electionID: string) {
-    return (await dbfind(this.db, { type: "election", id: electionID}))[0];
-  }
-
   public async createResource(resource: Resource,
                               type: string,
                               parentID?: string) {
     resource.type = type;
+    resource.id = generate();
     if (parentID !== undefined) {
       (resource as Poll | Candidate).parentID = parentID;
     }

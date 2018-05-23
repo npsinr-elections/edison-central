@@ -1,7 +1,11 @@
 <nav class="navbar navbar-expand-md navbar-dark">
   <a href="/" class="navbar-brand">{{ appName }}</a>
   <ul class="navbar-nav mr-auto">
-    {% for link, name, faIcon in navlinks %}
+    {% for link, name, faIcon in [
+      ["/elections", "Elections", "fab fa-dropbox"],
+      ["/settings", "Settings", "fas fa-cog"],
+      ["/users/logout", "Log Out", "fas fa-sign-out-alt"]
+    ] %}
     <li class="nav-item">
       <a href="{{ link }}" class="nav-link {% if currentURL === link %}active{% endif %}">
         <i class="nav-link-icon {{ faIcon }}"></i>
