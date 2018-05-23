@@ -52,7 +52,7 @@
     "webpack-cli": "^2.1.3"
   },
   "scripts": {
-    "test": "mocha \"src/test/**/*.ts\" --require ts-node/register",
+    "test": "mocha \"test/**/*.ts\" --require ts-node/register",
     "lint": "tslint --project ./tsconfig.json && eslint .",
     "build": "npm run build-ts && npm run bundle && npm run build-static",
     "build-ts": "tsc",
