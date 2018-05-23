@@ -11,11 +11,42 @@ import express = require("express");
 
 import { config } from "../../config";
 
-import { db } from "../model/elections";
+import { Candidate, db, Election, Poll} from "../model/elections";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
 import {JSONResponse} from "../utils/JSONResponse";
 
 export const router = express.Router();
+
+const emptyElection: Election = {
+  id: "",
+  name: "",
+  type: "election",
+  caption: "",
+  color: "",
+  image: "",
+  polls: []
+};
+
+const emptyPoll: Poll = {
+  id: "",
+  name: "",
+  type: "poll",
+  caption: "",
+  color: "",
+  candidates: [],
+  parentID: "",
+  group: ""
+};
+
+const emptyCandidate: Candidate = {
+  id: "",
+  name: "",
+  type: "candidate",
+  image: "",
+  parentID: "",
+  votes: 0,
+  group: ""
+};
 
 router.use((_REQ, res, next) => {
   res.setHeader("Cache-Control", "no-cache,no-store,max-age=0," +
@@ -35,11 +66,6 @@ router.get("/pages/:pageName", (req, res) => {
 const pageNames: Map<string, string> = new Map(
   [["elections", "Elections"], ["settings", "Settings"]]);
 
-const navlinks: Array<[string, string, string]> = [
-  ["/elections", "Elections", "fab fa-dropbox"],
-  ["/settings", "Settings", "fas fa-cog"],
-  ["/users/logout", "Log Out", "fas fa-sign-out-alt"]];
-
 /**
  * Redirects requests to /elections from root
  * @name /
@@ -54,29 +80,82 @@ router.get("/", (_REQ, res) => {
  * @name /elections
  * @function
  */
-router.get("/elections", asyncMiddleware(async (_REQ, res) => {
+router.get("/elections", asyncMiddleware(async (req, res) => {
   res.render("elections.html", {
     appName: config.appName,
     pageTitle: pageNames.get("elections"),
-    currentURL: "/elections",
-    navlinks: navlinks,
-    // Dummy data for elections.
-    // TODO replace with data from file
+    currentURL: req.url,
     elections: await db.getElections()
   });
 }));
+
+// Requests for create pages
+
+router.get("/elections/new", asyncMiddleware(async (req, res) => {
+  res.render("forms/election-edit.html", {
+    appName: config.appName,
+    pageTitle: "New Election",
+    currentURL: req.url,
+    election: emptyElection,
+    method: "POST"
+  });
+}));
+
+router.get("/polls/:pollID/new", asyncMiddleware(async (req, res) => {
+  res.render("forms/poll-edit.html", {
+    appName: config.appName,
+    pageTitle: "New Poll",
+    currentURL: req.url,
+    poll: emptyPoll,
+    method: "POST"
+  });
+}));
+
+router.get("/candidates/:candidateID/new",
+          asyncMiddleware(async (req, res) => {
+  res.render("forms/candidate-edit.html", {
+    appName: config.appName,
+    pageTitle: "New Candidate",
+    currentURL: req.url,
+    candidate: emptyCandidate,
+    method: "POST"
+  });
+}));
+
+// Requests for edit pages
 
 router.get("/elections/:electionID/edit", asyncMiddleware(async (req, res) => {
   res.render("forms/election-edit.html", {
     appName: config.appName,
     pageTitle: "Edit Elections",
     currentURL: req.url,
-    navlinks: navlinks,
     election: await db.getElection(req.params.electionID),
     method: "PUT"
   });
 }));
 
+router.get("/polls/:pollID/edit", asyncMiddleware(async (req, res) => {
+  const poll = await db.getPoll(req.params.pollID);
+  res.render("forms/poll-edit.html", {
+    appName: config.appName,
+    pageTitle: `Edit Poll ${poll.name}`,
+    currentURL: req.url,
+    poll: poll,
+    method: "PUT"
+  });
+}));
+
+router.get("/candidates/:candidateID/edit",
+          asyncMiddleware(async (req, res) => {
+  const candidate = await db.getResourceByID(req.params.candidateID);
+  res.render("forms/candidate-edit.html", {
+    appName: config.appName,
+    pageTitle: `Edit Candidate ${candidate.name}`,
+    currentURL: req.url,
+    candidate: candidate,
+    method: "PUT"
+  });
+}));
 // Requests for creating resources
 
 router.post("/elections", asyncMiddleware(async (req, res) => {
@@ -124,6 +203,5 @@ router.get("/settings", (_REQ, res) => {
     appName: config.appName,
     pageTitle: pageNames.get("settings"),
     currentURL: "/settings",
-    navlinks: navlinks
   });
 });
