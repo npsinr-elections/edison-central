@@ -1,7 +1,7 @@
 import Datastore = require("nedb");
 import { config } from "../../config";
 
-import {generate} from "shortid";
+import { generate } from "shortid";
 
 export interface Election {
   id: string;

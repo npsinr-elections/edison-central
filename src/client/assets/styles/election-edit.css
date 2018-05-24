@@ -12,8 +12,3 @@ input[type="color"] {
   width: 3.125rem;
   height: 3.125rem;
 }
-
-.uploaded-image {
-  max-height: 12.5rem;
-  margin: 0.75rem 0;
-}

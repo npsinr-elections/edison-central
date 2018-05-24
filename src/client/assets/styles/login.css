@@ -9,8 +9,10 @@ body {
   display: flex;
   -ms-flex-align: center;
   -ms-flex-pack: center;
+  box-align: center;
   -webkit-box-align: center;
   align-items: center;
+  box-pack: center;
   -webkit-box-pack: center;
   justify-content: center;
   padding-top: 40px;
