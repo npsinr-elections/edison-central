@@ -9,7 +9,7 @@ export async function createDummyData() {
       id: electionID,
       name: "Superhero Awards 2018",
       caption: "Save the WORLD!",
-      image: "/images/a.png",
+      image: "/dummy/images/election-default.jpg",
       color: "#6d0b0b",
     });
     const fallback = (id + 8).toString();
@@ -30,7 +30,7 @@ export async function createDummyData() {
           type: "candidate",
           id: (id++).toString(),
           name: "Superman",
-          image: "/images/c.png",
+          image: "/dummy/images/candidate-default.jpg",
           parentID: pollID,
           group: "heroes",
           fallback: (fallback === pollID) ? "_none_" : fallback

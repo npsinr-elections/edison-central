@@ -1,5 +1,6 @@
+{% import "./candidate-list.html" as candidateList %}
+
 {% macro table(polls) %}
-<div class="poll-list-container table-responsive">
   <table class="poll-list-table table table-bordered">
     <thead class="thead-light">
       <tr>
@@ -7,14 +8,15 @@
         <th scope="col">Candidates</th>
       </tr>
     </thead>
-    {% for poll in polls %}
-    <tr>
-      <td>{{ poll.name }}</td>
-      <td>{{ poll.candidates.length }} candidates</td>
-    </tr>
-    {% endfor %}
+    <tbody>
+      {% for poll in polls %}
+      <tr>
+        <td>{{ poll.name }}</td>
+        <td>{{ candidateList.smallList(poll.candidates) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
   </table>
-</div>
 {% endmacro %}
 
 {% macro scripts() %}
