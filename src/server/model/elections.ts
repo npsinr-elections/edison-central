@@ -95,32 +95,30 @@ class ElectionsDatastore {
       autoload: true
     });
   }
-  // TODO: No await in loops
-  public async getElections() {
-    const elections = await dbfind(this.db, { type: "election" });
-    for (const election of elections) {
-      election.polls = await (this.getPolls(election.id));
-    }
-    return elections;
+
+  public async getElections(): Promise<Election[]> {
+    const elections: Election[] = await dbfind(this.db, { type: "election" });
+    return await Promise.all(elections.map((value) => {
+      return this.getElection(value.id);
+    }));
   }
 
-  public async getPolls(electionID: string) {
-    const polls = await this.getChildren(electionID);
-    for (const poll of polls) {
-      poll.candidates = await this.getChildren(poll.id);
-    }
-    return polls;
+  public async getPolls(electionID: string): Promise<Poll[]> {
+    const polls: Poll[] = (await this.getChildren(electionID)) as Poll[];
+    return await Promise.all(polls.map((value) => {
+      return this.getPoll(value.id);
+    }));
   }
 
-  public async getElection(electionID: string) {
+  public async getElection(electionID: string): Promise<Election> {
     const election = (await this.getResourceByID(electionID)) as Election;
     election.polls = await this.getPolls(electionID);
     return election;
   }
 
-  public async getPoll(pollID: string) {
+  public async getPoll(pollID: string): Promise<Poll> {
     const poll = (await this.getResourceByID(pollID)) as Poll;
-    poll.candidates = await this.getChildren(poll.id);
+    poll.candidates = (await this.getChildren(poll.id)) as Candidate[];
     return poll;
   }
 
@@ -128,7 +126,7 @@ class ElectionsDatastore {
     return (await dbfind(this.db, {id}))[0];
   }
 
-  public async getChildren(parentID: string) {
+  public async getChildren(parentID: string): Promise<Poll[] | Candidate[]> {
     return (await dbfind(this.db, {parentID}));
   }
 
@@ -145,7 +143,7 @@ class ElectionsDatastore {
 
   public async deleteElection(electionID: string) {
     await dbRemove(this.db, {id: electionID});
-    const polls: Poll[] = await this.getChildren(electionID);
+    const polls: Poll[] = (await this.getChildren(electionID)) as Poll[];
     polls.forEach((poll: Poll) => {
       this.deletePoll(poll.id);
     });
@@ -154,7 +152,8 @@ class ElectionsDatastore {
 
   public async deletePoll(pollID: string) {
     await dbRemove(this.db, {id: pollID});
-    const candidates: Candidate[] = await this.getChildren(pollID);
+    const candidates: Candidate[] = (await this.getChildren(
+                                    pollID))as Candidate[];
     candidates.forEach((candidate: Candidate) => {
       this.deleteCandidate(candidate.id);
     });
