@@ -12,15 +12,15 @@
       {%- endif %}
     </div>
     <div class="card-body">
-      <h4>Polls</h4>
+      <h4 class="card-title">Polls</h4>
       {{ pollList.table(election.polls) }}
       <hr>
-      <h4>Colors</h4>
+      <h4 class="card-title">Colors</h4>
       <div class="election-color-display" style="background-color: {{ election.color }}">
         Sample Text
       </div>
       <hr>
-      <h4>Image</h4>
+      <h4 class="card-title">Image</h4>
       <img class="uploaded-image" src="{{ election.image }}" alt="Election Image">
       <hr>
       <div class="btn-group">
