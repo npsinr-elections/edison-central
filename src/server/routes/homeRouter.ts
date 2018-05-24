@@ -97,16 +97,19 @@ router.get("/elections/new", asyncMiddleware(async (req, res) => {
     pageTitle: "New Election",
     currentURL: req.url,
     election: emptyElection,
+    formURL: req.url.slice(0, -4),
     method: "POST"
   });
 }));
 
-router.get("/polls/:pollID/new", asyncMiddleware(async (req, res) => {
+router.get("/elections/:electionID/polls/new",
+      asyncMiddleware(async (req, res) => {
   res.render("forms/poll-edit.html", {
     appName: config.appName,
     pageTitle: "New Poll",
     currentURL: req.url,
     poll: emptyPoll,
+    formURL: req.url.slice(0, -4),
     method: "POST"
   });
 }));
@@ -118,6 +121,7 @@ router.get("/candidates/:candidateID/new",
     pageTitle: "New Candidate",
     currentURL: req.url,
     candidate: emptyCandidate,
+    formURL: req.url.slice(0, -4),
     method: "POST"
   });
 }));
