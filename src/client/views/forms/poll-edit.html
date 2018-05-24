@@ -17,21 +17,14 @@
           <input id="poll-caption-input" class="form-control" name="caption" type="text" value="{{ poll.caption }}" required>
         </div>
         <div class="form-group">
-          <label for="poll-group-input">Enter the type of poll</label>
-          <select name="group" id="poll-group-input" class="form-control" required>
-            <option value="house" {% if poll.group === "house" %}selected{% endif %}>House</option>
-            <option value="prefect" {% if poll.group === "prefect" %}selected{% endif %}>Prefect</option>
-          </select>
-        </div>
-        <div class="form-group">
           <label for="poll-color-input">Click to change the background color</label>
           <input id="poll-color-input" class="form-control" name="color" type="color" value="{{ poll.color }}">
         </div>
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label for="poll-image-input">Upload the image for the poll</label>
           <input id="poll-image-input" class="form-control-file" name="image" type="file">
           <img src="{{ poll.image }}" alt="No image uploaded" id="poll-uploaded-image" class="uploaded-image">
-        </div>
+        </div> -->
         <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i>&nbsp;Submit</button>
       </form>
     </div>
