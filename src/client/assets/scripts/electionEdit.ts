@@ -1,47 +1,21 @@
+import { imageLoader, multipartSubmitter } from "./modules/form";
+
 $(() => {
-  /**
-   * Submit the form data to the server
-   */
-  $("#election-form").submit((e: JQuery.Event<HTMLFormElement, null>) => {
-    const electionForm = $(e.target);
-    const data = new FormData(e.target);
-
-    $.ajax({
-      method: "PUT",
-      data: data,
-      cache: false,
-      processData: false,
-      contentType: "multipart/form-data",
-      success: (res) => {
-        console.log(res);
-      },
-      url: electionForm.attr("action")
-    });
-
-    e.preventDefault();
-  });
-
   /**
    * Change the image when an image is uploaded
    */
-  $("#election-image-input").change(
-    (e: JQuery.Event<HTMLInputElement, null>) => {
-      const imageInput = e.target;
-      const imagePreview = $("#election-uploaded-image");
-      const reader = new FileReader();
+  const imageInput = $("#election-image-input") as JQuery<HTMLInputElement>;
+  const imagePreview =
+    $("#election-uploaded-image") as JQuery<HTMLImageElement>;
+  imageLoader(imageInput, imagePreview);
 
-      reader.onload = (readEvent) => {
-        imagePreview.attr("src", readEvent.target.result);
-      };
-
-      if (imageInput.files && imageInput.files[0]) {
-        if (imageInput.files.length === 1) {
-          reader.readAsDataURL(imageInput.files[0]);
-        } else {
-          imagePreview.attr("src", "#");
-          imagePreview.attr("alt", "Too many images.");
-        }
-      }
-    }
+  /**
+   * Submit the form data to the server
+   */
+  const electionForm = $("#election-form") as JQuery<HTMLFormElement>;
+  multipartSubmitter(
+    electionForm,
+    (res) => { console.log($.parseJSON(res.responseText)); },
+    (res) => { console.error($.parseJSON(res.responseText)); }
   );
 });
