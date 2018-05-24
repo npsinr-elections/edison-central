@@ -12,9 +12,9 @@ import multer = require("multer");
 
 import { config } from "../../config";
 
-import { Candidate, db, Election, Poll} from "../model/elections";
+import { Candidate, db, Election, Poll } from "../model/elections";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
-import {ERRORS, JSONResponse} from "../utils/JSONResponse";
+import { ERRORS, JSONResponse } from "../utils/JSONResponse";
 
 export const router = express.Router();
 
@@ -110,32 +110,33 @@ router.get("/elections/new", asyncMiddleware(async (req, res) => {
 }));
 
 router.get("/elections/:electionID/polls/new",
-      asyncMiddleware(async (req, res) => {
-  res.render("forms/poll-edit.html", {
-    appName: config.appName,
-    pageTitle: "New Poll",
-    currentURL: req.url,
-    poll: emptyPoll,
-    formURL: req.url.slice(0, -4),
-    method: "POST"
-  });
-}));
+  asyncMiddleware(async (req, res) => {
+    res.render("forms/poll-edit.html", {
+      appName: config.appName,
+      pageTitle: "New Poll",
+      currentURL: req.url,
+      poll: emptyPoll,
+      formURL: req.url.slice(0, -4),
+      method: "POST"
+    });
+  }));
 
-router.get("/polls/:pollID/candidates/new",
-          asyncMiddleware(async (req, res) => {
-  const parentElectionID = (await db.getResourceByID(
-    req.params.pollID, "poll")).id;
-  const polls = await db.getPolls(parentElectionID);
-  res.render("forms/candidate-edit.html", {
-    appName: config.appName,
-    pageTitle: "New Candidate",
-    currentURL: req.url,
-    candidate: emptyCandidate,
-    formURL: req.url.slice(0, -4),
-    fallbacks: polls,
-    method: "POST"
-  });
-}));
+router.get(
+  "/polls/:pollID/candidates/new",
+  asyncMiddleware(async (req, res) => {
+    const parentElectionID = (await db.getResourceByID(
+      req.params.pollID, "poll")).id;
+    const polls = await db.getPolls(parentElectionID);
+    res.render("forms/candidate-edit.html", {
+      appName: config.appName,
+      pageTitle: "New Candidate",
+      currentURL: req.url,
+      candidate: emptyCandidate,
+      formURL: req.url.slice(0, -4),
+      fallbacks: polls,
+      method: "POST"
+    });
+  }));
 
 // Requests for edit pages
 
@@ -169,75 +170,78 @@ router.get("/polls/:pollID/edit", asyncMiddleware(async (req, res) => {
   });
 }));
 
-router.get("/candidates/:candidateID/edit",
-          asyncMiddleware(async (req, res) => {
+router.get(
+  "/candidates/:candidateID/edit",
+  asyncMiddleware(async (req, res) => {
 
-  const candidate = (await db.getResourceByID(
-    req.params.candidateID, "candidate")) as Candidate;
-  if (candidate === undefined) {
-    return JSONResponse.Error(res, ERRORS.pageError.notFound);
-  }
+    const candidate = (await db.getResourceByID(
+      req.params.candidateID, "candidate")) as Candidate;
+    if (candidate === undefined) {
+      return JSONResponse.Error(res, ERRORS.pageError.notFound);
+    }
 
-  const parentPollID = candidate.parentID;
-  const parentElectionID = (await db.getResourceByID(
-    parentPollID, "poll"
-  )).id;
-  const polls = await db.getPolls(parentElectionID);
-  res.render("forms/candidate-edit.html", {
-    appName: config.appName,
-    pageTitle: `Edit Candidate ${candidate.name}`,
-    currentURL: req.url,
-    candidate: candidate,
-    formURL: req.url.slice(0, -5),
-    fallbacks: polls,
-    method: "PUT"
-  });
-}));
+    const parentPollID = candidate.parentID;
+    const parentElectionID = (await db.getResourceByID(
+      parentPollID, "poll"
+    )).id;
+    const polls = await db.getPolls(parentElectionID);
+    res.render("forms/candidate-edit.html", {
+      appName: config.appName,
+      pageTitle: `Edit Candidate ${candidate.name}`,
+      currentURL: req.url,
+      candidate: candidate,
+      formURL: req.url.slice(0, -5),
+      fallbacks: polls,
+      method: "PUT"
+    });
+  }));
 // Requests for creating resources
 
 router.post("/elections",
   upload.single("image"),
   asyncMiddleware(async (req, res) => {
-  JSONResponse.Data(res, await db.createResource(req.body, "election"));
-}));
+    JSONResponse.Data(res, await db.createResource(req.body, "election"));
+  }));
 
 router.post("/elections/:electionID/polls",
-            asyncMiddleware(async (req, res) => {
-  JSONResponse.Data(res, await db.createResource(req.body,
-    "poll", req.params.electionID));
-}));
+  asyncMiddleware(async (req, res) => {
+    JSONResponse.Data(res, await db.createResource(req.body,
+      "poll", req.params.electionID));
+  }));
 
-router.post("/polls/:pollID/candidates",
+router.post(
+  "/polls/:pollID/candidates",
   upload.single("image"),
   asyncMiddleware(async (req, res) => {
-  JSONResponse.Data(res, await db.createResource(req.body,
-    "candidate", req.params.pollID));
-}));
+    JSONResponse.Data(res, await db.createResource(req.body,
+      "candidate", req.params.pollID));
+  }));
 
 // Requests for deleting resources
 
 router.delete("/elections/:electionID",
-              asyncMiddleware(async (req, res) => {
-  JSONResponse.Data(res, await db.deleteElection(req.params.electionID));
-}));
+  asyncMiddleware(async (req, res) => {
+    JSONResponse.Data(res, await db.deleteElection(req.params.electionID));
+  }));
 
 router.delete("/polls/:pollID",
-              asyncMiddleware(async (req, res) => {
-  JSONResponse.Data(res, await db.deletePoll(req.params.pollID));
-}));
+  asyncMiddleware(async (req, res) => {
+    JSONResponse.Data(res, await db.deletePoll(req.params.pollID));
+  }));
 
 router.delete("/candidates/:candidateID",
-              asyncMiddleware(async (req, res) => {
-  JSONResponse.Data(res, await db.deleteCandidate(req.params.candidateID));
-}));
+  asyncMiddleware(async (req, res) => {
+    JSONResponse.Data(res, await db.deleteCandidate(req.params.candidateID));
+  }));
 
 // Requests for updating resources
-router.put("/:resourceType(elections|polls|candidates)/:resourceID",
-          upload.single("image"),
-           asyncMiddleware(async (req, res) => {
-  JSONResponse.Data(res, await db.updateResource(req.params.resourceID,
-                                                 req.body));
-}));
+router.put(
+  "/:resourceType(elections|polls|candidates)/:resourceID",
+  upload.single("image"),
+  asyncMiddleware(async (req, res) => {
+    JSONResponse.Data(res, await db.updateResource(req.params.resourceID,
+      req.body));
+  }));
 
 router.get("/settings", (_REQ, res) => {
   res.render("settings.html", {
