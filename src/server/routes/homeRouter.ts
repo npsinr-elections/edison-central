@@ -225,7 +225,8 @@ router.post("/elections",
     JSONResponse.Data(res, newElection);
   }));
 
-router.post("/elections/:electionID/polls",
+router.post(
+  "/elections/:electionID/polls",
   upload.single("image"),
   asyncMiddleware(async (req, res) => {
     JSONResponse.Data(res, await db.createResource(req.body,
@@ -248,7 +249,7 @@ router.post(
       req.body.image = `/images/${req.file.filename}`;
     }
     const newCandidate = (await db.createResource(
-      req.body, "election", req.params.pollID, candidateID)) as Candidate;
+      req.body, "candidate", req.params.pollID, candidateID)) as Candidate;
     JSONResponse.Data(res, newCandidate);
   }));
 
