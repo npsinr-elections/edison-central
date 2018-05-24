@@ -8,14 +8,21 @@
  * GET /: Show home page
  */
 import express = require("express");
+import multer = require("multer");
 
 import { config } from "../../config";
 
 import { Candidate, db, Election, Poll} from "../model/elections";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
-import {JSONResponse} from "../utils/JSONResponse";
+import {ERRORS, JSONResponse} from "../utils/JSONResponse";
 
 export const router = express.Router();
+
+const storage = multer.diskStorage({
+  destination: config.database.images
+});
+
+const upload = multer({ storage: storage });
 
 const emptyElection: Election = {
   id: "",
@@ -114,14 +121,18 @@ router.get("/elections/:electionID/polls/new",
   });
 }));
 
-router.get("/candidates/:candidateID/new",
+router.get("/polls/:pollID/candidates/new",
           asyncMiddleware(async (req, res) => {
+  const parentElectionID = (await db.getResourceByID(
+    req.params.pollID, "poll")).id;
+  const polls = await db.getPolls(parentElectionID);
   res.render("forms/candidate-edit.html", {
     appName: config.appName,
     pageTitle: "New Candidate",
     currentURL: req.url,
     candidate: emptyCandidate,
     formURL: req.url.slice(0, -4),
+    fallbacks: polls,
     method: "POST"
   });
 }));
@@ -129,40 +140,64 @@ router.get("/candidates/:candidateID/new",
 // Requests for edit pages
 
 router.get("/elections/:electionID/edit", asyncMiddleware(async (req, res) => {
+  const election = await db.getElection(req.params.electionID);
+  if (election === undefined) {
+    return JSONResponse.Error(res, ERRORS.pageError.notFound);
+  }
   res.render("forms/election-edit.html", {
     appName: config.appName,
     pageTitle: "Edit Elections",
     currentURL: req.url,
     election: await db.getElection(req.params.electionID),
+    formURL: req.url.slice(0, -5),
     method: "PUT"
   });
 }));
 
 router.get("/polls/:pollID/edit", asyncMiddleware(async (req, res) => {
   const poll = await db.getPoll(req.params.pollID);
+  if (poll === undefined) {
+    return JSONResponse.Error(res, ERRORS.pageError.notFound);
+  }
   res.render("forms/poll-edit.html", {
     appName: config.appName,
     pageTitle: `Edit Poll ${poll.name}`,
     currentURL: req.url,
     poll: poll,
+    formURL: req.url.slice(0, -5),
     method: "PUT"
   });
 }));
 
 router.get("/candidates/:candidateID/edit",
           asyncMiddleware(async (req, res) => {
-  const candidate = await db.getResourceByID(req.params.candidateID);
+
+  const candidate = (await db.getResourceByID(
+    req.params.candidateID, "candidate")) as Candidate;
+  if (candidate === undefined) {
+    return JSONResponse.Error(res, ERRORS.pageError.notFound);
+  }
+
+  const parentPollID = candidate.parentID;
+  const parentElectionID = (await db.getResourceByID(
+    parentPollID, "poll"
+  )).id;
+  const polls = await db.getPolls(parentElectionID);
   res.render("forms/candidate-edit.html", {
     appName: config.appName,
     pageTitle: `Edit Candidate ${candidate.name}`,
     currentURL: req.url,
     candidate: candidate,
+    formURL: req.url.slice(0, -5),
+    fallbacks: polls,
     method: "PUT"
   });
 }));
 // Requests for creating resources
 
-router.post("/elections", asyncMiddleware(async (req, res) => {
+router.post("/elections",
+  upload.single("image"),
+  asyncMiddleware(async (req, res) => {
   JSONResponse.Data(res, await db.createResource(req.body, "election"));
 }));
 
@@ -173,7 +208,8 @@ router.post("/elections/:electionID/polls",
 }));
 
 router.post("/polls/:pollID/candidates",
-            asyncMiddleware(async (req, res) => {
+  upload.single("image"),
+  asyncMiddleware(async (req, res) => {
   JSONResponse.Data(res, await db.createResource(req.body,
     "candidate", req.params.pollID));
 }));
@@ -197,6 +233,7 @@ router.delete("/candidates/:candidateID",
 
 // Requests for updating resources
 router.put("/:resourceType(elections|polls|candidates)/:resourceID",
+          upload.single("image"),
            asyncMiddleware(async (req, res) => {
   JSONResponse.Data(res, await db.updateResource(req.params.resourceID,
                                                  req.body));

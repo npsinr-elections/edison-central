@@ -50,13 +50,13 @@ export function dbfind(datastore: Datastore, query: any): Promise<any[]> {
 
 export function dbInsert(datastore: Datastore, doc: any) {
   return new Promise((resolve, reject) => {
-      datastore.insert(doc, (err: any, newDocs: any) => {
-          if (err) {
-              reject(err);
-          } else {
-              resolve(newDocs);
-          }
-      });
+    datastore.insert(doc, (err: any, newDocs: any) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(newDocs);
+      }
+    });
   });
 }
 
@@ -72,10 +72,11 @@ export function dbRemove(datastore: Datastore, query: any) {
   });
 }
 
-export function dbUpdate(datastore: Datastore,
-                         query: any,
-                         update: any,
-                         options: any) {
+export function dbUpdate(
+  datastore: Datastore,
+  query: any,
+  update: any,
+  options: any) {
   return new Promise((resolve, reject) => {
     datastore.update(query, update, options, (err: any, numRemoved: number) => {
       if (err) {
@@ -111,38 +112,59 @@ class ElectionsDatastore {
   }
 
   public async getElection(electionID: string): Promise<Election> {
-    const election = (await this.getResourceByID(electionID)) as Election;
+    const election = (
+      await this.getResourceByID(
+        electionID, "election")) as Election;
+    if (election === undefined) {
+      return undefined;
+    }
     election.polls = await this.getPolls(electionID);
     return election;
   }
 
   public async getPoll(pollID: string): Promise<Poll> {
-    const poll = (await this.getResourceByID(pollID)) as Poll;
+    const poll = (
+      await this.getResourceByID(
+        pollID, "poll")) as Poll;
+    if (poll === undefined) {
+      return undefined;
+    }
     poll.candidates = (await this.getChildren(poll.id)) as Candidate[];
     return poll;
   }
 
-  public async getResourceByID(id: string): Promise<Resource> {
-    return (await dbfind(this.db, {id}))[0];
+  public async getResourceByID(id: string, type: string): Promise<Resource> {
+    const resource = (await dbfind(this.db, { id, type }));
+    if (resource.length === 0) {
+      return undefined;
+    } else {
+      return resource[0];
+    }
   }
 
   public async getChildren(parentID: string): Promise<Poll[] | Candidate[]> {
-    return (await dbfind(this.db, {parentID}));
+    return (await dbfind(this.db, { parentID }));
   }
 
-  public async createResource(resource: Resource,
-                              type: string,
-                              parentID?: string) {
+  public async createResource(
+    resource: Resource,
+    type: string,
+    parentID?: string) {
     resource.type = type;
     resource.id = generate();
     if (parentID !== undefined) {
       (resource as Poll | Candidate).parentID = parentID;
     }
+
+    if (resource.type === "candidate") {
+      (resource as Candidate).votes = 0;
+    }
+
     return await dbInsert(this.db, resource);
   }
 
   public async deleteElection(electionID: string) {
-    await dbRemove(this.db, {id: electionID});
+    await dbRemove(this.db, { id: electionID });
     const polls: Poll[] = (await this.getChildren(electionID)) as Poll[];
     polls.forEach((poll: Poll) => {
       this.deletePoll(poll.id);
@@ -151,9 +173,9 @@ class ElectionsDatastore {
   }
 
   public async deletePoll(pollID: string) {
-    await dbRemove(this.db, {id: pollID});
+    await dbRemove(this.db, { id: pollID });
     const candidates: Candidate[] = (await this.getChildren(
-                                    pollID))as Candidate[];
+      pollID)) as Candidate[];
     candidates.forEach((candidate: Candidate) => {
       this.deleteCandidate(candidate.id);
     });
@@ -161,12 +183,12 @@ class ElectionsDatastore {
   }
 
   public async deleteCandidate(candidateID: string) {
-    await dbRemove(this.db, {id: candidateID});
+    await dbRemove(this.db, { id: candidateID });
     return {};
   }
 
   public async updateResource(id: string, resource: Resource) {
-    return await dbUpdate(this.db, {id}, {$set: resource}, {});
+    return await dbUpdate(this.db, { id }, { $set: resource }, {});
   }
 }
 

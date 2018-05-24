@@ -74,6 +74,10 @@ interface PresetErrors {
     /** Attribute Value didn't follow format */
     invalidValue: (invalidValue: string, invalidAttr: string) => Error;
   };
+  pageError: {
+    /** Page Error */
+    notFound: Error
+  };
 }
 
 /**
@@ -161,6 +165,14 @@ export const ERRORS: PresetErrors = {
         detail: invalidValue + " is didn't follow format rules " +
           " as expected for " + invalidAttr
       };
+    }
+  },
+  pageError: {
+    notFound: {
+      code: "pageError.notFound",
+      status: 404,
+      title: "Page/Resource does not exist",
+      detail: ""
     }
   }
 };
