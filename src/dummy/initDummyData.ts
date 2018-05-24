@@ -31,7 +31,7 @@ export async function createDummyData() {
           name: "Superman",
           image: "/images/c.png",
           parentID: pollID,
-          house: "heroes"
+          group: "heroes"
         });
       }
     }
