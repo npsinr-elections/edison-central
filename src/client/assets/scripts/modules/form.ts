@@ -15,7 +15,7 @@ export function multipartSubmitter(
       data: data,
       cache: false,
       processData: false,
-      contentType: "multipart/form-data",
+      contentType: false,
       success: successCB,
       error: errorCB
     });

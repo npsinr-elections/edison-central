@@ -58,7 +58,8 @@ nunjucks.configure(app.get("views"), {
 });
 
 app.use("/assets", express.static(config.assets));
-
+app.use("/dummy/images", express.static(config.dummyImages));
+app.use("/images", express.static(config.database.images));
 app.use("/users", userRouter);
 
 app.use("/", checkLoggedIn, homeRouter);

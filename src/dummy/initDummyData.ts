@@ -12,6 +12,7 @@ export async function createDummyData() {
       image: "/images/a.png",
       color: "#6d0b0b",
     });
+    const fallback = (id + 8).toString();
     for (let j = 0; j < 3; j++) {
       const pollID = (id++).toString();
       await dbInsert(db.db, {
@@ -31,7 +32,8 @@ export async function createDummyData() {
           name: "Superman",
           image: "/images/c.png",
           parentID: pollID,
-          group: "heroes"
+          group: "heroes",
+          fallback: (fallback === pollID) ? "_none_" : fallback
         });
       }
     }

@@ -9,6 +9,8 @@
  */
 import express = require("express");
 import multer = require("multer");
+import path = require("path");
+import shortid = require("shortid");
 
 import { config } from "../../config";
 
@@ -19,7 +21,10 @@ import { ERRORS, JSONResponse } from "../utils/JSONResponse";
 export const router = express.Router();
 
 const storage = multer.diskStorage({
-  destination: config.database.images
+  destination: config.database.images,
+  filename: (_REQ, file, cb) => {
+    cb(null, shortid.generate() + path.extname(file.originalname));
+  }
 });
 
 const upload = multer({ storage: storage });
@@ -30,7 +35,7 @@ const emptyElection: Election = {
   type: "election",
   caption: "",
   color: "",
-  image: "",
+  image: "/dummy/images/election-default.jpg",
   polls: []
 };
 
@@ -49,10 +54,10 @@ const emptyCandidate: Candidate = {
   id: "",
   name: "",
   type: "candidate",
-  image: "",
+  image: "/dummy/images/candidate-default.jpg",
   parentID: "",
   votes: 0,
-  group: ""
+  fallback: ""
 };
 
 router.use((_REQ, res, next) => {
@@ -124,8 +129,8 @@ router.get("/elections/:electionID/polls/new",
 router.get(
   "/polls/:pollID/candidates/new",
   asyncMiddleware(async (req, res) => {
-    const parentElectionID = (await db.getResourceByID(
-      req.params.pollID, "poll")).id;
+    const parentElectionID = ((await db.getResourceByID(
+      req.params.pollID, "poll")) as Poll).parentID;
     const polls = await db.getPolls(parentElectionID);
     res.render("forms/candidate-edit.html", {
       appName: config.appName,
@@ -156,10 +161,14 @@ router.get("/elections/:electionID/edit", asyncMiddleware(async (req, res) => {
 }));
 
 router.get("/polls/:pollID/edit", asyncMiddleware(async (req, res) => {
-  const poll = await db.getPoll(req.params.pollID);
+  const poll = (await db.getPoll(req.params.pollID)) as Poll;
   if (poll === undefined) {
     return JSONResponse.Error(res, ERRORS.pageError.notFound);
   }
+  await Promise.all(poll.candidates.map((candidate) => {
+    return db.setFallbackName(candidate);
+  }));
+
   res.render("forms/poll-edit.html", {
     appName: config.appName,
     pageTitle: `Edit Poll ${poll.name}`,
@@ -181,9 +190,9 @@ router.get(
     }
 
     const parentPollID = candidate.parentID;
-    const parentElectionID = (await db.getResourceByID(
+    const parentElectionID = ((await db.getResourceByID(
       parentPollID, "poll"
-    )).id;
+    )) as Poll).parentID;
     const polls = await db.getPolls(parentElectionID);
     res.render("forms/candidate-edit.html", {
       appName: config.appName,
@@ -200,10 +209,24 @@ router.get(
 router.post("/elections",
   upload.single("image"),
   asyncMiddleware(async (req, res) => {
-    JSONResponse.Data(res, await db.createResource(req.body, "election"));
+    const electionID = shortid.generate();
+    if (req.file === undefined) {
+      req.body.image = "/dummy/images/election-default.jpg";
+    } else {
+      db.createResource({
+        id: req.file.filename,
+        type: "image",
+        resourceID: electionID
+      }, "image", undefined, req.file.filename);
+      req.body.image = `/images/${req.file.filename}`;
+    }
+    const newElection = (await db.createResource(
+      req.body, "election", undefined, electionID)) as Election;
+    JSONResponse.Data(res, newElection);
   }));
 
 router.post("/elections/:electionID/polls",
+  upload.single("image"),
   asyncMiddleware(async (req, res) => {
     JSONResponse.Data(res, await db.createResource(req.body,
       "poll", req.params.electionID));
@@ -213,8 +236,20 @@ router.post(
   "/polls/:pollID/candidates",
   upload.single("image"),
   asyncMiddleware(async (req, res) => {
-    JSONResponse.Data(res, await db.createResource(req.body,
-      "candidate", req.params.pollID));
+    const candidateID = shortid.generate();
+    if (req.file === undefined) {
+      req.body.image = "/dummy/images/candidate-default.jpg";
+    } else {
+      db.createResource({
+        id: req.file.filename,
+        type: "image",
+        resourceID: candidateID
+      }, "image", undefined, req.file.filename);
+      req.body.image = `/images/${req.file.filename}`;
+    }
+    const newCandidate = (await db.createResource(
+      req.body, "election", req.params.pollID, candidateID)) as Candidate;
+    JSONResponse.Data(res, newCandidate);
   }));
 
 // Requests for deleting resources
@@ -239,8 +274,19 @@ router.put(
   "/:resourceType(elections|polls|candidates)/:resourceID",
   upload.single("image"),
   asyncMiddleware(async (req, res) => {
-    JSONResponse.Data(res, await db.updateResource(req.params.resourceID,
-      req.body));
+    if (req.file !== undefined) {
+      await db.deleteImage(req.params.resourceID);
+      await db.createResource({
+        id: req.file.filename,
+        type: "image",
+        resourceID: req.params.resourceID
+      }, "image");
+      req.body.image = `/images/${req.file.filename}`;
+    } else {
+      delete req.body.image; // Dont overwrite old image
+    }
+    const updateNum = await db.updateResource(req.params.resourceID, req.body);
+    JSONResponse.Data(res, updateNum);
   }));
 
 router.get("/settings", (_REQ, res) => {

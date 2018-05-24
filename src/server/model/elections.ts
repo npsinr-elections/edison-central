@@ -1,7 +1,13 @@
+import fs = require("fs");
 import Datastore = require("nedb");
+import path = require("path");
+import { promisify } from "util";
+
 import { config } from "../../config";
 
 import { generate } from "shortid";
+
+const unlinkPromise = promisify(fs.unlink);
 
 export interface Election {
   id: string;
@@ -31,10 +37,17 @@ export interface Candidate {
   image: string;
   votes: number;
   parentID: string;
-  group: string;
+  fallback: string;
+  fallbackName?: string;
 }
 
-type Resource = Election | Poll | Candidate;
+export interface Image {
+  id: string;
+  type: string;
+  resourceID: string;
+}
+
+type Resource = Election | Poll | Candidate | Image;
 
 export function dbfind(datastore: Datastore, query: any): Promise<any[]> {
   return new Promise((resolve, reject) => {
@@ -48,9 +61,9 @@ export function dbfind(datastore: Datastore, query: any): Promise<any[]> {
   });
 }
 
-export function dbInsert(datastore: Datastore, doc: any) {
+export function dbInsert<T>(datastore: Datastore, doc: T): Promise<T> {
   return new Promise((resolve, reject) => {
-    datastore.insert(doc, (err: any, newDocs: any) => {
+    datastore.insert(doc, (err: any, newDocs: T) => {
       if (err) {
         reject(err);
       } else {
@@ -142,6 +155,24 @@ class ElectionsDatastore {
     }
   }
 
+  public async getResourceImage(resourceID: string): Promise<Image> {
+    const image = (await dbfind(
+      this.db, {resourceID: resourceID, type: "image"}));
+    if (image.length === 0) {
+      return undefined;
+    } else {
+      return image[0];
+    }
+  }
+
+  public async setFallbackName(candidate: Candidate) {
+    if (candidate.fallback === "_none_") {
+      candidate.fallbackName = "None";
+    } else {
+      candidate.fallbackName = (await this.getPoll(candidate.fallback)).name;
+    }
+  }
+
   public async getChildren(parentID: string): Promise<Poll[] | Candidate[]> {
     return (await dbfind(this.db, { parentID }));
   }
@@ -149,9 +180,10 @@ class ElectionsDatastore {
   public async createResource(
     resource: Resource,
     type: string,
-    parentID?: string) {
+    parentID?: string,
+    id?: string) {
     resource.type = type;
-    resource.id = generate();
+    resource.id = id || generate();
     if (parentID !== undefined) {
       (resource as Poll | Candidate).parentID = parentID;
     }
@@ -169,6 +201,7 @@ class ElectionsDatastore {
     polls.forEach((poll: Poll) => {
       this.deletePoll(poll.id);
     });
+    await this.deleteImage(electionID);
     return {};
   }
 
@@ -184,9 +217,16 @@ class ElectionsDatastore {
 
   public async deleteCandidate(candidateID: string) {
     await dbRemove(this.db, { id: candidateID });
+    await this.deleteImage(candidateID);
     return {};
   }
 
+  public async deleteImage(resourceID: string) {
+    const image = (await this.getResourceImage(resourceID));
+    console.log(image);
+    await unlinkPromise(path.join(config.database.images, image.id));
+    return await dbRemove(this.db, {type: "image", id: image.id});
+  }
   public async updateResource(id: string, resource: Resource) {
     return await dbUpdate(this.db, { id }, { $set: resource }, {});
   }
