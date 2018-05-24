@@ -1,0 +1,62 @@
+{% macro list(merges) %}
+<div class="col-lg-10 mx-auto">
+  <a href="/merges/new" class="btn btn-primary btn-lg">
+    <i class="fas fa-plus-circle"></i>
+    Create New Merge
+  </a>
+</div>
+<div class="merge-list-container col-lg-10 mx-auto">
+  {% for merge in merges %}
+  <div class="merge-container card">
+    <div class="card-header">
+      <div class="clearfix">
+        <h3 class="merge-name float-left">Merge on <code>{{ merge.timestamp }}</code></h3>
+        <div class="btn-group float-right">
+            <a href="/merge/{{ merge.id }}/present" class="btn btn-info">
+              <i class="fas fa-video"></i>
+              Present
+            </a>
+            <button class="btn btn-danger btn-del-merge" data-merge-id="{{ merge.id }}">
+              <i class="far fa-trash-alt"></i>
+              Delete
+            </button>
+          </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h4 class="card-title">Ties</h4>
+      {% if merge.ties.length === 0 -%}
+        No Ties
+      {%- else -%}
+        {{ merge.ties.join(", ") }}
+      {%- endif %}
+      <hr>
+      <h4 class="card-title">Votes counted</h4>
+      <table class="table table-bordered">
+        <thead class="thead-light">
+          <tr>
+            <th>Poll name</th>
+            <th>Total votes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for poll in merge.polls -%}
+          <tr>
+            <td>{{ poll.name }}</td>
+            <td>{{ poll.votes }}</td>
+          </tr>
+          {%- endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{%- endmacro %}
+
+{% macro styles() %}
+<link rel="stylesheet" href="/assets/styles/merge-list.css">
+{%- endmacro %}
+
+{% macro scripts() %}
+{%- endmacro %}

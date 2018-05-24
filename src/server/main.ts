@@ -9,6 +9,7 @@ import morgan = require("morgan");
 import nunjucks = require("nunjucks");
 
 import { router as homeRouter } from "./routes/homeRouter";
+import { router as mergeRouter } from "./routes/mergeRouter";
 import { router as userRouter } from "./routes/userRouter";
 import * as database from "./utils/database";
 
@@ -63,6 +64,7 @@ app.use("/images", express.static(config.database.images));
 app.use("/users", userRouter);
 
 app.use("/", checkLoggedIn, homeRouter);
+app.use("/", mergeRouter);
 
 app.disable("view cache");
 
