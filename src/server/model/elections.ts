@@ -1,12 +1,11 @@
 import fs = require("fs");
 import Datastore = require("nedb");
 import path = require("path");
+import { generate } from "shortid";
 import { promisify } from "util";
 
 import { config } from "../../config";
-
-import { generate } from "shortid";
-
+import { dbfind, dbInsert, dbRemove, dbUpdate} from "../utils/database";
 const unlinkPromise = promisify(fs.unlink);
 
 export interface Election {
@@ -48,60 +47,6 @@ export interface Image {
 }
 
 type Resource = Election | Poll | Candidate | Image;
-
-export function dbfind(datastore: Datastore, query: any): Promise<any[]> {
-  return new Promise((resolve, reject) => {
-    datastore.find(query)
-      .sort({ createdAt: 1 })
-      .exec((err: any, docs: any[]) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(docs);
-        }
-      });
-  });
-}
-
-export function dbInsert<T>(datastore: Datastore, doc: T): Promise<T> {
-  return new Promise((resolve, reject) => {
-    datastore.insert(doc, (err: any, newDocs: T) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(newDocs);
-      }
-    });
-  });
-}
-
-export function dbRemove(datastore: Datastore, query: any) {
-  return new Promise((resolve, reject) => {
-    datastore.remove(query, (err: any, numRemoved: number) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(numRemoved);
-      }
-    });
-  });
-}
-
-export function dbUpdate(
-  datastore: Datastore,
-  query: any,
-  update: any,
-  options: any) {
-  return new Promise((resolve, reject) => {
-    datastore.update(query, update, options, (err: any, numRemoved: number) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(numRemoved);
-      }
-    });
-  });
-}
 
 class ElectionsDatastore {
   public db: Datastore;
@@ -244,3 +189,13 @@ class ElectionsDatastore {
 }
 
 export const db = new ElectionsDatastore();
+
+/*
+const polls ...
+
+await dbInsert(election)
+
+await Promise.all(polls.map((poll) => dbInsert(poll)))
+
+await Promise.all(polls.map((poll) => dbInsert(this.getChildren)))
+*/

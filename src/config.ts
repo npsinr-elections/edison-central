@@ -1,5 +1,20 @@
 import path = require("path");
 
+/**
+ * Folder in which the app stores it's data
+ *
+ * Windows: %APPDATA%
+ * Linux: $HOME
+ * Mac: "Library/Preferences"
+ */
+const APPDATA = path.join(
+  process.env.APPDATA
+  || (
+    process.platform === "darwin" ?
+      path.join(process.env.HOME, "Library/Preferences") :
+      process.env.HOME), ".edison"
+);
+
 interface Config {
   /** */
   appName: string;
@@ -16,16 +31,9 @@ interface Config {
     merges: string;
     mergeDB: string;
     elections: string;
+    exportTemp: string;
   }>;
 }
-
-const APPDATA = path.join(
-  process.env.APPDATA
-  || (
-    process.platform === "darwin" ?
-    path.join(process.env.HOME, "Library/Preferences") :
-    process.env.HOME), ".edison"
-  );
 
 export const config: Readonly<Config> = {
   appName: "edison-central",
@@ -41,6 +49,7 @@ export const config: Readonly<Config> = {
     users: path.join(APPDATA, "user.json"),
     elections: path.join(APPDATA, "data.db"),
     merges: path.join(APPDATA, "merges"),
-    mergeDB: path.join(APPDATA, "merges", "merge.db")
+    mergeDB: path.join(APPDATA, "merges", "merge.db"),
+    exportTemp: path.join(APPDATA, "merges", "export-temp")
   }
 };

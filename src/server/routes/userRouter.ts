@@ -16,17 +16,16 @@
  */
 
 import express = require("express");
-import shortid = require("shortid");
 
 import { checks, StringValidator } from "../../shared/StringValidator";
+import * as usersDB from "../model/users";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
 import * as crypt from "../utils/crypt";
-import * as database from "../utils/database";
 import { ERRORS, JSONResponse } from "../utils/JSONResponse";
 
 export const router = express.Router();
 
-let userData: database.UserData;
+let userData: usersDB.UserData;
 
 /**
  * Check if user has registered a password in the app yet.
@@ -57,7 +56,7 @@ router.use((req, res, next) => {
  * @function
  */
 router.use(asyncMiddleware(async (_1, _2, next) => {
-  userData = await database.getUserData();
+  userData = await usersDB.getUserData();
   next();
 }));
 
@@ -145,17 +144,7 @@ router.post("/register", asyncMiddleware(async (req, res, _NEXT) => {
     userData.key = (await crypt.encryptMasterKey(encryptKey,
       Buffer.from(password))).toString("hex");
     userData.password = passwordHash;
-    await database.writeUserData(userData);
-
-    const newElectionData: database.Election = {
-      id: shortid.generate(),
-      name: "",
-      caption: "",
-      image: "",
-      color: "",
-      offices: []
-    };
-    await database.writeElectionData(newElectionData, encryptKey);
+    await usersDB.writeUserData(userData);
     return JSONResponse.Data(res, {});
   }
 }));
