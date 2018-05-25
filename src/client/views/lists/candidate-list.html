@@ -14,14 +14,14 @@
 </div>
 <table class="candidate-list-table table table-bordered">
   {% for candidate in candidates -%}
-  <tr>
+  <tr class="resource-container">
     <td class="candidate-image-container">
       <img class="uploaded-image" src="{{ candidate.image }}" alt="">
     </td>
     <td class="candidate-details-container">
       <div class="clearfix">
         <h4 class="float-left"><a href="/candidates/{{ candidate.id }}/edit">{{ candidate.name }}</a></h4>
-        <button class="btn btn-danger btn-del-candidate float-right" data-action="/candidates/{{ candidate.id }}" data-redirect="reload">
+        <button class="btn btn-danger btn-del-candidate float-right" data-action="/candidates/{{ candidate.id }}" data-redirect="none" data-name="{{ candidate.name }}">
           <i class="far fa-trash-alt"></i>
           Delete
         </button>

@@ -2,3 +2,12 @@
   margin-top: 1.25rem;
   margin-bottom: 1.25rem;
 }
+
+.btn-del-poll {
+  color: #8e99a4;
+}
+
+.btn-del-poll:hover {
+  color: #212529;
+  cursor: pointer;
+}

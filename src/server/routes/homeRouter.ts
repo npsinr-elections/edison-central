@@ -211,7 +211,7 @@ router.post("/elections",
   asyncMiddleware(async (req, res) => {
     const electionID = shortid.generate();
     if (req.file === undefined) {
-      req.body.image = "/dummy/images/election-default.jpg";
+      req.body.image = "/assets/images/election-default.jpg";
     } else {
       db.createResource({
         id: req.file.filename,
@@ -239,7 +239,7 @@ router.post(
   asyncMiddleware(async (req, res) => {
     const candidateID = shortid.generate();
     if (req.file === undefined) {
-      req.body.image = "/dummy/images/candidate-default.jpg";
+      req.body.image = "/assets/images/candidate-default.jpg";
     } else {
       db.createResource({
         id: req.file.filename,
