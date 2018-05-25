@@ -26,7 +26,6 @@ config.port = process.env.PORT || 3000; // local server port
 config.views = path.join(config.PROJECT_ROOT, "/client/views"); // html pages
 // static content
 config.assets = path.join(config.PROJECT_ROOT, "/client/assets");
-config.dummyImages = path.join(config.PROJECT_ROOT, "/dummy/images");
 // Defining data storage location paths.
 config.database = {};
 config.database.dir = path.join(process.env.APPDATA ||

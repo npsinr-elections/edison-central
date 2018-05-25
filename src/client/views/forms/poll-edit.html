@@ -9,7 +9,7 @@
       <div class="clearfix">
         <h3 class="float-left">{{ pageTitle }}</h3>
         {% if method === "PUT" %}
-          <button class="btn btn-danger btn-del-poll float-right" data-action="/polls/{{ poll.id }}">
+          <button class="btn btn-danger btn-del-poll float-right" data-action="/polls/{{ poll.id }}" data-redirect="back">
               <i class="far fa-trash-alt"></i>
               Delete
           </button>

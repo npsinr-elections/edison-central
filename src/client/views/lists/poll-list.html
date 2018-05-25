@@ -18,7 +18,12 @@
     <tbody>
       {% for poll in polls %}
       <tr>
-        <td><a href="/polls/{{ poll.id }}/edit">{{ poll.name }}</a></td>
+        <td>
+          <div class="clearfix">
+            <a class="float-left" href="/polls/{{ poll.id }}/edit">{{ poll.name }}</a>
+            <i class="btn-del-poll far fa-trash-alt float-right" data-action="/polls/{{ poll.id }}" data-redirect="reload"></i>
+          </div>
+        </td>
         <td>{{ candidateList.smallList(poll.candidates) }}</td>
       </tr>
       {% endfor %}
@@ -27,6 +32,7 @@
 {% endmacro %}
 
 {% macro scripts() %}
+<script src="/assets/scripts/pollList.bundle.js"></script>
 {{ candidateList.scripts() }}
 {% endmacro %}
 
