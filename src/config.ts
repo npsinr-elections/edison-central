@@ -29,6 +29,7 @@ interface Config {
     users: string;
     images: string;
     merges: string;
+    mergeTemp: string;
     mergeDB: string;
     elections: string;
     exportTemp: string;
@@ -49,6 +50,7 @@ export const config: Readonly<Config> = {
     users: path.join(APPDATA, "user.json"),
     elections: path.join(APPDATA, "data.db"),
     merges: path.join(APPDATA, "merges"),
+    mergeTemp: path.join(APPDATA, "merges", "merge-temp"),
     mergeDB: path.join(APPDATA, "merges", "merge.db"),
     exportTemp: path.join(APPDATA, "merges", "export-temp")
   }
