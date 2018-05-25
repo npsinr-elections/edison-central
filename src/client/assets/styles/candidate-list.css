@@ -5,3 +5,8 @@
 .candidate-image {
   width: 100%;
 }
+
+.candidate-list-table {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
