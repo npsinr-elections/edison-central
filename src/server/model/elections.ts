@@ -51,13 +51,15 @@ type Resource = Election | Poll | Candidate | Image;
 
 export function dbfind(datastore: Datastore, query: any): Promise<any[]> {
   return new Promise((resolve, reject) => {
-    datastore.find(query, (err: any, docs: any[]) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(docs);
-      }
-    });
+    datastore.find(query)
+      .sort({ createdAt: 1 })
+      .exec((err: any, docs: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(docs);
+        }
+      });
   });
 }
 
@@ -106,7 +108,8 @@ class ElectionsDatastore {
   constructor() {
     this.db = new Datastore({
       filename: config.database.elections,
-      autoload: true
+      autoload: true,
+      timestampData: true
     });
   }
 
@@ -151,7 +154,7 @@ class ElectionsDatastore {
     if (type !== undefined) {
       resource = (await dbfind(this.db, { id, type }));
     } else {
-      resource = (await dbfind(this.db, {id}));
+      resource = (await dbfind(this.db, { id }));
     }
     if (resource.length === 0) {
       return undefined;
@@ -162,7 +165,7 @@ class ElectionsDatastore {
 
   public async getResourceImage(resourceID: string): Promise<Image> {
     const image = (await dbfind(
-      this.db, {resourceID: resourceID, type: "image"}));
+      this.db, { resourceID: resourceID, type: "image" }));
     if (image.length === 0) {
       return undefined;
     } else {
@@ -232,7 +235,7 @@ class ElectionsDatastore {
       return;
     }
     await unlinkPromise(path.join(config.database.images, image.id));
-    return await dbRemove(this.db, {type: "image", id: image.id});
+    return await dbRemove(this.db, { type: "image", id: image.id });
   }
   public async updateResource(id: string, resource: Resource) {
     await dbUpdate(this.db, { id }, { $set: resource }, {});

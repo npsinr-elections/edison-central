@@ -4,11 +4,16 @@ export function deleteResourceOnClick(element: JQuery<HTMLElement>) {
           url: $(e.target).attr("data-action"),
           method: "DELETE",
           success: (_RES) => {
-            const redirectURL = $(e.target).attr("data-redirect");
-            if (redirectURL === undefined) {
-              window.history.back();
-            } else {
-              window.location.href = redirectURL;
+            const redirect = $(e.target).attr("data-redirect");
+            switch (redirect) {
+              case "reload":
+                window.location.reload(true);
+                break;
+              case "back":
+                window.history.back();
+                break;
+              default:
+                window.location.href = redirect;
             }
           }
         });

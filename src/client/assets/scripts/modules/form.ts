@@ -1,9 +1,5 @@
-type ResponseHandler = (res: any) => void;
-
 export function multipartSubmitter(
-  form: JQuery<HTMLFormElement>,
-  successCB: ResponseHandler,
-  errorCB: ResponseHandler): void {
+  form: JQuery<HTMLFormElement>): void {
 
   form.submit((e: JQuery.Event<HTMLFormElement, null>) => {
     const resourceForm = $(e.target);
@@ -16,8 +12,12 @@ export function multipartSubmitter(
       cache: false,
       processData: false,
       contentType: false,
-      success: successCB,
-      error: errorCB
+      success: (_RES) => {
+        window.history.back();
+      },
+      error: (res) => {
+        alert(res.responseText);
+      }
     });
 
     e.preventDefault();
