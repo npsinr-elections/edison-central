@@ -75,3 +75,6 @@ docs
 
 # Ignore bundles js files in assets, but not js libraries
 src/client/assets/scripts/*.bundle.js
+
+# macOS .DS_Store
+**/.DS_Store
