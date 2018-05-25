@@ -2,38 +2,45 @@ import path = require("path");
 
 interface Config {
   /** */
-  PROJECT_ROOT: string;
-  port: string | number;
-  views: string;
-  assets: string;
-  database: DatabaseConfig;
+  appName: string;
+  devMode: boolean;
+  port: string;
+  static: Readonly<{
+    views: string;
+    assets: string;
+  }>;
+  database: Readonly<{
+    dir: string;
+    users: string;
+    images: string;
+    merges: string;
+    mergeDB: string;
+    elections: string;
+  }>;
 }
 
-interface DatabaseConfig {
-  dir: string;
-  users: string;
-}
-
-export let config: Config | any = {};
-
-config.appName = "edison-central";
-config.devMode = process.env.NODE_ENV === "development";
-
-config.PROJECT_ROOT = __dirname;
-
-config.port = process.env.PORT || 3000; // local server port
-
-config.views = path.join(config.PROJECT_ROOT, "/client/views"); // html pages
-// static content
-config.assets = path.join(config.PROJECT_ROOT, "/client/assets");
-// Defining data storage location paths.
-config.database = {};
-config.database.dir = path.join(process.env.APPDATA ||
-  (process.platform === "darwin" ?
+const APPDATA = path.join(
+  process.env.APPDATA
+  || (
+    process.platform === "darwin" ?
     path.join(process.env.HOME, "Library/Preferences") :
-    process.env.HOME), ".edison");
-config.database.images = path.join(config.database.dir, "images");
-config.database.merge = path.join(config.database.dir, "merges");
-config.database.mergeDB = path.join(config.database.merge, "merge.db");
-config.database.users = path.join(config.database.dir, "user.json");
-config.database.elections = path.join(config.database.dir, "data.db");
+    process.env.HOME), ".edison"
+  );
+
+export const config: Readonly<Config> = {
+  appName: "edison-central",
+  devMode: process.env.NODE_ENV === "development",
+  port: process.env.PORT || "3000",
+  static: {
+    views: path.join(__dirname, "client", "views"),
+    assets: path.join(__dirname, "client", "assets"),
+  },
+  database: {
+    dir: APPDATA,
+    images: path.join(APPDATA, "images"),
+    users: path.join(APPDATA, "user.json"),
+    elections: path.join(APPDATA, "data.db"),
+    merges: path.join(APPDATA, "merges"),
+    mergeDB: path.join(APPDATA, "merges", "merge.db")
+  }
+};
