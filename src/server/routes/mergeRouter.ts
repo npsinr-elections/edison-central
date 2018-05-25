@@ -18,14 +18,28 @@ const merges = [{
   ]
 }];
 
-router.get("/merges", (_REQ, res) => {
+router.get("/merges", (req, res) => {
     res.render(
       "merges.html", {
         appName: config.appName,
-        currentURL: "/merges",
+        currentURL: req.url,
         pageTitle: "Merges",
         merges: merges
       }
     );
   }
 );
+
+router.get("/merges/:mergeID/present", (_REQ, res) => {
+  res.send("Hello World!");
+});
+
+router.get("/merges/new", (req, res) => {
+  res.render(
+    "forms/merge-edit.html", {
+      appName: config.appName,
+      currentURL: req.url,
+      pageTitle: "Create Merge",
+    }
+  );
+});
