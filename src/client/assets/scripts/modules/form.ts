@@ -6,12 +6,12 @@ export function multipartSubmitter(
   errorCB: ResponseHandler): void {
 
   form.submit((e: JQuery.Event<HTMLFormElement, null>) => {
-    const electionForm = $(e.target);
+    const resourceForm = $(e.target);
     const data = new FormData(e.target);
 
     $.ajax({
-      url: electionForm.attr("action"),
-      method: electionForm.attr("data-method"),
+      url: resourceForm.attr("action"),
+      method: resourceForm.attr("data-method"),
       data: data,
       cache: false,
       processData: false,

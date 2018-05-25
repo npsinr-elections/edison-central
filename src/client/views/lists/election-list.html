@@ -1,19 +1,42 @@
 {% import "./poll-list.html" as pollList %}
   
 {% macro list(elections) %}
+<div class="col-lg-10 mx-auto">
+  <a href="/elections/new" class="btn btn-primary btn-lg">
+    <i class="fas fa-plus-circle"></i>
+    Create New Election
+  </a>
+</div>
 <div class="election-list-container col-lg-10 mx-auto">
   {% for election in elections %}
   <div class="election-container card">
     <div class="card-header">
-      <h3 class="election-name">{{ election.name }}</h3>
+      <div class="clearfix">
+        <h3 class="election-name float-left">
+        {{ election.name }}
+        </h3>
+        <div class="btn-group float-right">
+          <a href="/election/{{ election.id }}/export" class="btn btn-info">
+            <i class="far fa-file-archive"></i>
+            Export
+          </a>
+          <a href="/elections/{{ election.id }}/edit" class="btn btn-info">
+            <i class="far fa-edit"></i>
+            Edit
+          </a>
+          <button class="btn btn-danger btn-del-election" data-action="/elections/{{ election.id }}" data-redirect="/elections">
+            <i class="far fa-trash-alt"></i>
+            Delete
+          </button>
+        </div>
+      </div>
       {% if election.caption %}
         <hr>
         <h5 class="election-caption text-muted">{{ election.caption }}</h5>
       {%- endif %}
     </div>
     <div class="card-body">
-      <h4 class="card-title">Polls</h4>
-      {{ pollList.table(election.polls) }}
+      {{ pollList.table(election.polls, election.id) }}
       <hr>
       <h4 class="card-title">Colors</h4>
       <div class="election-color-display" style="background-color: {{ election.color }}">
@@ -22,22 +45,18 @@
       <hr>
       <h4 class="card-title">Image</h4>
       <img class="uploaded-image" src="{{ election.image }}" alt="Election Image">
-      <hr>
-      <div class="btn-group">
-        <a href="/election/{{ election.id }}/export" class="btn btn-light">Export</a>
-        <a href="/elections/{{ election.id }}/edit" class="btn btn-light">Edit</a>
-        <button class="btn btn-danger btn-del-election" data-election-id="{{ election.id }}">Delete</button>
-      </div>
     </div>
   </div>
   {% endfor %}
 </div>
 {%- endmacro %}
 
-{% macro listStyle() %}
+{% macro styles() %}
 <link rel="stylesheet" href="/assets/styles/election-list.css">
+{{ pollList.styles() }}
 {%- endmacro %}
 
-{% macro listScript() %}
+{% macro scripts() %}
 <script src="/assets/scripts/electionList.bundle.js"></script>
+{{ pollList.scripts() }}
 {%- endmacro %}

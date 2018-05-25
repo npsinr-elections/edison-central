@@ -146,8 +146,13 @@ class ElectionsDatastore {
     return poll;
   }
 
-  public async getResourceByID(id: string, type: string): Promise<Resource> {
-    const resource = (await dbfind(this.db, { id, type }));
+  public async getResourceByID(id: string, type?: string): Promise<Resource> {
+    let resource: Resource[];
+    if (type !== undefined) {
+      resource = (await dbfind(this.db, { id, type }));
+    } else {
+      resource = (await dbfind(this.db, {id}));
+    }
     if (resource.length === 0) {
       return undefined;
     } else {
@@ -223,12 +228,15 @@ class ElectionsDatastore {
 
   public async deleteImage(resourceID: string) {
     const image = (await this.getResourceImage(resourceID));
-    console.log(image);
+    if (image === undefined) { // Should be a dummy image
+      return;
+    }
     await unlinkPromise(path.join(config.database.images, image.id));
     return await dbRemove(this.db, {type: "image", id: image.id});
   }
   public async updateResource(id: string, resource: Resource) {
-    return await dbUpdate(this.db, { id }, { $set: resource }, {});
+    await dbUpdate(this.db, { id }, { $set: resource }, {});
+    return await this.getResourceByID(id);
   }
 }
 

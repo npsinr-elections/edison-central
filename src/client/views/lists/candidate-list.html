@@ -4,27 +4,34 @@
 {%- endfor %}
 {%- endmacro %}
 
-{% macro list(candidates) -%}
-<table class="table table-bordered">
-  <thead class="thead-light">
-    <td colspan="2" class="bg-light"><h3>Candidates</h3></td>
-  </thead>
+{% macro list(candidates, pollID) -%}
+<div class="clearfix">
+    <h4 class="card-title float-left">Candidates</h4>
+    <a href="/polls/{{ pollID }}/candidates/new" class="btn btn-info float-right">
+      <i class="fas fa-plus-circle"></i>
+      New Candidate
+    </a>
+</div>
+<table class="candidate-list-table table table-bordered">
   {% for candidate in candidates -%}
   <tr>
-    <td class="election-image-container">
-      <img src="{{ candidate.image }}" alt="">
+    <td class="candidate-image-container">
+      <img class="uploaded-image" src="{{ candidate.image }}" alt="">
     </td>
-    <td class="election-details-container">
-      <h4>{{ candidate.name }}</h4>
+    <td class="candidate-details-container">
+      <h4><a href="/candidates/{{ candidate.id }}/edit">{{ candidate.name }}</a></h4>
       <hr>
       {% if candidate.fallback !== "_none_" %}
-        <p>Fallback: {{ candidate.fallbackName }}</p>
+        <p>Fallback: <a href="/polls/{{ candidate.fallback }}/edit">{{ candidate.fallbackName }}</a></p>
       {% endif %}
     </td>
   </tr>
   {%- endfor %}
 </table>
 {% endmacro -%}
+
+{% macro scripts() -%}
+{%- endmacro %}
 
 {% macro styles() -%}
 <link rel="stylesheet" href="/assets/styles/candidate-list.css">

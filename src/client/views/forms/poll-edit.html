@@ -6,10 +6,18 @@
 <div class="poll-edit-container col-lg-10 mx-auto">
   <div class="poll-form-container card">
     <div class="card-header">
-      <h3>Edit Poll</h3>
+      <div class="clearfix">
+        <h3 class="float-left">{{ pageTitle }}</h3>
+        {% if method === "PUT" %}
+          <button class="btn btn-danger btn-del-poll float-right" data-action="/polls/{{ poll.id }}">
+              <i class="far fa-trash-alt"></i>
+              Delete
+          </button>
+        {% endif %}
+      </div>
     </div>
     <div class="card-body">
-      <form action="{{ election.formURL }}" id="poll-form" data-method="{{ method }}" enctype="multipart/form-data">
+      <form action="{{ formURL }}" id="poll-form" data-method="{{ method }}" enctype="multipart/form-data">
         <div class="form-group">
           <label for="poll-name-input">Enter the name</label>
           <input id="poll-name-input" class="form-control" name="name" type="text" value="{{ poll.name }}" required>
@@ -32,7 +40,11 @@
     </div>
   </div>
   {% if method === "PUT" %}
-  {{ candidateList.list(poll.candidates) }}
+  <div class="card">
+      <div class="card-body">
+        {{ candidateList.list(poll.candidates, poll.id) }}
+      </div>
+  </div>
   {% endif %}
 </div>
 {%- endblock %}
@@ -44,4 +56,5 @@
 
 {% block scripts %}
 <script src="/assets/scripts/pollEdit.bundle.js"></script>
+{{ candidateList.scripts() }}
 {%- endblock %}

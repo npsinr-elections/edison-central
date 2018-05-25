@@ -1,6 +1,13 @@
 {% import "./candidate-list.html" as candidateList %}
 
-{% macro table(polls) %}
+{% macro table(polls, electionID) %}
+  <div class="clearfix">
+    <h4 class="card-title float-left">Polls</h4>
+    <a href="/elections/{{electionID}}/polls/new" class="btn btn-info float-right">
+      <i class="fas fa-plus-circle"></i>
+      New Poll
+    </a>
+  </div>
   <table class="poll-list-table table table-bordered">
     <thead class="thead-light">
       <tr>
@@ -11,7 +18,7 @@
     <tbody>
       {% for poll in polls %}
       <tr>
-        <td>{{ poll.name }}</td>
+        <td><a href="/polls/{{ poll.id }}/edit">{{ poll.name }}</a></td>
         <td>{{ candidateList.smallList(poll.candidates) }}</td>
       </tr>
       {% endfor %}
@@ -20,8 +27,10 @@
 {% endmacro %}
 
 {% macro scripts() %}
+{{ candidateList.scripts() }}
 {% endmacro %}
 
 {% macro styles() %}
 <link rel="stylesheet" href="/assets/styles/poll-list.css">
+{{ candidateList.styles() }}
 {% endmacro %}

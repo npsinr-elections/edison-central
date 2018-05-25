@@ -171,7 +171,7 @@ router.get("/polls/:pollID/edit", asyncMiddleware(async (req, res) => {
 
   res.render("forms/poll-edit.html", {
     appName: config.appName,
-    pageTitle: `Edit Poll ${poll.name}`,
+    pageTitle: "Edit Poll",
     currentURL: req.url,
     poll: poll,
     formURL: req.url.slice(0, -5),
@@ -196,7 +196,7 @@ router.get(
     const polls = await db.getPolls(parentElectionID);
     res.render("forms/candidate-edit.html", {
       appName: config.appName,
-      pageTitle: `Edit Candidate ${candidate.name}`,
+      pageTitle: "Edit Candidate",
       currentURL: req.url,
       candidate: candidate,
       formURL: req.url.slice(0, -5),
@@ -286,8 +286,8 @@ router.put(
     } else {
       delete req.body.image; // Dont overwrite old image
     }
-    const updateNum = await db.updateResource(req.params.resourceID, req.body);
-    JSONResponse.Data(res, updateNum);
+    const updated = await db.updateResource(req.params.resourceID, req.body);
+    JSONResponse.Data(res, updated);
   }));
 
 router.get("/settings", (_REQ, res) => {
