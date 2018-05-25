@@ -35,7 +35,7 @@ const emptyElection: Election = {
   type: "election",
   caption: "",
   color: "",
-  image: "/dummy/images/election-default.jpg",
+  image: "/assets/images/election-default.jpg",
   polls: []
 };
 
@@ -54,7 +54,7 @@ const emptyCandidate: Candidate = {
   id: "",
   name: "",
   type: "candidate",
-  image: "/dummy/images/candidate-default.jpg",
+  image: "/assets/images/candidate-default.jpg",
   parentID: "",
   votes: 0,
   fallback: ""
