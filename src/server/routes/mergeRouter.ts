@@ -30,10 +30,6 @@ router.get("/merges", (req, res) => {
   }
 );
 
-router.get("/merges/:mergeID/present", (_REQ, res) => {
-  res.send("Hello World!");
-});
-
 router.get("/merges/new", (req, res) => {
   res.render(
     "forms/merge-edit.html", {
