@@ -1,0 +1,36 @@
+{% extends "../index.html" %}
+
+{% block mainContent -%}
+<div class="merge-edit-container col-lg-10 mx-auto">
+  <div class="merge-form-container card">
+    <div class="card-header">
+      <div class="clearfix">
+        <h3 class="float-left">Create merge</h3>
+      </div>
+    </div>
+    <div class="card-body">
+      <form action="/merges" id="merge-form">
+        <div class="form">
+          <label class="card multi-files-input text-muted text-center bg-light" for="merge-file-input">
+            <div><u>Click to upload or drag files here</u></div>
+          </label>
+          <input class="form-control-file" style="display: none" type="file" multiple="true" name="results" id="merge-file-input">
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-paper-plane"></i>
+          &nbsp;Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{%- endblock %}
+
+{% block stylesheets -%}
+<link rel="stylesheet" href="/assets/styles/forms.css">
+<link rel="stylesheet" href="/assets/styles/forms/merge-edit.css">
+{%- endblock %}
+
+{% block scripts -%}
+<script src="/assets/scripts/mergeEdit.bundle.js"></script>
+{%- endblock %}
