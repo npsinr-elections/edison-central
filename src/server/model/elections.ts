@@ -230,7 +230,7 @@ class ElectionsDatastore {
     const image = (await this.getResourceImage(resourceID));
     if (image === undefined) { // Should be a dummy image
       return;
-    };
+    }
     await unlinkPromise(path.join(config.database.images, image.id));
     return await dbRemove(this.db, {type: "image", id: image.id});
   }
