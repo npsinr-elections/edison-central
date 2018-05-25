@@ -297,3 +297,15 @@ router.get("/settings", (_REQ, res) => {
     currentURL: "/settings",
   });
 });
+
+// Route for exporting an election
+
+router.get("/elections/:electionID/export",
+  asyncMiddleware(async (req, res) => {
+    res.render("forms/election-export.html", {
+      appName: config.appName,
+      pageTitle: "Export Election",
+      currentURL: req.url,
+      election: await db.getElection(req.params.electionID)
+    });
+}));
