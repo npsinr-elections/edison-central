@@ -37,3 +37,4 @@ config.database.merge = path.join(config.database.dir, "merges");
 config.database.mergeDB = path.join(config.database.merge, "merge.db");
 config.database.users = path.join(config.database.dir, "user.json");
 config.database.elections = path.join(config.database.dir, "data.db");
+config.database.tmp = path.join(config.database.dir, "tmp");

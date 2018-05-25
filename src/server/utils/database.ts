@@ -4,6 +4,7 @@
  *
  */
 import fs = require("fs");
+import Datastore = require("nedb");
 import { promisify } from "util";
 
 import { config } from "../../config";
@@ -12,68 +13,6 @@ import { db } from "../model/elections";
 import * as fileHandler from "./fileHandler";
 
 const mkdirPromise = promisify(fs.mkdir);
-
-/**
- * Structure for user password file
- */
-export interface UserData {
-  /** Encryption key encrypted itself, with the password */
-  key: string;
-  /** Hashed user password */
-  password: string;
-}
-
-/**
- * Defines an election object
- */
-export interface Election {
-  [key: string]: string | Office[];
-  id: string;
-  name: string;
-  caption: string;
-  image: string;
-  color: string;
-  offices: Office[];
-}
-
-/**
- * Defines an office object
- */
-export interface Office {
-  [key: string]: string | Candidate[];
-  id: string;
-  name: string;
-  caption: string;
-  image: string;
-  color: string;
-  candidates: Candidate[];
-}
-
-/**
- * Defines a candidate object
- */
-export interface Candidate {
-  [key: string]: string | number;
-  id: string;
-  name: string;
-  image: string;
-  votes: number;
-}
-
-/**
- * Defines a result object
- */
-export interface Result {
-  election: Election;
-  date: string;
-}
-
-/**
- * Defines structure of result json file
- */
-export interface Results {
-  results: Result[];
-}
 
 /**
  * Checks whether the user data directory for the app
@@ -100,6 +39,59 @@ export async function checkDataDir() {
   }
 }
 
+export function dbfind(datastore: Datastore, query: any): Promise<any[]> {
+  return new Promise((resolve, reject) => {
+    datastore.find(query)
+      .sort({ createdAt: 1 })
+      .exec((err: any, docs: any[]) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(docs);
+        }
+      });
+  });
+}
+
+export function dbInsert<T>(datastore: Datastore, doc: T): Promise<T> {
+  return new Promise((resolve, reject) => {
+    datastore.insert(doc, (err: any, newDocs: T) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(newDocs);
+      }
+    });
+  });
+}
+
+export function dbRemove(datastore: Datastore, query: any) {
+  return new Promise((resolve, reject) => {
+    datastore.remove(query, (err: any, numRemoved: number) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(numRemoved);
+      }
+    });
+  });
+}
+
+export function dbUpdate(
+  datastore: Datastore,
+  query: any,
+  update: any,
+  options: any) {
+  return new Promise((resolve, reject) => {
+    datastore.update(query, update, options, (err: any, numRemoved: number) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(numRemoved);
+      }
+    });
+  });
+}
 /**
  * Reads a json from its location, and returns
  * its contents as an object. If the datafile doesn't
@@ -119,40 +111,4 @@ export async function getData(dataPath: string,
     }
   }
   return data;
-}
-
-/**
- * Reads users.json and returns its contents.
- * @returns {database.UserData}
- */
-export async function getUserData(): Promise<UserData> {
-  return await getData(config.database.users);
-}
-
-/**
- * Writes `data1 to users.json
- * @param data The data object as defined in `database.UserData`
- */
-export async function writeUserData(data: UserData) {
-  return await fileHandler.writeFile(config.database.users,
-    JSON.stringify(data));
-}
-/**
- * Reads election data and returns a json object
- * @param  {Buffer} cryptKey Key used to encrypt data file
- * @returns Promise<Election>
- */
-export async function getElectionData(cryptKey: Buffer): Promise<Election> {
-  return await getData(config.database.elections, cryptKey);
-}
-
-/**
- * Writes election data
- * @param data Election object to write
- * @param cryptKey Key used to encrypt data file
- */
-export async function writeElectionData(data: Election, cryptKey: Buffer) {
-  return await fileHandler.writeFile(config.database.elections,
-    JSON.stringify(data),
-    cryptKey);
 }
