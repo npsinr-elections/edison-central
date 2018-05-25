@@ -34,5 +34,7 @@ config.database.dir = path.join(process.env.APPDATA ||
     path.join(process.env.HOME, "Library/Preferences") :
     process.env.HOME), ".edison");
 config.database.images = path.join(config.database.dir, "images");
+config.database.merge = path.join(config.database.dir, "merges");
+config.database.mergeDB = path.join(config.database.merge, "merge.db");
 config.database.users = path.join(config.database.dir, "user.json");
 config.database.elections = path.join(config.database.dir, "data.db");
