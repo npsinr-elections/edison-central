@@ -50,7 +50,7 @@ app.use(express.urlencoded({
   extended: true
 }));
 
-app.set("views", config.views);
+app.set("views", config.static.views);
 
 nunjucks.configure(app.get("views"), {
   autoescape: true,
@@ -58,7 +58,7 @@ nunjucks.configure(app.get("views"), {
   express: app
 });
 
-app.use("/assets", express.static(config.assets));
+app.use("/assets", express.static(config.static.assets));
 app.use("/images", express.static(config.database.images));
 app.use("/users", userRouter);
 
