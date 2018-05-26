@@ -5,6 +5,7 @@ import multer = require("multer");
 import shortid = require("shortid");
 
 import { config } from "../../config";
+import { Election } from "../model/elections";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
 import { JSONResponse } from "../utils/JSONResponse";
 import { extractZipFile } from "../utils/zipAndUnzip";
@@ -46,6 +47,43 @@ router.get("/merges", (req, res) => {
     }
   );
 });
+
+const election: Election = {
+  id: "1",
+  type: "election",
+  name: "NPS Elections",
+  caption: "Choose Responsibly, Choose Responsibility.",
+  image: "../../client/assets/images/election-default.jpg",
+  color: "black",
+  polls: [{
+    id: "2",
+    type: "poll",
+    name: "Prefect",
+    caption : "Reach Out, Reach High, Reach Beyond.",
+    color: "red",
+    parentID: "1",
+    group: "",
+    candidates: [{
+      id: "3",
+      type: "candidate",
+      name: "Superman",
+      image: "../../client/assets/images/election-default.jpg",
+      votes: 1000,
+      parentID: "2",
+      fallback: "2",
+      fallbackName: "Prefect"
+    }]
+  }]
+};
+
+router.get("/merges/:mergeID/present", (_REQ, res) => {
+  res.render(
+    "../../client/views/results.html", {
+      election: election
+    }
+  );
+ }
+);
 
 router.get("/merges/new", (req, res) => {
   res.render(

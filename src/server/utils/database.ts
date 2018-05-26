@@ -19,7 +19,14 @@ const mkdirPromise = promisify(fs.mkdir);
  * has been initialized. If not, then initializes it
  */
 export async function checkDataDir() {
-  const dirs = [config.database.dir, config.database.images];
+  const dirs = [
+    config.database.dir,
+    config.database.images,
+    config.database.exportTemp,
+    config.database.merges,
+    config.database.merges,
+    config.database.mergeTemp
+  ];
   const files = [config.database.users];
 
   for (const dir of dirs) {
