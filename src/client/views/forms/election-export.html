@@ -1,0 +1,34 @@
+{% extends "../index.html" %}
+
+{% block mainContent %}
+<div class="election-export-container col-lg-10 mx-auto">
+    <div class="election-export-container card">
+      <div class="card-header"> 
+        <h3>Select Polls to export:</h3>
+      </div>
+      <div class="card-body">
+        <form action="" method="get">
+          <div class="form-group">
+            {% for poll in election.polls %}
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="{{ poll.id }}" id="check{{ poll.id }}">
+              <label class="form-check-label h5" for="check{{ poll.id }}">{{ poll.name }}</label>
+            </div>
+            {% endfor %}
+          </div>
+          <button type="submit" class="btn btn-success">
+              <i class="fas fa-download"></i>
+              Export Polls
+          </button>
+        </form>
+      </div>
+    </div>
+</div>
+{%- endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="/assets/styles/forms.css">
+{%- endblock %}
+
+{% block scripts %}
+{%- endblock %}

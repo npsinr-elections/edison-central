@@ -35,7 +35,7 @@ const emptyElection: Election = {
   type: "election",
   caption: "",
   color: "",
-  image: "/dummy/images/election-default.jpg",
+  image: "/assets/images/election-default.jpg",
   polls: []
 };
 
@@ -54,7 +54,7 @@ const emptyCandidate: Candidate = {
   id: "",
   name: "",
   type: "candidate",
-  image: "/dummy/images/candidate-default.jpg",
+  image: "/assets/images/candidate-default.jpg",
   parentID: "",
   votes: 0,
   fallback: ""
@@ -148,7 +148,7 @@ router.get(
 router.get("/elections/:electionID/edit", asyncMiddleware(async (req, res) => {
   const election = await db.getElection(req.params.electionID);
   if (election === undefined) {
-    return JSONResponse.Error(res, ERRORS.pageError.notFound);
+    return JSONResponse.Error(res, ERRORS.PageError.NotFound);
   }
   res.render("forms/election-edit.html", {
     appName: config.appName,
@@ -163,7 +163,7 @@ router.get("/elections/:electionID/edit", asyncMiddleware(async (req, res) => {
 router.get("/polls/:pollID/edit", asyncMiddleware(async (req, res) => {
   const poll = (await db.getPoll(req.params.pollID)) as Poll;
   if (poll === undefined) {
-    return JSONResponse.Error(res, ERRORS.pageError.notFound);
+    return JSONResponse.Error(res, ERRORS.PageError.NotFound);
   }
   await Promise.all(poll.candidates.map((candidate) => {
     return db.setFallbackName(candidate);
@@ -186,7 +186,7 @@ router.get(
     const candidate = (await db.getResourceByID(
       req.params.candidateID, "candidate")) as Candidate;
     if (candidate === undefined) {
-      return JSONResponse.Error(res, ERRORS.pageError.notFound);
+      return JSONResponse.Error(res, ERRORS.PageError.NotFound);
     }
 
     const parentPollID = candidate.parentID;
@@ -211,7 +211,7 @@ router.post("/elections",
   asyncMiddleware(async (req, res) => {
     const electionID = shortid.generate();
     if (req.file === undefined) {
-      req.body.image = "/dummy/images/election-default.jpg";
+      req.body.image = "/assets/images/election-default.jpg";
     } else {
       db.createResource({
         id: req.file.filename,
@@ -239,7 +239,7 @@ router.post(
   asyncMiddleware(async (req, res) => {
     const candidateID = shortid.generate();
     if (req.file === undefined) {
-      req.body.image = "/dummy/images/candidate-default.jpg";
+      req.body.image = "/assets/images/candidate-default.jpg";
     } else {
       db.createResource({
         id: req.file.filename,
@@ -257,18 +257,35 @@ router.post(
 
 router.delete("/elections/:electionID",
   asyncMiddleware(async (req, res) => {
-    JSONResponse.Data(res, await db.deleteElection(req.params.electionID));
+    const numDeleted = await db.deleteElection(req.params.electionID);
+    if (numDeleted > 0) {
+      JSONResponse.Data(res, { numDeleted });
+    } else {
+      JSONResponse.Error(res, ERRORS.PageError.NotFound);
+    }
   }));
 
 router.delete("/polls/:pollID",
   asyncMiddleware(async (req, res) => {
-    JSONResponse.Data(res, await db.deletePoll(req.params.pollID));
-  }));
+    const numDeleted = await db.deleteElection(req.params.pollID);
+    if (numDeleted > 0) {
+      JSONResponse.Data(res, { numDeleted });
+    } else {
+      JSONResponse.Error(res, ERRORS.PageError.NotFound);
+    }
+  })
+);
 
 router.delete("/candidates/:candidateID",
   asyncMiddleware(async (req, res) => {
-    JSONResponse.Data(res, await db.deleteCandidate(req.params.candidateID));
-  }));
+    const numDeleted = await db.deleteElection(req.params.candidateID);
+    if (numDeleted > 0) {
+      JSONResponse.Data(res, { numDeleted });
+    } else {
+      JSONResponse.Error(res, ERRORS.PageError.NotFound);
+    }
+  })
+);
 
 // Requests for updating resources
 router.put(
@@ -297,3 +314,15 @@ router.get("/settings", (_REQ, res) => {
     currentURL: "/settings",
   });
 });
+
+// Route for exporting an election
+
+router.get("/elections/:electionID/export",
+  asyncMiddleware(async (req, res) => {
+    res.render("forms/election-export.html", {
+      appName: config.appName,
+      pageTitle: "Export Election",
+      currentURL: req.url,
+      election: await db.getElection(req.params.electionID)
+    });
+}));

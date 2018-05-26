@@ -56,27 +56,13 @@ interface PresetErrors {
     /** User not registered */
     NotRegistered: Error
   };
-  ReqErrors: {
-    /** Parameter missing in request */
-    paramError: (missingParams: string) => Error;
+  PageError: {
+    /** Page not found */
+    NotFound: Error
   };
-  dataErrors: {
-    /** ID not found */
-    invalidID: (ID: string) => Error;
-    /** Resource type for create/patch wrong */
-    invalidResourceType: Error;
-    /** Missing attribute in resource */
-    missingAttribute: (resourceType: string,
-                       missingAttr: string) => Error;
-    /** Invalid attribute provided with resource */
-    invalidAttribute: (resourceType: string,
-                       invalidAttrs: string) => Error;
-    /** Attribute Value didn't follow format */
-    invalidValue: (invalidValue: string, invalidAttr: string) => Error;
-  };
-  pageError: {
-    /** Page Error */
-    notFound: Error
+  ResourceError: {
+    /** Resource not found */
+    NotFound: Error
   };
 }
 
@@ -114,64 +100,19 @@ export const ERRORS: PresetErrors = {
       detail: "No user password has been set. Register at /register"
     }
   },
-  ReqErrors: {
-    paramError: (missingParam: string) => {
-      return {
-        code: "ReqErrors.paramError",
-        status: 400,
-        title: "Missing parameters in request",
-        detail: "parameter " + missingParam + "is REQUIRED"
-      };
-    }
-  },
-  dataErrors: {
-    invalidID: (ID: string) => {
-      return {
-        code: "dataErrors.invalidOfficeID",
-        status: 404,
-        title: "Resource not found",
-        detail: "There is no resource with the ID: " + ID
-      };
-    },
-    invalidResourceType: {
-      code: "dataErrors.invalidResourceType",
-      status: 409,
-      title: "Invalid Resource type field",
-      detail: "The resource trying to be created/patched has wrong type"
-    },
-    missingAttribute: (resourceType: string, missingAttr: string) => {
-      return {
-        code: "dataErrors.missingAttribute",
-        status: 409,
-        title: "Missing attribute in resource",
-        detail: "The attribute " + missingAttr + "was expected " +
-          "in resource of type" + resourceType
-      };
-    },
-    invalidAttribute: (resourceType: string, invalidAttr: string) => {
-      return {
-        code: "dataErrors.invalidAttribute",
-        status: 409,
-        title: "Invalid Attribute in Resource",
-        detail: "The attrbute " + invalidAttr + " does not exist " +
-          "in resource of type " + resourceType
-      };
-    },
-    invalidValue: (invalidValue: string, invalidAttr: string) => {
-      return {
-        code: "dataErrors.invalidValue",
-        status: 409,
-        title: "Invalid Value for " + invalidAttr,
-        detail: invalidValue + " is didn't follow format rules " +
-          " as expected for " + invalidAttr
-      };
-    }
-  },
-  pageError: {
-    notFound: {
+  PageError: {
+    NotFound: {
       code: "pageError.notFound",
       status: 404,
-      title: "Page/Resource does not exist",
+      title: "Page does not exist",
+      detail: ""
+    }
+  },
+  ResourceError: {
+    NotFound: {
+      code: "pageError.notFound",
+      status: 404,
+      title: "Resource does not exist",
       detail: ""
     }
   }

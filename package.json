@@ -14,6 +14,7 @@
     "nedb": "^1.8.0",
     "nunjucks": "^3.1.2",
     "opn": "^5.3.0",
+    "rimraf": "^2.6.2",
     "shortid": "^2.2.8"
   },
   "devDependencies": {
@@ -30,6 +31,7 @@
     "@types/nunjucks": "^3.0.0",
     "@types/opn": "^5.1.0",
     "@types/puppeteer": "^1.2.1",
+    "@types/rimraf": "^2.0.2",
     "@types/shortid": "0.0.29",
     "adm-zip": "^0.4.11",
     "chai": "^4.1.2",
@@ -61,12 +63,13 @@
     "bundle": "webpack --mode production",
     "build-static": "cpx \"./src/client/**/*\" ./build/client",
     "dist": "pkg package.json --out-path ./dist -t node9-linux-x86,node9-win-x86 && cpx ./node_modules/opn/xdg-open ./dist",
-    "dev": "cross-env NODE_ENV=development NO_LOGIN=1 concurrently --kill-others -n \"client,server\" -c \"bgGreen,bgYellow\" \"npm run watch-client\" \"npm run watch-server\"",
+    "dev": "concurrently --kill-others -n \"client,server\" -c \"bgGreen,bgYellow\" \"npm run watch-client\" \"npm run watch-server\"",
     "docs": "typedoc ./src --mode file --out ./docs --module commonjs",
     "reset:linux": "rm -rf ~/.edison",
+    "reset:windows": "rmdir /S /Q %APPDATA%\\.edison",
     "start": "ts-node src/main.ts",
     "watch-client": "webpack --mode development --info-verbosity=none",
-    "watch-server": "ts-node-dev --respawn src/main.ts --cacheDirectory ./.cache"
+    "watch-server": "cross-env NODE_ENV=development NO_LOGIN=1 ts-node-dev --respawn src/main.ts --cacheDirectory ./.cache"
   },
   "pkg": {
     "assets": [

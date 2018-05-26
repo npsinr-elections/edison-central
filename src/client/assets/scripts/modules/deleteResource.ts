@@ -1,16 +1,34 @@
 export function deleteResourceOnClick(element: JQuery<HTMLElement>) {
     element.click((e: JQuery.Event<HTMLElement, null>) => {
+        const button = $(e.currentTarget);
+        const confirmMessage = "Are you sure you want to remove "
+                                + button.attr("data-name")
+                                + "?";
+        if (window.confirm(confirmMessage)) {
         $.ajax({
-          url: $(e.target).attr("data-action"),
+          url: button.attr("data-action"),
           method: "DELETE",
           success: (_RES) => {
-            const redirectURL = $(e.target).attr("data-redirect");
-            if (redirectURL === undefined) {
-              window.history.back();
-            } else {
-              window.location.href = redirectURL;
+            const redirect = button.attr("data-redirect");
+            switch (redirect) {
+              case "reload":
+                window.location.reload();
+                break;
+              case "back":
+                window.history.back();
+                break;
+              case "none":
+                const resourceContainer = button
+                .closest(".resource-container");
+                resourceContainer.hide("fast", () => {
+                  resourceContainer.remove();
+                });
+                break;
+              default:
+                window.location.href = redirect;
             }
           }
         });
+      }
       });
 }

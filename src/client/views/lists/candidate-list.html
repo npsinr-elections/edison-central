@@ -14,12 +14,18 @@
 </div>
 <table class="candidate-list-table table table-bordered">
   {% for candidate in candidates -%}
-  <tr>
+  <tr class="resource-container">
     <td class="candidate-image-container">
       <img class="uploaded-image" src="{{ candidate.image }}" alt="">
     </td>
     <td class="candidate-details-container">
-      <h4><a href="/candidates/{{ candidate.id }}/edit">{{ candidate.name }}</a></h4>
+      <div class="clearfix">
+        <h4 class="float-left"><a href="/candidates/{{ candidate.id }}/edit">{{ candidate.name }}</a></h4>
+        <button class="btn btn-danger btn-del-candidate float-right" data-action="/candidates/{{ candidate.id }}" data-redirect="none" data-name="{{ candidate.name }}">
+          <i class="far fa-trash-alt"></i>
+          Delete
+        </button>
+      </div>
       <hr>
       {% if candidate.fallback !== "_none_" %}
         <p>Fallback: <a href="/polls/{{ candidate.fallback }}/edit">{{ candidate.fallbackName }}</a></p>
@@ -31,6 +37,7 @@
 {% endmacro -%}
 
 {% macro scripts() -%}
+<script src="/assets/scripts/candidateList.bundle.js"></script>
 {%- endmacro %}
 
 {% macro styles() -%}

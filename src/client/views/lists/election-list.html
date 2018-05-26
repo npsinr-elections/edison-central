@@ -9,14 +9,14 @@
 </div>
 <div class="election-list-container col-lg-10 mx-auto">
   {% for election in elections %}
-  <div class="election-container card">
+  <div class="election-container card resource-container">
     <div class="card-header">
       <div class="clearfix">
         <h3 class="election-name float-left">
         {{ election.name }}
         </h3>
         <div class="btn-group float-right">
-          <a href="/election/{{ election.id }}/export" class="btn btn-info">
+          <a href="/elections/{{ election.id }}/export" class="btn btn-info">
             <i class="far fa-file-archive"></i>
             Export
           </a>
@@ -24,7 +24,7 @@
             <i class="far fa-edit"></i>
             Edit
           </a>
-          <button class="btn btn-danger btn-del-election" data-action="/elections/{{ election.id }}" data-redirect="/elections">
+          <button class="btn btn-danger btn-del-election" data-action="/elections/{{ election.id }}" data-redirect="none" data-name="{{ election.name }}">
             <i class="far fa-trash-alt"></i>
             Delete
           </button>

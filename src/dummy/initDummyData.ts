@@ -1,4 +1,5 @@
-import { db, dbInsert } from "../server/model/elections";
+import { db } from "../server/model/elections";
+import { dbInsert } from "../server/utils/database";
 
 export async function createDummyData() {
   let id = 1;
@@ -9,7 +10,7 @@ export async function createDummyData() {
       id: electionID,
       name: "Superhero Awards 2018",
       caption: "Save the WORLD!",
-      image: "/dummy/images/election-default.jpg",
+      image: "/assets/images/election-default.jpg",
       color: "#6d0b0b",
     });
     const fallback = (id + 8).toString();
@@ -20,7 +21,6 @@ export async function createDummyData() {
         id: pollID,
         name: "Best Cape",
         caption: "Defeat villains with LOOKS.",
-        image: "/images/b.png",
         color: "#000000",
         parentID: electionID,
         group: "house"
@@ -30,7 +30,7 @@ export async function createDummyData() {
           type: "candidate",
           id: (id++).toString(),
           name: "Superman",
-          image: "/dummy/images/candidate-default.jpg",
+          image: "/assets/images/candidate-default.jpg",
           parentID: pollID,
           group: "heroes",
           fallback: (fallback === pollID) ? "_none_" : fallback

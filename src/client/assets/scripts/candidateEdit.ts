@@ -15,13 +15,5 @@ $(() => {
    * Submit the form data to the server
    */
   const candidateForm = $("#candidate-form") as JQuery<HTMLFormElement>;
-  multipartSubmitter(
-    candidateForm,
-    (res) => {
-      window.location.href = `/polls/${res.parentID}/edit`;
-    },
-    (res) => {
-      alert($.parseJSON(res.responseText));
-    }
-  );
+  multipartSubmitter(candidateForm);
 });
