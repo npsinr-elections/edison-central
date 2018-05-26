@@ -36,7 +36,20 @@
       {% if merge.ties.length === 0 -%}
         No Ties
       {%- else -%}
-        {{ merge.ties.join(", ") }}
+        <table class="table table-bordered">
+          <thead class="thead-light">
+            <th>Poll</th>
+            <th>Candidates</th>
+          </thead>
+          <tbody>
+            {% for tie in merge.ties %}
+            <tr>
+              <td>{{ tie.pollName }}</td>
+              <td>{{ tie.candidates.join(", ") }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       {%- endif %}
       <hr>
       <h4 class="card-title">Votes counted</h4>
