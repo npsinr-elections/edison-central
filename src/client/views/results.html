@@ -11,10 +11,10 @@
     <title>Edison</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="../assets/styles/libraries/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/styles/libraries/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="../assets/styles/results.css" rel="stylesheet">
+    <link href="/assets/styles/results.css" rel="stylesheet">
 
   </head>
 
@@ -30,98 +30,24 @@
     <header>
       <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
-          <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="3"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="4"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="5"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="6"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="7"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="8"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="9"></li>
-          <li data-target="#carouselExampleIndicators" data-slide-to="10"></li>
-          
+
+          {% for i in range(election.polls.length) %}
+          <li data-target="#carouselExampleIndicators" data-slide-to="{{i}}" class="{% if i === 0 %}active{% endif %}"></li>
+          {% endfor %}
+
         </ol>
         <div class="carousel-inner" role="listbox">
-          <!-- Slide 1 - Set the background image for this slide in the line below -->
-          <div class="carousel-item active" style="background-color:white">
+          {% for i in range(election.polls.length) %}
+          {% set poll = election.polls[i] %}
+          <div class="carousel-item {% if i === 0 %}active{% endif %}" style="background-color: {{ poll.color }}">
             <div class="carousel-caption d-none d-md-block">
-              <h3 style="color: black">Prefect</h3>
+              <h3>{{ poll.name }}</h3>
             </div>
           </div>
-          <!-- Slide 2 - Set the background image for this slide in the line below -->
-          <div class="carousel-item" style="background-color:white">
-            <div class="carousel-caption d-none d-md-block">
-              <h3 style="color: black">Vice Prefect 1</h3>
-            </div>
-          </div>
-           <!-- Slide 3 - Set the background image for this slide in the line below -->
-           <div class="carousel-item" style="background-color:white">
-            <div class="carousel-caption d-none d-md-block">
-              <h3  style="color: black">Vice Prefect 2</h3>
-            </div>
-          </div>
-          <!-- Slide 4 - Set the background image for this slide in the line below -->
-          <div class="carousel-item" style="background-color: maroon">
-            <div class="carousel-caption d-none d-md-block">
-              <h3>Challengers Captain</h3>
-            </div>
-          </div>
-          <!-- Slide 5 - Set the background image for this slide in the line below -->
-          <div class="carousel-item" style="background-color: maroon">
-            <div class="carousel-caption d-none d-md-block">
-              <h3>Challengers Vice Captain</h3>
-              
-            </div>
-          </div>
-          <!-- Slide 6 - Set the background image for this slide in the line below -->
-          <div class="carousel-item" style="background-color: purple">
-            <div class="carousel-caption d-none d-md-block">
-              <h3>Explorers Captain</h3>
-             
-            </div>
-          </div>
-          <!-- Slide 7 - Set the background image for this slide in the line below -->
-          <div class="carousel-item" style="background-color: purple">
-            <div class="carousel-caption d-none d-md-block">
-              <h3>Explorers Vice Captain</h3>
-              
-            </div>
-          </div>
-          <!-- Slide 8 - Set the background image for this slide in the line below -->
-          <div class="carousel-item" style="background-color:darkorange">
-            <div class="carousel-caption d-none d-md-block">
-              <h3>Pioneers Captain</h3>
-              
-            </div>
-          </div>
-          <!-- Slide 9 - Set the background image for this slide in the line below -->
-          <div class="carousel-item" style="background-color:darkorange">
-            <div class="carousel-caption d-none d-md-block">
-              <h3>Pioneers Vice Captain</h3>
-              
-            </div>
-          </div>
-          <!-- Slide 10 - Set the background image for this slide in the line below -->
-          <div class="carousel-item" style="background-color:rgb(0, 110, 255)">
-            <div class="carousel-caption d-none d-md-block">
-              <h3>Voyagers Captain</h3>
-              
-            </div>
-          </div>
-          <!-- Slide 11 - Set the background image for this slide in the line below -->
-          <div class="carousel-item" style="background-color: rgb(0, 110, 255)">
-            <div class="carousel-caption d-none d-md-block">
-              <h3>Voyagers Vice Captain</h3>
-              
-            </div>
-          </div>
-         
-          
-
-          
+          {% endfor %}
         </div>
+
+      </div>
         <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span class="sr-only">Previous</span>
@@ -132,13 +58,14 @@
         </a>
       </div>
     </header>
-    
 
-   
- 
+
+
+
     <!-- Bootstrap core JavaScript -->
-    <script src="../assets/scripts/libraries/jquery-3.3.1.min.js"></script>
-    <script src="../assets/scripts/libraries/bootstrap.min.js"></script>
+    <script src="/assets/scripts/libraries/jquery-3.3.1.min.js"></script>
+    <script src="/assets/scripts/libraries/bootstrap.min.js"></script>
+
 
   </body>
 

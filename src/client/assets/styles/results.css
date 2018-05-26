@@ -12,5 +12,33 @@
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  background-color:white;
 }
 
+h3 {
+  color: black;
+}
+
+#maroon {
+  background-color:maroon;
+}
+
+#purple {
+  background-color: purple;
+}
+
+#orange {
+  background-color: darkorange;
+}
+
+#blue {
+  background-color: rgb(58, 128, 242);
+}
+
+#black {
+  color: black;
+}
+
+.carousel-item h3 {
+  color: white;
+}
