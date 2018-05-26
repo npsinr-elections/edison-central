@@ -4,22 +4,30 @@
 <div class="merge-edit-container col-lg-10 mx-auto">
   <div class="merge-form-container card">
     <div class="card-header">
-      <div class="clearfix">
-        <h3 class="float-left">Create merge</h3>
-      </div>
+      <h3 class="float-left">Create merge</h3>
     </div>
     <div class="card-body">
-      <form action="/merges" id="merge-form">
+      <form class="merge-form" action="/merges" id="merge-form" data-method="POST">
         <div class="form">
-          <label class="card multi-files-input text-muted text-center bg-light" for="merge-file-input">
-            <div><u>Click to upload or drag files here</u></div>
+          <label class="card multi-files-input bg-light text-center text-muted" for="merge-file-input">
+           Click to upload files
           </label>
-          <input class="form-control-file" style="display: none" type="file" multiple="true" name="results" id="merge-file-input">
+          <input class="form-control-file" type="file" multiple="true" name="results" id="merge-file-input" accept="application/zip">
         </div>
-        <button type="submit" class="btn btn-primary">
-          <i class="fas fa-paper-plane"></i>
-          &nbsp;Submit
-        </button>
+        <h4 class="card-title" id="merge-files-list-header">Files uploaded:</h4>
+        <p>
+          <ul id="merge-files-list"></ul>
+        </p>
+        <div class="btn-group">
+          <button type="reset" class="btn btn-info" id="merge-reset-button">
+            <i class="fas fa-undo-alt"></i>
+            Reset
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-paper-plane"></i>
+            &nbsp;Submit
+          </button>
+        </div>
       </form>
     </div>
   </div>

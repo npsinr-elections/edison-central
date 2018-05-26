@@ -7,16 +7,24 @@
 </div>
 <div class="merge-list-container col-lg-10 mx-auto">
   {% for merge in merges %}
-  <div class="merge-container card">
+  <div class="merge-container card resource-container">
     <div class="card-header">
       <div class="clearfix">
-        <h3 class="merge-name float-left">Merge on <code>{{ merge.timestamp }}</code></h3>
+        <h3 class="merge-name float-left">Merge on <code>{{ merge.createdAt }}</code></h3>
         <div class="btn-group float-right">
+            <a href="/merge/{{ merge.id }}/results" class="btn btn-info">
+              <i class="fas fa-angle-double-right"></i>
+              Results
+            </a>
             <a href="/merge/{{ merge.id }}/present" class="btn btn-info">
               <i class="fas fa-video"></i>
               Present
             </a>
-            <button class="btn btn-danger btn-del-merge" data-merge-id="{{ merge.id }}">
+            <button
+              class="btn btn-danger btn-del-merge"
+              data-action="/merges/{{ merge.id }}"
+              data-redirect="none"
+              data-name="Merge {{ merge.createdAt }}">
               <i class="far fa-trash-alt"></i>
               Delete
             </button>
@@ -28,7 +36,20 @@
       {% if merge.ties.length === 0 -%}
         No Ties
       {%- else -%}
-        {{ merge.ties.join(", ") }}
+        <table class="table table-bordered">
+          <thead class="thead-light">
+            <th>Poll</th>
+            <th>Candidates</th>
+          </thead>
+          <tbody>
+            {% for tie in merge.ties %}
+            <tr>
+              <td>{{ tie.pollName }}</td>
+              <td>{{ tie.candidates.join(", ") }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       {%- endif %}
       <hr>
       <h4 class="card-title">Votes counted</h4>
@@ -59,4 +80,5 @@
 {%- endmacro %}
 
 {% macro scripts() %}
+<script src="/assets/scripts/mergeList.bundle.js"></script>
 {%- endmacro %}
