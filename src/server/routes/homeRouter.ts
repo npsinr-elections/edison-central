@@ -338,14 +338,7 @@ router.get("/elections/:electionID/export/download",
   asyncMiddleware(async (req, res) => {
     const zipFile = await db.exportElection(
       req.params.electionID, req.query.pollIDs);
-    const download = fs.createReadStream(zipFile);
-
-    download.on("end", () => {
+    res.download(zipFile, () => {
       fs.unlink(zipFile, () => undefined);
     });
-
-    res.setHeader("Content-disposition",
-      `attachment; filename=${path.basename(zipFile)}`);
-    res.setHeader("Content-type", "application/zip, application/octet-stream");
-    download.pipe(res);
   }));
