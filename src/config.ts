@@ -52,6 +52,6 @@ export const config: Readonly<Config> = {
     merges: path.join(APPDATA, "merges"),
     mergeTemp: path.join(APPDATA, "merges", "merge-temp"),
     mergeDB: path.join(APPDATA, "merges", "merge.db"),
-    exportTemp: path.join(APPDATA, "merges", "export-temp")
+    exportTemp: path.join(APPDATA, "export-temp")
   }
 };

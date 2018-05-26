@@ -8,6 +8,7 @@
  * GET /: Show home page
  */
 import express = require("express");
+import fs = require("fs");
 import multer = require("multer");
 import path = require("path");
 import shortid = require("shortid");
@@ -129,16 +130,14 @@ router.get("/elections/:electionID/polls/new",
 router.get(
   "/polls/:pollID/candidates/new",
   asyncMiddleware(async (req, res) => {
-    const parentElectionID = ((await db.getResourceByID(
-      req.params.pollID, "poll")) as Poll).parentID;
-    const polls = await db.getPolls(parentElectionID);
+    const fallbacks = await db.getCandidateFallbacks(req.params.pollID);
     res.render("forms/candidate-edit.html", {
       appName: config.appName,
       pageTitle: "New Candidate",
       currentURL: req.url,
       candidate: emptyCandidate,
       formURL: req.url.slice(0, -4),
-      fallbacks: polls,
+      fallbacks: fallbacks,
       method: "POST"
     });
   }));
@@ -189,18 +188,14 @@ router.get(
       return JSONResponse.Error(res, ERRORS.PageError.NotFound);
     }
 
-    const parentPollID = candidate.parentID;
-    const parentElectionID = ((await db.getResourceByID(
-      parentPollID, "poll"
-    )) as Poll).parentID;
-    const polls = await db.getPolls(parentElectionID);
+    const fallbacks = await db.getCandidateFallbacks(candidate.parentID);
     res.render("forms/candidate-edit.html", {
       appName: config.appName,
       pageTitle: "Edit Candidate",
       currentURL: req.url,
       candidate: candidate,
       formURL: req.url.slice(0, -5),
-      fallbacks: polls,
+      fallbacks: fallbacks,
       method: "PUT"
     });
   }));
@@ -267,7 +262,7 @@ router.delete("/elections/:electionID",
 
 router.delete("/polls/:pollID",
   asyncMiddleware(async (req, res) => {
-    const numDeleted = await db.deleteElection(req.params.pollID);
+    const numDeleted = await db.deletePoll(req.params.pollID);
     if (numDeleted > 0) {
       JSONResponse.Data(res, { numDeleted });
     } else {
@@ -278,7 +273,7 @@ router.delete("/polls/:pollID",
 
 router.delete("/candidates/:candidateID",
   asyncMiddleware(async (req, res) => {
-    const numDeleted = await db.deleteElection(req.params.candidateID);
+    const numDeleted = await db.deleteCandidate(req.params.candidateID);
     if (numDeleted > 0) {
       JSONResponse.Data(res, { numDeleted });
     } else {
@@ -323,6 +318,24 @@ router.get("/elections/:electionID/export",
       appName: config.appName,
       pageTitle: "Export Election",
       currentURL: req.url,
+      formURL: `/elections/${req.params.electionID}/export/download`,
       election: await db.getElection(req.params.electionID)
     });
 }));
+
+router.get("/elections/:electionID/export/download",
+  upload.any(),
+  asyncMiddleware(async (req, res) => {
+    const zipFile = await db.exportElection(
+      req.params.electionID, req.query.pollIDs);
+    const download = fs.createReadStream(zipFile);
+
+    download.on("end", () => {
+      fs.unlink(zipFile, () => undefined);
+    });
+
+    res.setHeader("Content-disposition",
+    `attachment; filename=${path.basename(zipFile)}`);
+    res.setHeader("Content-type", "application/zip, application/octet-stream");
+    download.pipe(res);
+  }));

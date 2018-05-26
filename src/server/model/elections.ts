@@ -1,12 +1,18 @@
-import fs = require("fs");
+import { copyFile, mkdir, unlink } from "fs";
 import Datastore = require("nedb");
 import path = require("path");
+import rimraf = require("rimraf");
 import { generate } from "shortid";
 import { promisify } from "util";
 
 import { config } from "../../config";
-import { dbfind, dbInsert, dbRemove, dbUpdate} from "../utils/database";
-const unlinkPromise = promisify(fs.unlink);
+import { dbfind, dbInsert, dbRemove, dbUpdate } from "../utils/database";
+import { zipElection } from "../utils/zipAndUnzip";
+
+const copyFilePromise = promisify(copyFile);
+const mkdirPromise = promisify(mkdir);
+const unlinkPromise = promisify(unlink);
+const rimrafPromise = promisify(rimraf);
 
 export interface Election {
   id: string;
@@ -22,6 +28,7 @@ export interface Poll {
   id: string;
   type: string;
   name: string;
+  image?: string;
   caption: string;
   color: string;
   parentID: string;
@@ -47,6 +54,8 @@ export interface Image {
 }
 
 type Resource = Election | Poll | Candidate | Image;
+
+type NonImageResource = Election | Poll | Candidate;
 
 class ElectionsDatastore {
   public db: Datastore;
@@ -117,6 +126,13 @@ class ElectionsDatastore {
       return image[0];
     }
   }
+  public async getCandidateFallbacks(candidatePollID: string) {
+    const parentElectionID = (await db.getPoll(candidatePollID)).parentID;
+    const polls = await db.getPolls(parentElectionID);
+    return polls.filter((poll) => {
+      return poll.id !== candidatePollID;
+    });
+  }
 
   public async setFallbackName(candidate: Candidate) {
     if (candidate.fallback === "_none_") {
@@ -149,34 +165,37 @@ class ElectionsDatastore {
   }
 
   public async deleteElection(electionID: string) {
-    await dbRemove(this.db, { id: electionID });
+    const numDeleted = await dbRemove(this.db, { id: electionID });
     const polls: Poll[] = (await this.getChildren(electionID)) as Poll[];
     polls.forEach((poll: Poll) => {
       this.deletePoll(poll.id);
     });
     await this.deleteImage(electionID);
-    return {};
+    return numDeleted;
   }
 
   public async deletePoll(pollID: string) {
-    await dbRemove(this.db, { id: pollID });
+    const numDeleted = await dbRemove(this.db, { id: pollID });
     const candidates: Candidate[] = (await this.getChildren(
       pollID)) as Candidate[];
     candidates.forEach((candidate: Candidate) => {
       this.deleteCandidate(candidate.id);
     });
-    return {};
+
+    await this.removeFallback(pollID);
+    return numDeleted;
   }
 
   public async deleteCandidate(candidateID: string) {
-    await dbRemove(this.db, { id: candidateID });
+    const numDeleted = await dbRemove(this.db, { id: candidateID });
     await this.deleteImage(candidateID);
-    return {};
+    return numDeleted;
   }
 
   public async deleteImage(resourceID: string) {
     const image = (await this.getResourceImage(resourceID));
-    if (image === undefined) { // Should be a dummy image
+    if (image === undefined) {
+      // Should be a dummy image
       return;
     }
     await unlinkPromise(path.join(config.database.images, image.id));
@@ -185,6 +204,70 @@ class ElectionsDatastore {
   public async updateResource(id: string, resource: Resource) {
     await dbUpdate(this.db, { id }, { $set: resource }, {});
     return await this.getResourceByID(id);
+  }
+
+  public async exportElection(electionID: string, pollIDs: string[]) {
+    const { polls, ...exportElection } = await this.getElection(electionID);
+    const exportCandidates: Candidate[] = [];
+    const exportPolls: Poll[] = polls
+    .filter((poll) => {
+      return pollIDs.indexOf(poll.id) > -1;
+    })
+    .map((poll) => {
+      const { candidates, ...exportPoll } = poll;
+      exportCandidates.push(...candidates);
+      return exportPoll;
+    });
+    const exportResources: NonImageResource[] = [
+      exportElection as NonImageResource
+    ]
+      .concat(exportPolls, exportCandidates);
+
+    const tmpDir = path.join(config.database.exportTemp, generate());
+    const tmpDirImages = path.join(tmpDir, "images");
+    await mkdirPromise(tmpDir);
+    await mkdirPromise(tmpDirImages);
+
+    const tmpDB = path.join(
+      tmpDir, `export${generate()}.db`);
+    const exportDB = new Datastore({
+      filename: tmpDB,
+      autoload: true
+    });
+
+    await Promise.all(exportResources.map((resource) => {
+      return dbInsert(exportDB, resource);
+    }));
+    await Promise.all(exportResources.map((resource) => {
+      if (resource.image === undefined) {
+        return;
+      }
+      const image = path.basename(resource.image);
+      if (["candidate-default.jpg", "election-default.jpg"]
+        .every((value) => value !== image)) {
+        const src = path.join(config.database.images, image);
+        const dest = path.join(tmpDirImages, image);
+        return copyFilePromise(src, dest);
+      }
+    }));
+
+    const zipFile = path.join(
+      config.database.exportTemp,
+      `export_${exportElection.name.replace(" ", "_")}_`
+      + `${generate()}.zip`);
+
+    await zipElection(tmpDB, tmpDirImages, zipFile);
+    await rimrafPromise(tmpDir);
+
+    return zipFile;
+  }
+
+  private async removeFallback(fallback: string) {
+      return await dbUpdate(
+        this.db,
+        { fallback },
+        { $set: {fallback: "_none_"}},
+        {});
   }
 }
 

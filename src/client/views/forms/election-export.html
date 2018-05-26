@@ -7,11 +7,11 @@
         <h3>Select Polls to export:</h3>
       </div>
       <div class="card-body">
-        <form action="" method="get">
+        <form id="election-export-form" action="{{ formURL }}" data-method="GET">
           <div class="form-group">
             {% for poll in election.polls %}
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="{{ poll.id }}" id="check{{ poll.id }}">
+              <input name= "pollIDs" class="form-check-input" type="checkbox" value="{{ poll.id }}" id="check{{ poll.id }}">
               <label class="form-check-label h5" for="check{{ poll.id }}">{{ poll.name }}</label>
             </div>
             {% endfor %}
