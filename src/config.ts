@@ -12,7 +12,7 @@ const APPDATA = path.join(
   || (
     process.platform === "darwin" ?
       path.join(process.env.HOME, "Library/Preferences") :
-      process.env.HOME), ".edison"
+      process.env.HOME), ".edison-central"
 );
 
 interface Config {
