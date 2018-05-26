@@ -9,6 +9,7 @@
  */
 import express = require("express");
 import fs = require("fs");
+import ip = require("ip");
 import multer = require("multer");
 import path = require("path");
 import shortid = require("shortid");
@@ -96,7 +97,8 @@ router.get("/", (_REQ, res) => {
 router.get("/elections", asyncMiddleware(async (req, res) => {
   res.render("elections.html", {
     appName: config.appName,
-    pageTitle: pageNames.get("elections"),
+    lanIP: ip.address(),
+    pageTitle: "Elections",
     currentURL: req.url,
     elections: await db.getElections()
   });
@@ -107,6 +109,7 @@ router.get("/elections", asyncMiddleware(async (req, res) => {
 router.get("/elections/new", asyncMiddleware(async (req, res) => {
   res.render("forms/election-edit.html", {
     appName: config.appName,
+    lanIP: ip.address(),
     pageTitle: "New Election",
     currentURL: req.url,
     election: emptyElection,
@@ -119,6 +122,7 @@ router.get("/elections/:electionID/polls/new",
   asyncMiddleware(async (req, res) => {
     res.render("forms/poll-edit.html", {
       appName: config.appName,
+      lanIP: ip.address(),
       pageTitle: "New Poll",
       currentURL: req.url,
       poll: emptyPoll,
@@ -133,6 +137,7 @@ router.get(
     const fallbacks = await db.getCandidateFallbacks(req.params.pollID);
     res.render("forms/candidate-edit.html", {
       appName: config.appName,
+      lanIP: ip.address(),
       pageTitle: "New Candidate",
       currentURL: req.url,
       candidate: emptyCandidate,
@@ -151,6 +156,7 @@ router.get("/elections/:electionID/edit", asyncMiddleware(async (req, res) => {
   }
   res.render("forms/election-edit.html", {
     appName: config.appName,
+    lanIP: ip.address(),
     pageTitle: "Edit Elections",
     currentURL: req.url,
     election: await db.getElection(req.params.electionID),
@@ -170,6 +176,7 @@ router.get("/polls/:pollID/edit", asyncMiddleware(async (req, res) => {
 
   res.render("forms/poll-edit.html", {
     appName: config.appName,
+    lanIP: ip.address(),
     pageTitle: "Edit Poll",
     currentURL: req.url,
     poll: poll,
@@ -191,6 +198,7 @@ router.get(
     const fallbacks = await db.getCandidateFallbacks(candidate.parentID);
     res.render("forms/candidate-edit.html", {
       appName: config.appName,
+      lanIP: ip.address(),
       pageTitle: "Edit Candidate",
       currentURL: req.url,
       candidate: candidate,
@@ -305,6 +313,7 @@ router.put(
 router.get("/settings", (_REQ, res) => {
   res.render("settings.html", {
     appName: config.appName,
+    lanIP: ip.address(),
     pageTitle: pageNames.get("settings"),
     currentURL: "/settings",
   });
@@ -316,12 +325,13 @@ router.get("/elections/:electionID/export",
   asyncMiddleware(async (req, res) => {
     res.render("forms/election-export.html", {
       appName: config.appName,
+      lanIP: ip.address(),
       pageTitle: "Export Election",
       currentURL: req.url,
       formURL: `/elections/${req.params.electionID}/export/download`,
       election: await db.getElection(req.params.electionID)
     });
-}));
+  }));
 
 router.get("/elections/:electionID/export/download",
   upload.any(),
@@ -335,7 +345,7 @@ router.get("/elections/:electionID/export/download",
     });
 
     res.setHeader("Content-disposition",
-    `attachment; filename=${path.basename(zipFile)}`);
+      `attachment; filename=${path.basename(zipFile)}`);
     res.setHeader("Content-type", "application/zip, application/octet-stream");
     download.pipe(res);
   }));
