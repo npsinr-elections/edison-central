@@ -69,7 +69,7 @@ export function zipElection(
 }
 
 class ElectionsDatastore {
-  private db: Datastore;
+  public db: Datastore;
   constructor() {
     this.db = new Datastore({
       filename: config.database.elections,
