@@ -53,9 +53,9 @@ export interface Image {
   resourceID: string;
 }
 
-type Resource = Election | Poll | Candidate | Image;
+export type Resource = Election | Poll | Candidate | Image;
 
-type NonImageResource = Election | Poll | Candidate;
+export type NonImageResource = Election | Poll | Candidate;
 
 class ElectionsDatastore {
   public db: Datastore;

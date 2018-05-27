@@ -1,13 +1,16 @@
+import { unlink } from "fs";
 import { join } from "path";
 
 import express = require("express");
 import multer = require("multer");
 import shortid = require("shortid");
 
+import { promisify } from "util";
 import { config } from "../../config";
 import { Election } from "../model/elections";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
 import { JSONResponse } from "../utils/JSONResponse";
+import * as merge from "../utils/merge";
 import { extractZipFile } from "../utils/zipAndUnzip";
 
 export const router = express.Router();
@@ -26,10 +29,21 @@ interface Tie {
   candidates: string[];
 }
 
-const merges = [{
+interface Merge {
+  id: string;
+  mergedFile: string;
+  createdAt: string;
+  ties: Tie[];
+  polls: Array<{
+    name: string,
+    votes: number
+  }>;
+}
+const merges: Merge[] = [{
   id: "0",
+  mergedFile: "merge_1.db",
   createdAt: "2018-05-24T19:29:26.879Z",
-  ties: [] as |Tie[],
+  ties: [],
   polls: [
     { name: "Best Cape", votes: 10 },
     { name: "Best Library", votes: 10 },
@@ -116,12 +130,19 @@ router.post(
 
       resultPaths.push(destPath);
     }
-
     await Promise.all(extractFilePromises);
-
-    // await promisify(rimraf)(config.database.mergeTemp);
-    // await promisify(mkdir)(config.database.mergeTemp);
+    await merge.mergeDBs(resultPaths);
     JSONResponse.Data(res, {});
+
+    const delFilesPromise = Promise.all([
+      (req.files as Express.Multer.File[]).map(
+        (value) => {
+          return promisify(unlink)(value.path);
+        }
+      )
+    ]);
+
+    await delFilesPromise;
   }
   )
 );
