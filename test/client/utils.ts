@@ -9,8 +9,10 @@ import * as puppeteer from "puppeteer";
  * @param  {puppeteer.Page} page
  * @param  {string} selector
  */
-export async function getElemText(page: puppeteer.Page,
-                                  selector: string): Promise<string> {
+export async function getElemText(
+  page: puppeteer.Page,
+  selector: string): Promise<string> {
+
   return await page.evaluate(
     (element) => document.querySelector(element).textContent, selector);
 }
