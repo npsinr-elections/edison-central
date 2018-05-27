@@ -1,3 +1,4 @@
+import * as zip from "adm-zip";
 import { copyFile, mkdir, unlink } from "fs";
 import Datastore = require("nedb");
 import path = require("path");
@@ -7,7 +8,6 @@ import { promisify } from "util";
 
 import { config } from "../../config";
 import { dbfind, dbInsert, dbRemove, dbUpdate } from "../utils/database";
-import { zipElection } from "../utils/zipAndUnzip";
 
 const copyFilePromise = promisify(copyFile);
 const mkdirPromise = promisify(mkdir);
@@ -53,9 +53,20 @@ export interface Image {
   resourceID: string;
 }
 
-type Resource = Election | Poll | Candidate | Image;
+export type Resource = Election | Poll | Candidate | Image;
 
-type NonImageResource = Election | Poll | Candidate;
+export type NonImageResource = Election | Poll | Candidate;
+
+export function zipElection(
+  dbFile: string,
+  imagesDir: string,
+  destination: string): void {
+  const zipper: zip = new zip();
+  zipper.addLocalFile(dbFile);
+  zipper.addLocalFile(config.database.users);
+  zipper.addLocalFolder(imagesDir, "images");
+  zipper.writeZip(destination);
+}
 
 class ElectionsDatastore {
   public db: Datastore;
@@ -66,7 +77,6 @@ class ElectionsDatastore {
       timestampData: true
     });
   }
-
   public async getElections(): Promise<Election[]> {
     const elections: Election[] = await dbfind(this.db, { type: "election" });
     return await Promise.all(elections.map((value) => {

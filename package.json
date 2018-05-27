@@ -68,8 +68,8 @@
     "dist": "pkg package.json --out-path ./dist -t node9-linux-x86,node9-win-x86 && cpx ./node_modules/opn/xdg-open ./dist",
     "dev": "concurrently --kill-others -n \"client,server\" -c \"bgGreen,bgYellow\" \"npm run watch-client\" \"npm run watch-server\"",
     "docs": "typedoc ./src --mode file --out ./docs --module commonjs",
-    "reset:linux": "rm -rf ~/.edison",
-    "reset:windows": "rmdir /S /Q %APPDATA%\\.edison",
+    "reset:linux": "rm -rf ~/.edison-central",
+    "reset:windows": "rmdir /S /Q %APPDATA%\\.edison-central",
     "start": "ts-node src/main.ts",
     "watch-client": "webpack --mode development --info-verbosity=none",
     "watch-server": "cross-env NODE_ENV=development NO_LOGIN=1 ts-node-dev --respawn src/main.ts --cacheDirectory ./.cache"

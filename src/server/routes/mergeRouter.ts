@@ -1,13 +1,16 @@
+import { unlink } from "fs";
 import { join } from "path";
 
 import express = require("express");
+import ip = require("ip");
 import multer = require("multer");
 import shortid = require("shortid");
 
+import { promisify } from "util";
 import { config } from "../../config";
-import { Election } from "../model/elections";
+import {db as merges} from "../model/merges";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
-import { JSONResponse } from "../utils/JSONResponse";
+import { ERRORS, JSONResponse } from "../utils/JSONResponse";
 import { extractZipFile } from "../utils/zipAndUnzip";
 
 export const router = express.Router();
@@ -21,69 +24,26 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-interface Tie {
-  pollName: string;
-  candidates: string[];
-}
-
-const merges = [{
-  id: "0",
-  createdAt: "2018-05-24T19:29:26.879Z",
-  ties: [] as |Tie[],
-  polls: [
-    { name: "Best Cape", votes: 10 },
-    { name: "Best Library", votes: 10 },
-    { name: "Best Shoes", votes: 10 }
-  ]
-}];
-
-router.get("/merges", (req, res) => {
+router.get("/merges", asyncMiddleware(async (req, res) => {
   res.render(
     "merges.html", {
       appName: config.appName,
       currentURL: req.url,
       pageTitle: "Merges",
-      merges: merges
+      merges: await merges.getMerges(),
+      lanIP: ip.address()
     }
   );
-});
+}));
 
-const election: Election = {
-  id: "1",
-  type: "election",
-  name: "NPS Elections",
-  caption: "Choose Responsibly, Choose Responsibility.",
-  image: "../../client/assets/images/election-default.jpg",
-  color: "black",
-  polls: [{
-    id: "2",
-    type: "poll",
-    name: "Prefect",
-    caption : "Reach Out, Reach High, Reach Beyond.",
-    color: "red",
-    parentID: "1",
-    group: "",
-    candidates: [{
-      id: "3",
-      type: "candidate",
-      name: "Superman",
-      image: "../../client/assets/images/election-default.jpg",
-      votes: 1000,
-      parentID: "2",
-      fallback: "2",
-      fallbackName: "Prefect"
-    }]
-  }]
-};
-
-router.get("/merges/:mergeID/present", (_REQ, res) => {
-  res.render(
-    "../../client/views/results.html", {
-      election: election
-    }
-  );
- }
-);
+// router.get("/merges/:mergeID/present", (_REQ, res) => {
+//   res.render(
+//     "../../client/views/results.html", {
+//       election: election
+//     }
+//   );
+//  }
+// );
 
 router.get("/merges/new", (req, res) => {
   res.render(
@@ -91,6 +51,7 @@ router.get("/merges/new", (req, res) => {
       appName: config.appName,
       currentURL: req.url,
       pageTitle: "Create Merge",
+      lanIP: ip.address()
     }
   );
 });
@@ -116,17 +77,28 @@ router.post(
 
       resultPaths.push(destPath);
     }
-
     await Promise.all(extractFilePromises);
-
-    // await promisify(rimraf)(config.database.mergeTemp);
-    // await promisify(mkdir)(config.database.mergeTemp);
+    await merges.newMerge(resultPaths);
     JSONResponse.Data(res, {});
+
+    const delFilesPromise = Promise.all([
+      (req.files as Express.Multer.File[]).map(
+        (value) => {
+          return promisify(unlink)(value.path);
+        }
+      )
+    ]);
+
+    await delFilesPromise;
   }
   )
 );
 
-router.delete("/merges/:mergeID", (req, res) => {
-  console.log(req.params.mergeID);
-  JSONResponse.Data(res, {});
-});
+router.delete("/merges/:mergeID", asyncMiddleware(async (req, res) => {
+  const numRemoved = await merges.deleteMerge(req.params.mergeID);
+  if (numRemoved > 0) {
+    JSONResponse.Data(res, { numRemoved });
+  } else {
+    JSONResponse.Error(res, ERRORS.ResourceError.NotFound);
+  }
+}));
