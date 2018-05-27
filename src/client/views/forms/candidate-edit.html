@@ -3,7 +3,7 @@
 {% block mainContent %}
 <div class="candidate-edit-container col-lg-10 mx-auto">
   <div class="candidate-form-container card">
-    <div class="card-header">
+    <div class="card-header bg-dark">
       <div class="clearfix">
         <h3 class="float-left">{{ pageTitle }}</h3>
         {% if method === "PUT" %}
@@ -34,7 +34,7 @@
           <input type="file" class="form-control-file" name="image" id="candidate-image-input" accept="image/*">
           <img id="candidate-uploaded-image" class="uploaded-image" src="{{ candidate.image }}" alt="No Image Uploaded">
         </div>
-        <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i>&nbsp;Submit</button>        
+        <button type="submit" class="btn btn-dark"><i class="fas fa-paper-plane"></i>&nbsp;Submit</button>        
       </form>
     </div>
   </div>

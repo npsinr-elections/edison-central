@@ -3,13 +3,13 @@
 {% macro table(polls, electionID) %}
   <div class="clearfix">
     <h4 class="card-title float-left">Polls</h4>
-    <a href="/elections/{{electionID}}/polls/new" class="btn btn-info float-right">
+    <a href="/elections/{{electionID}}/polls/new" class="btn btn-dark float-right">
       <i class="fas fa-plus-circle"></i>
       New Poll
     </a>
   </div>
   <table class="poll-list-table table table-bordered">
-    <thead class="thead-light">
+    <thead class="thead-dark">
       <tr>
         <th scope="col">Name</th>
         <th scope="col">Candidates</th>
