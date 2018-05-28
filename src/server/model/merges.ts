@@ -1,6 +1,6 @@
 import { config } from "../../config";
-import { Election, NonImageResource, Poll } from "../model/elections";
-import { Candidate } from "../model/elections";
+import { Candidate, Election, Poll } from "../../shared/models";
+import { NonImageResource } from "../model/elections";
 import { dbfind, dbInsert, dbRemove } from "../utils/database";
 
 import Datastore = require("nedb");
