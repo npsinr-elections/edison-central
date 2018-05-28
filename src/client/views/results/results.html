@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>{{ election.name }}</title>
+
+    <link href="/assets/styles/libraries/bootstrap.min.css" rel="stylesheet">
+
+    <link href="/assets/styles/results.css" rel="stylesheet">
+    <script defer src="/assets/scripts/libraries/fontawesome-all.min.js"></script>
+  </head>
+
+  <body data-poll-number="{{ election.polls.length }}">
+    {% include "./carousel.html" %}
+    <script src="/assets/scripts/libraries/jquery-3.3.1.min.js"></script>
+    <script src="/assets/scripts/libraries/bootstrap.min.js"></script>
+    <script src="/assets/scripts/results.bundle.js"></script>
+
+  </body>
+</html>

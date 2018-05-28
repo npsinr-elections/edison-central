@@ -36,7 +36,7 @@ router.get("/merges", asyncMiddleware(async (req, res) => {
   );
 }));
 
-router.get("/merge/:mergeID/results", asyncMiddleware(async (req, res) => {
+router.get("/merges/:mergeID/results", asyncMiddleware(async (req, res) => {
   const merge = await merges.getMergeByID(req.params.mergeID);
   const winnerIDs: {[id: string]: string[]} = {};
   merge.merged.polls.map((poll) => {
@@ -53,14 +53,20 @@ router.get("/merge/:mergeID/results", asyncMiddleware(async (req, res) => {
   );
 }));
 
-// router.get("/merges/:mergeID/present", (_REQ, res) => {
-//   res.render(
-//     "../../client/views/results.html", {
-//       election: election
-//     }
-//   );
-//  }
-// );
+router.get("/merges/:mergeID/present", asyncMiddleware(async (req, res) => {
+  const merge = await merges.getMergeByID(req.params.mergeID);
+  const winnerIDs: {[id: string]: string[]} = {};
+  merge.merged.polls.map((poll) => {
+    winnerIDs[poll.id] = poll.winners.map((winner) => winner.id);
+  });
+  res.render(
+    "results/results.html", {
+      election: merge.merged,
+      winnerIDs: winnerIDs
+    }
+  );
+ }
+));
 
 router.get("/merges/new", (req, res) => {
   res.render(
