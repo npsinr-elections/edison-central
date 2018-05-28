@@ -8,6 +8,7 @@
       New Poll
     </a>
   </div>
+  {% if polls.length > 0 %}
   <table class="poll-list-table table table-bordered">
     <thead class="thead-dark">
       <tr>
@@ -19,16 +20,19 @@
       {% for poll in polls %}
       <tr class="resource-container">
         <td>
-            <a  href="/polls/{{ poll.id }}/edit">{{ poll.name }}</a>
-            <span class="btn-del-poll"  data-action="/polls/{{ poll.id }}" data-redirect="none" data-name="{{ poll.name }}">
-              <i class="far fa-trash-alt float-right"></i>
-            </span>
+          <a  href="/polls/{{ poll.id }}/edit">{{ poll.name }}</a>
+          <span class="btn-del-poll"  data-action="/polls/{{ poll.id }}" data-redirect="none" data-name="{{ poll.name }}">
+            <i class="far fa-trash-alt float-right"></i>
+          </span>
         </td>
         <td>{{ candidateList.smallList(poll.candidates) }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  {% else %}
+  <p>No polls added.</p>
+  {% endif %}
 {% endmacro %}
 
 {% macro scripts() %}
