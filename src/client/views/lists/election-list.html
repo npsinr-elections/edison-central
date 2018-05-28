@@ -2,7 +2,7 @@
   
 {% macro list(elections) %}
 <div class="col-lg-10 mx-auto">
-  <a href="/elections/new" class="btn btn-primary btn-lg">
+  <a href="/elections/new" class="btn btn-dark btn-lg">
     <i class="fas fa-plus-circle"></i>
     Create New Election
   </a>
@@ -10,17 +10,17 @@
 <div class="election-list-container col-lg-10 mx-auto">
   {% for election in elections %}
   <div class="election-container card resource-container">
-    <div class="card-header">
+    <div class="card-header bg-dark text-white">
       <div class="clearfix">
         <h3 class="election-name float-left">
         {{ election.name }}
         </h3>
         <div class="btn-group float-right">
-          <a href="/elections/{{ election.id }}/export" class="btn btn-info">
+          <a href="/elections/{{ election.id }}/export" class="btn btn-light">
             <i class="far fa-file-archive"></i>
             Export
           </a>
-          <a href="/elections/{{ election.id }}/edit" class="btn btn-info">
+          <a href="/elections/{{ election.id }}/edit" class="btn btn-light">
             <i class="far fa-edit"></i>
             Edit
           </a>
@@ -31,7 +31,6 @@
         </div>
       </div>
       {% if election.caption %}
-        <hr>
         <h5 class="election-caption text-muted">{{ election.caption }}</h5>
       {%- endif %}
     </div>

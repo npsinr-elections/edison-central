@@ -83,12 +83,6 @@
   "pre-commit": [
     "lint"
   ],
-  "bundle": {
-    "entries": [
-      "index.ts",
-      "passwordForm.ts"
-    ]
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/npsinr-elections/edison-central.git"

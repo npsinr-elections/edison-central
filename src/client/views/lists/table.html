@@ -1,0 +1,49 @@
+{% import "./candidate-list.html" as candidateList %}
+
+{% macro table(election, winnerIDs) %}
+<div class="results-table-container col-lg-10 mx-auto">
+    <div class="card">
+      <div class="card-header bg-dark">
+        <h3 class="float-left">{{ election.name }}</h3>
+      </div>
+      <div class="card-body">
+          {% for poll in election.polls %}
+          <h1>{{ poll.name }}</h1>
+          <h2>
+          {{ candidateList.smallList(poll.winners) }}
+          {% if poll.winners.length === 1 %}
+          <span class="font-weight-bold text-success">&nbsp; (Winner)</span>
+          {% else %}
+          <span class="font-weight-bold text-danger">&nbsp; (Tie)</span>
+          {% endif %}
+          </h2>
+          <table class="candidate-list-table table table-bordered">
+            {% for candidate in poll.candidates|sort(attribute="votes", reverse=true) -%}
+            <tr class="resource-container {% if winnerIDs[poll.id].indexOf(candidate.id) > -1 %}
+              {% if winnerIDs[poll.id].length === 1 %}candidate-winner{% else %}candidate-tie{% endif %}{% endif %}">
+              <td class="candidate-image-container">
+                <img class="uploaded-image candidate-image" src="{{ candidate.image }}" alt="">
+              </td>
+              <td class="candidate-details-container">
+                <h4><a href="/candidates/{{ candidate.id }}/edit">{{ candidate.name }}</a></h4>
+                <hr>               
+              </td>
+              <td>
+                  <h3>{{ candidate.votes }} Votes</h3>
+              </td>
+            </tr>
+            {%- endfor %}
+          </table>
+          <hr>
+          {% endfor %}
+      </div>
+    </div>
+  </div>
+{%- endmacro %}
+
+{% macro scripts() -%}
+{%- endmacro %}
+
+{% macro styles() -%}
+<link rel="stylesheet" href="/assets/styles/results-table.css">
+{%- endmacro %}

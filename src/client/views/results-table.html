@@ -1,0 +1,19 @@
+{% import "./lists/table.html" as resultsTable %}
+
+{% extends "index.html" %}
+
+{% block mainContent -%}
+<div class="jumbotron">
+  <h1>Results</h1>
+  <h3 class="text-muted">Review results in the table below</h3>
+</div>
+
+{{ resultsTable.table(election, winnerIDs) }}
+{%- endblock %}
+
+{% block stylesheets -%}
+{{ resultsTable.styles() }}
+{%- endblock %}
+
+{% block scripts -%}
+{%- endblock %}

@@ -16,7 +16,9 @@ import shortid = require("shortid");
 
 import { config } from "../../config";
 
-import { Candidate, db, Election, Poll } from "../model/elections";
+import { Candidate, Election, Poll } from "../../shared/models";
+import { db } from "../model/elections";
+
 import { asyncMiddleware } from "../utils/asyncMiddleware";
 import { ERRORS, JSONResponse } from "../utils/JSONResponse";
 
@@ -48,8 +50,7 @@ const emptyPoll: Poll = {
   caption: "",
   color: "",
   candidates: [],
-  parentID: "",
-  group: ""
+  parentID: ""
 };
 
 const emptyCandidate: Candidate = {

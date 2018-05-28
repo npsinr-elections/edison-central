@@ -8,7 +8,7 @@ import shortid = require("shortid");
 
 import { promisify } from "util";
 import { config } from "../../config";
-import {db as merges} from "../model/merges";
+import { db as merges } from "../model/merges";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
 import { ERRORS, JSONResponse } from "../utils/JSONResponse";
 import { extractZipFile } from "../utils/zipAndUnzip";
@@ -36,14 +36,37 @@ router.get("/merges", asyncMiddleware(async (req, res) => {
   );
 }));
 
-// router.get("/merges/:mergeID/present", (_REQ, res) => {
-//   res.render(
-//     "../../client/views/results.html", {
-//       election: election
-//     }
-//   );
-//  }
-// );
+router.get("/merges/:mergeID/results", asyncMiddleware(async (req, res) => {
+  const merge = await merges.getMergeByID(req.params.mergeID);
+  const winnerIDs: {[id: string]: string[]} = {};
+  merge.merged.polls.map((poll) => {
+    winnerIDs[poll.id] = poll.winners.map((winner) => winner.id);
+  });
+  res.render(
+    "results-table.html", {
+      appName: config.appName,
+      currentURL: req.url,
+      pageTitle: "Results",
+      election: merge.merged,
+      winnerIDs: winnerIDs
+    }
+  );
+}));
+
+router.get("/merges/:mergeID/present", asyncMiddleware(async (req, res) => {
+  const merge = await merges.getMergeByID(req.params.mergeID);
+  const winnerIDs: {[id: string]: string[]} = {};
+  merge.merged.polls.map((poll) => {
+    winnerIDs[poll.id] = poll.winners.map((winner) => winner.id);
+  });
+  res.render(
+    "results/results.html", {
+      election: merge.merged,
+      winnerIDs: winnerIDs
+    }
+  );
+ }
+));
 
 router.get("/merges/new", (req, res) => {
   res.render(

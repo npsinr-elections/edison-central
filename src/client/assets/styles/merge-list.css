@@ -2,3 +2,7 @@
   margin-top: 1.25rem;
   margin-bottom: 1.25rem;
 }
+
+.merge-container code {
+  color:  rgb(255, 255, 50) !important;
+}

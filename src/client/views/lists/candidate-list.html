@@ -7,7 +7,7 @@
 {% macro list(candidates, pollID) -%}
 <div class="clearfix">
     <h4 class="card-title float-left">Candidates</h4>
-    <a href="/polls/{{ pollID }}/candidates/new" class="btn btn-info float-right">
+    <a href="/polls/{{ pollID }}/candidates/new" class="btn btn-dark float-right">
       <i class="fas fa-plus-circle"></i>
       New Candidate
     </a>
@@ -16,7 +16,7 @@
   {% for candidate in candidates -%}
   <tr class="resource-container">
     <td class="candidate-image-container">
-      <img class="uploaded-image" src="{{ candidate.image }}" alt="">
+      <img class="uploaded-image candidate-image" src="{{ candidate.image }}" alt="">
     </td>
     <td class="candidate-details-container">
       <div class="clearfix">

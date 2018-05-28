@@ -1,5 +1,15 @@
-.navbar {
-  background-color: #6d0b0b;
+.jumbotron {
+  background-color: rgb(255, 255, 50);
+}
+
+.btn-light {
+  border-color: rgb(255, 255, 50);
+  background-color: rgb(255, 255, 50);
+}
+
+.btn-light:hover {
+  border-color: rgb(255, 255, 130);
+  background-color: rgb(255, 255, 130);  
 }
 
 .card {
@@ -11,6 +21,10 @@
   margin: 0.75rem 0;
 }
 
-#lanIP {
+.card-header {
   color: white;
+}
+
+.bg-dark .text-muted {
+  color: rgb(180, 180, 3)  !important;
 }
