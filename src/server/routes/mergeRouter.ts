@@ -8,7 +8,7 @@ import shortid = require("shortid");
 
 import { promisify } from "util";
 import { config } from "../../config";
-import {db as merges} from "../model/merges";
+import { db as merges } from "../model/merges";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
 import { ERRORS, JSONResponse } from "../utils/JSONResponse";
 import { extractZipFile } from "../utils/zipAndUnzip";
@@ -32,6 +32,23 @@ router.get("/merges", asyncMiddleware(async (req, res) => {
       pageTitle: "Merges",
       merges: await merges.getMerges(),
       lanIP: ip.address()
+    }
+  );
+}));
+
+router.get("/merge/:mergeID/results", asyncMiddleware(async (req, res) => {
+  const merge = await merges.getMergeByID(req.params.mergeID);
+  const winnerIDs: {[id: string]: string[]} = {};
+  merge.merged.polls.map((poll) => {
+    winnerIDs[poll.id] = poll.winners.map((winner) => winner.id);
+  });
+  res.render(
+    "results-table.html", {
+      appName: config.appName,
+      currentURL: req.url,
+      pageTitle: "Results",
+      election: merge.merged,
+      winnerIDs: winnerIDs
     }
   );
 }));

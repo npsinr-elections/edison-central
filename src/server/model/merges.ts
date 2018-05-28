@@ -1,5 +1,5 @@
 import { config } from "../../config";
-import { NonImageResource } from "../model/elections";
+import { Election, NonImageResource, Poll } from "../model/elections";
 import { Candidate } from "../model/elections";
 import { dbfind, dbInsert, dbRemove } from "../utils/database";
 
@@ -8,7 +8,7 @@ import { generate } from "shortid";
 
 interface Merge {
   id: string;
-  merged: NonImageResource[];
+  merged: Election;
   createdAt?: string;
   ties: Tie[];
   polls: PollTotal[];
@@ -24,9 +24,7 @@ export interface Tie {
   candidates: string[];
 }
 
-function checkforTies(pollCandidates: Candidate[]): string[] {
-  console.log("RAN");
-  console.log(pollCandidates.toString());
+function getWinners(pollCandidates: Candidate[]): Candidate[] {
   let candidates: Candidate[] = [];
   for (const candidate of pollCandidates) {
     if (candidates.length === 0 || candidates[0].votes === candidate.votes) {
@@ -35,11 +33,8 @@ function checkforTies(pollCandidates: Candidate[]): string[] {
       candidates = [candidate];
     }
   }
-  if (candidates.length === 1) {
-    return [];
-  }
 
-  return candidates.map((value) => value.name);
+  return candidates;
 }
 
 async function mergeDBs(dbFiles: string[]) {
@@ -93,6 +88,15 @@ class MergeDatastore {
     return await dbfind(this.db, {});
   }
 
+  public async getMergeByID(mergeID: string): Promise<Merge> {
+    const merge = (await dbfind(this.db, { id: mergeID })) as Merge[];
+    if (merge.length > 0) {
+      return merge[0];
+    } else {
+      return undefined;
+    }
+  }
+
   public async deleteMerge(id: string) {
     return await dbRemove(this.db, { id });
   }
@@ -100,8 +104,10 @@ class MergeDatastore {
     const mergedResources = await mergeDBs(dbFiles);
 
     const ties: Tie[] = [];
-    const polls: PollTotal[] = [];
-    console.log(mergedResources);
+    const votesCount: PollTotal[] = [];
+    const polls: Poll[] = [];
+
+    let mergedElection: Election;
     mergedResources.map((resource) => {
       if (resource.type === "poll") {
         const pollCandidates: Candidate[] = [];
@@ -118,26 +124,36 @@ class MergeDatastore {
         });
 
         // Calculate and push ties for this poll
-        const tie = checkforTies(pollCandidates);
-        if (tie.length > 0) {
+        const winners = getWinners(pollCandidates);
+        if (winners.length > 1) {
           ties.push({
             pollName: resource.name,
-            candidates: tie
+            candidates: winners.map((value) => value.name)
           });
         }
 
-        polls.push({
+        // Push votes count for this poll
+        votesCount.push({
           name: resource.name,
           votes: totalVotes
         });
+
+        // Finally store the poll too in the poll list
+        (resource as Poll).candidates = pollCandidates;
+        (resource as Poll).winners = winners;
+        polls.push(resource as Poll);
+      } else if (resource.type === "election") {
+        mergedElection = resource as Election;
       }
     });
 
+    mergedElection.polls = polls;
+
     const merge: Merge = {
       id: generate(),
-      merged: mergedResources,
+      merged: mergedElection,
       ties: ties,
-      polls: polls
+      polls: votesCount
     };
 
     await dbInsert(this.db, merge);

@@ -34,6 +34,7 @@ export interface Poll {
   parentID: string;
   group: string;
   candidates?: Candidate[];
+  winners?: Candidate[];
 }
 
 export interface Candidate {
@@ -45,6 +46,7 @@ export interface Candidate {
   parentID: string;
   fallback: string;
   fallbackName?: string;
+  isWinner?: boolean;
 }
 
 export interface Image {

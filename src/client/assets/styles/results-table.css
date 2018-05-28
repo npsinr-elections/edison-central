@@ -1,0 +1,20 @@
+.candidate-image-container {
+    width: 15%;
+  }
+  
+  .candidate-image {
+    width: 100%;
+  }
+  
+  .candidate-list-table {
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .candidate-winner {
+      background-color: #66ff99;
+  }
+
+  .candidate-tie {
+      background-color: rgb(255, 255, 50);
+  }
