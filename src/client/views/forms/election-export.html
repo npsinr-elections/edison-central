@@ -7,7 +7,7 @@
         <h3>Select polls to export</h3>
       </div>
       <div class="card-body">
-        <form id="election-export-form" action="{{ formURL }}" data-method="GET">
+        <form id="poll-select-form" action="{{ formURL }}" data-method="GET">
           <div class="form-group">
             {% for poll in election.polls %}
             <div class="form-check">
@@ -16,7 +16,7 @@
             </div>
             {% endfor %}
           </div>
-          <button type="submit" class="btn btn-success">
+          <button id="exportPollsBtn" type="submit" class="btn btn-success">
               <i class="fas fa-download"></i>
               Export Polls
           </button>
@@ -31,4 +31,5 @@
 {%- endblock %}
 
 {% block scripts %}
+<script src="/assets/scripts/poll-select-form.bundle.js"></script>
 {%- endblock %}

@@ -329,6 +329,9 @@ router.get("/elections/:electionID/export",
 router.get("/elections/:electionID/export/download",
   upload.any(),
   asyncMiddleware(async (req, res) => {
+    if (req.query.pollIDs === undefined) {
+      return JSONResponse.Error(res, ERRORS.ResourceError.NotFound);
+    }
     const zipFile = await db.exportElection(
       req.params.electionID, req.query.pollIDs);
     res.download(zipFile, () => {
