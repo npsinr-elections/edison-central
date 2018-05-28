@@ -43,7 +43,7 @@ router.get("/merges/:mergeID/results", asyncMiddleware(async (req, res) => {
     winnerIDs[poll.id] = poll.winners.map((winner) => winner.id);
   });
   res.render(
-    "results-table.html", {
+    "results.html", {
       appName: config.appName,
       lanIP: ip.address(),
       currentURL: req.url,
