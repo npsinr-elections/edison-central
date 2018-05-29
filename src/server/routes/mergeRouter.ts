@@ -44,8 +44,9 @@ router.get("/merges/:mergeID/results", asyncMiddleware(async (req, res) => {
     winnerIDs[poll.id] = poll.winners.map((winner) => winner.id);
   });
   res.render(
-    "results-table.html", {
+    "results.html", {
       appName: config.appName,
+      lanIP: ip.address(),
       currentURL: req.url,
       pageTitle: "Results",
       election: merge.merged,
@@ -61,7 +62,7 @@ router.get("/merges/:mergeID/present", asyncMiddleware(async (req, res) => {
     winnerIDs[poll.id] = poll.winners.map((winner) => winner.id);
   });
   res.render(
-    "results/results.html", {
+    "present/present.html", {
       election: merge.merged,
       winnerIDs: winnerIDs
     }
@@ -73,9 +74,9 @@ router.get("/merges/new", (req, res) => {
   res.render(
     "forms/merge-edit.html", {
       appName: config.appName,
+      lanIP: ip.address(),
       currentURL: req.url,
-      pageTitle: "Create Merge",
-      lanIP: ip.address()
+      pageTitle: "Create Merge"
     }
   );
 });

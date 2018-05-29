@@ -1,4 +1,5 @@
-#lock, #confirm-page {
+#lock,
+#confirm-page {
   background-size: cover;
   background-position: center;
   background-color: black;
@@ -57,12 +58,12 @@ q {
 }
 
 @-webkit-keyframes winners {
-		from {
-				transform: scale(0.75);
-		}
-		to {
-				transform: scale(1);
-		}
+  from {
+    transform: scale(0.75);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
 .card-text {
@@ -70,19 +71,20 @@ q {
 }
 
 @-webkit-keyframes test {
-		from {
-				transform: scale(0.1);
-		}
-		to {
-				transform: scale(1);
-		}
+  from {
+    transform: scale(0.1);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
 img {
   height: 50vh;
 }
 
-.h3,.h4{
+.h3,
+.h4 {
   color: black;
 }
 
@@ -105,8 +107,7 @@ img {
   padding: 3rem 0;
 }
 
-#left-arrow {
-}
+#left-arrow {}
 
 #confirm-text-container {
   width: 80%;

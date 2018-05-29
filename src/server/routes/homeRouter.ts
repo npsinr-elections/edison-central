@@ -69,15 +69,6 @@ router.use((_REQ, res, next) => {
   next();
 });
 
-/**
- * Route to return sections of other pages
- * @name get/pages/:pageName
- * @function
- */
-router.get("/pages/:pageName", (req, res) => {
-  res.render(req.params.pageName + ".html");
-});
-
 const pageNames: Map<string, string> = new Map(
   [["elections", "Elections"], ["settings", "Settings"]]);
 
@@ -334,7 +325,8 @@ router.get("/elections/:electionID/export",
       submitText: "Export Polls",
       election: election
     });
-  }));
+  })
+);
 
 router.get("/elections/:electionID/export/download",
   upload.any(),
@@ -347,4 +339,5 @@ router.get("/elections/:electionID/export/download",
     res.download(zipFile, () => {
       fs.unlink(zipFile, () => undefined);
     });
-  }));
+  })
+);
