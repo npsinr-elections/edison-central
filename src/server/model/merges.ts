@@ -6,7 +6,7 @@ import { dbfind, dbInsert, dbRemove } from "../utils/database";
 import Datastore = require("nedb");
 import { generate } from "shortid";
 
-interface Merge {
+export interface Merge {
   id: string;
   merged: Election;
   createdAt?: string;
@@ -24,7 +24,7 @@ export interface Tie {
   candidates: string[];
 }
 
-function getWinners(pollCandidates: Candidate[]): Candidate[] {
+export function getWinners(pollCandidates: Candidate[]): Candidate[] {
   let candidates: Candidate[] = [];
   for (const candidate of pollCandidates) {
     if (candidates.length === 0 || candidates[0].votes === candidate.votes) {

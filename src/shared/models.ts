@@ -1,4 +1,5 @@
 export interface Election {
+  _id?: string;
   id: string;
   type: string;
   name: string;
@@ -9,6 +10,7 @@ export interface Election {
 }
 
 export interface Poll {
+  _id?: string;
   id: string;
   type: string;
   name: string;
@@ -21,6 +23,7 @@ export interface Poll {
 }
 
 export interface Candidate {
+  _id?: string;
   id: string;
   type: string;
   name: string;
@@ -33,6 +36,7 @@ export interface Candidate {
 }
 
 export interface Image {
+  _id?: string;
   id: string;
   type: string;
   resourceID: string;

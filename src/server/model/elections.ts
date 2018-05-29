@@ -9,6 +9,7 @@ import { promisify } from "util";
 import { config } from "../../config";
 import { Candidate, Election, Image, Poll } from "../../shared/models";
 import { dbfind, dbInsert, dbRemove, dbUpdate } from "../utils/database";
+import { Merge } from "./merges";
 
 const copyFilePromise = promisify(copyFile);
 const mkdirPromise = promisify(mkdir);
@@ -170,7 +171,11 @@ class ElectionsDatastore {
       // Should be a dummy image
       return;
     }
-    await unlinkPromise(path.join(config.database.images, image.id));
+    try {
+      await unlinkPromise(path.join(config.database.images, image.id));
+    } catch (err) {
+      return;
+    }
     return await dbRemove(this.db, { type: "image", id: image.id });
   }
   public async updateResource(id: string, resource: Resource) {
@@ -182,14 +187,14 @@ class ElectionsDatastore {
     const { polls, ...exportElection } = await this.getElection(electionID);
     const exportCandidates: Candidate[] = [];
     const exportPolls: Poll[] = polls
-    .filter((poll) => {
-      return pollIDs.indexOf(poll.id) > -1;
-    })
-    .map((poll) => {
-      const { candidates, ...exportPoll } = poll;
-      exportCandidates.push(...candidates);
-      return exportPoll;
-    });
+      .filter((poll) => {
+        return pollIDs.indexOf(poll.id) > -1;
+      })
+      .map((poll) => {
+        const { candidates, ...exportPoll } = poll;
+        exportCandidates.push(...candidates);
+        return exportPoll;
+      });
     const exportResources: NonImageResource[] = [
       exportElection as NonImageResource
     ]
@@ -234,12 +239,117 @@ class ElectionsDatastore {
     return zipFile;
   }
 
+  public async copyElection(
+    electionID: string,
+    mergeData: Merge,
+    fallbackPolls: string[]) {
+    const electionData = await this.getElection(electionID);
+    const { polls, ...election } = electionData;
+    election.id = generate();
+    election.name = election.name + " (After fallback)";
+    delete election._id;
+
+    const candidates: Candidate[] = [];
+
+    // First collect winners IDs for each poll
+    const pollWinnerIDs: { [id: string]: string[] } = {};
+    mergeData.merged.polls.map((poll) => {
+      pollWinnerIDs[poll.id] = poll.winners.map((winner) => winner.id);
+    });
+
+    // Generate a new ID for each poll
+    polls.map((poll) => {
+      poll._id = generate();
+    });
+
+    polls.map((poll) => {
+      // Resolve fallbacks of candidates to use new poll IDs generated
+      // in previous step.
+      const fallback = fallbackPolls.indexOf(poll.id) > -1;
+      poll.candidates.map((candidate) => {
+        if (candidate.fallback !== "_none_") {
+          for (const newPoll of polls) {
+            if (newPoll.id === candidate.fallback) {
+              candidate.fallback = newPoll._id;
+              break;
+            }
+          }
+        }
+        // Now apply fallbacks for each candidate which is
+        // not a winner
+        if (fallback &&
+          (pollWinnerIDs[poll.id].indexOf(candidate.id) === -1)) {
+          this.setFallback(candidate);
+        } else {
+          candidate.parentID = poll._id;
+        }
+
+        // Now initalize the new candidate's resource attributes
+        candidate.id = generate();
+        candidate.votes = 0;
+        delete candidate._id;
+        candidates.push(candidate);
+      });
+    });
+
+    // Initalize misc attributes for each poll
+    polls.map((poll) => {
+      poll.id = poll._id;
+      poll.parentID = election.id;
+      delete poll._id;
+    });
+
+    // Build a list of all the resources
+    const resources: Resource[] = [election as NonImageResource]
+      .concat(polls, candidates);
+
+    // Create Image copies for each election/candidate resource
+    await Promise.all(resources.map((resource) => {
+      if (resource.type === "election" || resource.type === "candidate") {
+        return this.copyImageResource(resource as Candidate | Election);
+      }
+    }));
+
+    // Finally insert the election copy in the database
+    await dbInsert(this.db, resources);
+    return election.id;
+  }
+
+  private setFallback(candidate: Candidate) {
+    if (candidate.fallback !== "_none_") {
+      candidate.parentID = candidate.fallback;
+      candidate.fallback = "_none_";
+    }
+    return candidate;
+  }
+
+  private async copyImageResource(
+    resource: Candidate | Election) {
+    if (resource.image === "/assets/images/election-default.jpg"
+      || resource.image === "/assets/images/candidate-default.jpg") {
+      return true;
+    }
+    const imageFileName = path.basename(resource.image);
+    const image = (await this.getResourceByID(imageFileName, "image")) as Image;
+    delete image._id;
+
+    image.id = generate();
+    image.resourceID = resource.id;
+
+    const newImageFile = image.id + path.extname(imageFileName);
+    return Promise.all([copyFilePromise(
+      path.join(config.database.images, imageFileName),
+      path.join(config.database.images, newImageFile)),
+    this.createResource(image, "image")
+    ]);
+  }
+
   private async removeFallback(fallback: string) {
-      return await dbUpdate(
-        this.db,
-        { fallback },
-        { $set: {fallback: "_none_"}},
-        {});
+    return await dbUpdate(
+      this.db,
+      { fallback },
+      { $set: { fallback: "_none_" } },
+      {});
   }
 }
 

@@ -302,7 +302,7 @@ router.put(
         id: req.file.filename,
         type: "image",
         resourceID: req.params.resourceID
-      }, "image");
+      }, "image", undefined, req.file.filename);
       req.body.image = `/images/${req.file.filename}`;
     } else {
       delete req.body.image; // Dont overwrite old image
@@ -324,13 +324,15 @@ router.get("/settings", (_REQ, res) => {
 
 router.get("/elections/:electionID/export",
   asyncMiddleware(async (req, res) => {
-    res.render("forms/election-export.html", {
+    const election = await db.getElection(req.params.electionID);
+    res.render("forms/poll-select-form.html", {
       appName: config.appName,
       lanIP: ip.address(),
-      pageTitle: "Export Election",
+      pageTitle: `Export Election ${election.name}`,
       currentURL: req.url,
       formURL: `/elections/${req.params.electionID}/export/download`,
-      election: await db.getElection(req.params.electionID)
+      submitText: "Export Polls",
+      election: election
     });
   }));
 
