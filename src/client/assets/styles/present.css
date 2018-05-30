@@ -1,142 +1,79 @@
-#lock,
-#confirm-page {
-  background-size: cover;
-  background-position: center;
-  background-color: black;
-}
-
-q {
-  font-style: italic;
-  opacity: 0.8;
-}
-
 .carousel-item {
   height: 100vh;
 }
 
-.candidates-block {
-  max-width: 80%;
-}
-
-.candidates-vertical-align {
-  width: 100%;
+.poll-detail-vertical-align, .candidates-vertical-align {
   height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.candidate-card {
-  min-width: 160px;
-  max-width: 20vw;
-  cursor: pointer;
-  position: relative;
-  transition: top 0.3s ease-out, opacity 0.3s ease-out;
-  -webkit-transition: top 0.3s ease-out, opacity 0.3s ease-out;
-  -moz-transition: top 0.3s ease-out, opacity 0.3s ease-out;
-  top: 0;
-  opacity: 0.7;
-}
-
-.candidate-active {
-  top: -1rem;
-}
-
-.candidate-inactive {
-  opacity: 0.7;
-}
-
-.thin-control {
-  width: 10%;
-}
-
-.winner {
-  top: -1rem !important;
-  opacity: 1;
-  border-color: black;
-  border-width: 5px;
-  animation: winners 3s 1 ease-out;
-}
-
-@-webkit-keyframes winners {
-  from {
-    transform: scale(0.75);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-.card-text {
-  animation: test 3s 1 ease-out;
-}
-
-@-webkit-keyframes test {
-  from {
-    transform: scale(0.1);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-img {
-  height: 50vh;
-}
-
-.h3,
-.h4 {
-  color: black;
-}
-
-#lock {
-  position: fixed;
-  z-index: 50;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  top: 0;
-  transition: top 0.3s ease-out;
-}
-
-#lock-text-container {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  background-color: rgb(255, 255, 50);
+  align-items: center;
+}
+
+.poll-text {
+  width: 100%;
   padding: 3rem 0;
-}
-
-#left-arrow {}
-
-#confirm-text-container {
-  width: 80%;
-  height: 100%;
   background-color: #FFF;
-  padding: 1rem;
 }
 
-#submit-button {
+q {
+  font-style: italic;
+  opacity: 0.7;
+}
+
+.candidates-block {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.candidates-block.four-cards {
+  width: 60%;
+}
+
+.card-deck .candidate-card {
+  position: relative;
+  top: 0px;
+  min-width: 10.75rem;
+  max-width: 11rem;
+  margin: 0.7rem;
+  transition: top 1s ease-out;
+}
+
+.candidate-card.candidate-active {
+  top: -0.5rem;
+}
+
+.candidate-card.candidate-inactive {
+  opacity: 0.5;
+}
+
+.candidate-card .card-body {
+  text-align: left;
+}
+
+.votes {
+  font-size: 1rem;
+}
+
+.candidate-card table {
+  width: 100%;
+  height: 100%;
+}
+
+.candidate-card td {
+  padding: 0.5rem;
+}
+
+.candidate-card .card-body {
+  padding: 0;
+}
+
+.crown {
+  width: 100%;
+  position: absolute;
+  font-size: 3rem;
+  top: -2rem;
+  color: goldenrod;
   display: none;
-}
-
-#notification {
-  z-index: 100;
-  background-color: #FFFF32;
-  position: fixed;
-  margin: 1rem auto;
-  padding: 1rem;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  display: none;
-  border-radius: 5px;
-}
-
-.carousel-indicators li {
-  background-color: rgba(200, 200, 200, 0.5);
-}
-
-.carousel-indicators li.active {
-  background-color: rgba(200, 200, 200, 1);
 }

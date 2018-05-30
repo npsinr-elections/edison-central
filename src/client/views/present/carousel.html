@@ -1,43 +1,52 @@
 <div id="carousel-container">
-  <div id="results-carousel" class="carousel slide" data-ride="carousel" data-interval="3000">
+  <div id="results-carousel" class="carousel slide" data-ride="false" data-interval="false">
     <ol class="carousel-indicators">
 
-      {% for i in range(election.polls.length) %}
-      <li data-target="#results-carousel" data-slide-to="{{ i }}" class="{% if i === 0 %}active{% endif %}"></li>
+      {% for pollIndex in range(election.polls.length * 2) %}
+      <li data-target="#results-carousel" data-slide-to="{{ pollIndex }}" class="{% if pollIndex === 0 %}active{% endif %}"></li>
       {% endfor %}
 
     </ol>
     <div class="carousel-inner" role="listbox">
-      {% for i in range(election.polls.length) %}
-      {% set poll = election.polls[i] %}
+      {% for pollIndex in range(election.polls.length) %}
+      {% set poll = election.polls[pollIndex] %}
+      <div class="carousel-item {% if pollIndex === 0 %}active{% endif %}"
+        style="background-color: {{ poll.color }}">
+        <div class="poll-detail-vertical-align">
+          <div class="poll-text text-center">
+            <h1>{{ poll.name }}</h1>
+            <h3><q>{{ poll.caption }}</q></h3>
+          </div>
+        </div>
+      </div>
       <div
-        class="carousel-item {% if i === 0 %}active{% endif %}"
+        class="carousel-item"
         style="background-color: {{ poll.color }}">
 
         <div class="candidates-vertical-align">
-          <div class="candidates-block card-deck mx-auto">
+          <div class="candidates-block card-deck mx-auto" id="block-{{ pollIndex }}">
 
-            {% for candidate in poll.candidates %}
+            {% for cIndex in range(poll.candidates.length) -%}
+            {%- set candidate = poll.candidates[cIndex] -%}
             <div
-              class="card candidate-card text-center {% if winnerIDs[poll.id].indexOf(candidate.id) !== -1 %}winner{% endif %}"
-              data-candidate-id="{{ candidate.id }}"
-              data-candidate-name="{{ candidate.name }}">
+              class="card candidate-card text-center
+                {% if winnerIDs[poll.id].indexOf(candidate.id) !== -1 %}winner{% else %}not-winner{% endif %}"
+              data-votes="{{ candidate.votes }}">
 
               <img src="{{ candidate.image }}" alt="" class="card-img-top img-responsive">
+              <div class="crown"><i class="fas fa-crown"></i></div>
               <div class="card-body">
-                <h5 class="card-title">{{ candidate.name }}</h5>
-                <h5 class="card-text">{{ candidate.votes }}</h5>
+                <table>
+                  <tr>
+                    <td>{{ candidate.name }}</td>
+                    <td class="votes text-right">
+                      <h5><span class="badge badge-secondary" id="votes-{{ pollIndex }}-{{ cIndex }}">0</span></h5>
+                    </td>
+                  </tr>
+                </table>
               </div>
             </div>
-            {% endfor %}
-          </div>
-        </div>
-        <div class="carousel-caption d-none d-md-block">
-          <div>
-            <span class="h3">{{ poll.name }} - </span>
-            <span class="h4">
-              <q>{{ poll.caption }}</q>
-            </span>
+            {%- endfor %}
           </div>
         </div>
       </div>
