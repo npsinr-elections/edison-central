@@ -174,7 +174,9 @@ class ElectionsDatastore {
     try {
       await unlinkPromise(path.join(config.database.images, image.id));
     } catch (err) {
-      return;
+      if (!config.devMode) {
+        throw err;
+      }
     }
     return await dbRemove(this.db, { type: "image", id: image.id });
   }
