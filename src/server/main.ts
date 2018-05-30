@@ -8,6 +8,7 @@ import session = require("express-session");
 import morgan = require("morgan");
 import nunjucks = require("nunjucks");
 
+import { router as externalRouter } from "./routes/externalRouter";
 import { router as homeRouter } from "./routes/homeRouter";
 import { router as mergeRouter } from "./routes/mergeRouter";
 import { router as userRouter } from "./routes/userRouter";
@@ -58,9 +59,14 @@ nunjucks.configure(app.get("views"), {
   express: app
 });
 
+app.get("/identity", (_REQ, res) => {
+  res.json({ name: config.appName });
+});
+
 app.use("/assets", express.static(config.static.assets));
 app.use("/images", express.static(config.database.images));
 app.use("/users", userRouter);
+app.use("/external", externalRouter);
 
 app.use("/", checkLoggedIn, homeRouter);
 app.use("/", mergeRouter);

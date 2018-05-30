@@ -8,7 +8,6 @@
  * GET /: Show home page
  */
 import express = require("express");
-import fs = require("fs");
 import ip = require("ip");
 import multer = require("multer");
 import path = require("path");
@@ -311,8 +310,6 @@ router.get("/settings", (_REQ, res) => {
   });
 });
 
-// Route for exporting an election
-
 router.get("/elections/:electionID/export",
   asyncMiddleware(async (req, res) => {
     const election = await db.getElection(req.params.electionID);
@@ -321,23 +318,9 @@ router.get("/elections/:electionID/export",
       lanIP: ip.address(),
       pageTitle: `Export Election ${election.name}`,
       currentURL: req.url,
-      formURL: `/elections/${req.params.electionID}/export/download`,
+      formURL: `/external/elections/${req.params.electionID}/export`,
       submitText: "Export Polls",
       election: election
-    });
-  })
-);
-
-router.get("/elections/:electionID/export/download",
-  upload.any(),
-  asyncMiddleware(async (req, res) => {
-    if (req.query.pollIDs === undefined) {
-      return JSONResponse.Error(res, ERRORS.ResourceError.NotFound);
-    }
-    const zipFile = await db.exportElection(
-      req.params.electionID, req.query.pollIDs);
-    res.download(zipFile, () => {
-      fs.unlink(zipFile, () => undefined);
     });
   })
 );

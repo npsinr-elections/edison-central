@@ -1,18 +1,13 @@
-import { unlink } from "fs";
-import { join } from "path";
-
 import express = require("express");
 import ip = require("ip");
 import multer = require("multer");
 import shortid = require("shortid");
 
-import { promisify } from "util";
 import { config } from "../../config";
 import { db as elections } from "../model/elections";
-import { db as merges } from "../model/merges";
+import { db as merges, uploadMerge } from "../model/merges";
 import { asyncMiddleware } from "../utils/asyncMiddleware";
 import { ERRORS, JSONResponse } from "../utils/JSONResponse";
-import { extractZipFile } from "../utils/zipAndUnzip";
 
 export const router = express.Router();
 
@@ -85,39 +80,12 @@ router.post(
   "/merges",
   upload.array("results"),
   asyncMiddleware(async (req, res) => {
-    const extractFilePromises: Array<Promise<void>> = [];
-    const resultPaths: string[] = [];
+    await uploadMerge((req.files as Express.Multer.File[]).map(
+      (file) => file.path
+    ));
 
-    // req.files is declared a union type
-    // but upload.array() gives an array
-    for (const file of req.files as Express.Multer.File[]) {
-      const destPath = join(
-        config.database.mergeTemp,
-        shortid.generate()
-      );
-
-      extractFilePromises.push(
-        extractZipFile(file.path, destPath)
-      );
-
-      resultPaths.push(destPath);
-    }
-    await Promise.all(extractFilePromises);
-    await merges.newMerge(resultPaths);
     JSONResponse.Data(res, {});
-
-    const delFilesPromise = Promise.all([
-      (req.files as Express.Multer.File[]).map(
-        (value) => {
-          return promisify(unlink)(value.path);
-        }
-      )
-    ]);
-
-    await delFilesPromise;
-  }
-  )
-);
+  }));
 
 router.delete("/merges/:mergeID", asyncMiddleware(async (req, res) => {
   const numRemoved = await merges.deleteMerge(req.params.mergeID);

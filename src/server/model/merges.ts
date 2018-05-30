@@ -2,9 +2,13 @@ import { config } from "../../config";
 import { Candidate, Election, Poll } from "../../shared/models";
 import { NonImageResource } from "../model/elections";
 import { dbfind, dbInsert, dbRemove } from "../utils/database";
+import { extractZipFile } from "../utils/zipAndUnzip";
 
+import { unlink } from "fs";
 import Datastore = require("nedb");
+import { join } from "path";
 import { generate } from "shortid";
+import { promisify } from "util";
 
 export interface Merge {
   id: string;
@@ -35,6 +39,38 @@ export function getWinners(pollCandidates: Candidate[]): Candidate[] {
   }
 
   return candidates;
+}
+
+export async function uploadMerge(files: string[]) {
+  const extractFilePromises: Array<Promise<void>> = [];
+  const resultPaths: string[] = [];
+
+  // req.files is declared a union type
+  // but upload.array() gives an array
+  for (const file of files) {
+    const destPath = join(
+      config.database.mergeTemp,
+      generate()
+    );
+
+    extractFilePromises.push(
+      extractZipFile(file, destPath)
+    );
+
+    resultPaths.push(destPath);
+  }
+  await Promise.all(extractFilePromises);
+  await db.newMerge(resultPaths);
+
+  const delFilesPromise = Promise.all([
+    (files).map(
+      (value) => {
+        return promisify(unlink)(value);
+      }
+    )
+  ]);
+
+  await delFilesPromise;
 }
 
 async function mergeDBs(dbFiles: string[]) {
@@ -84,7 +120,7 @@ class MergeDatastore {
     });
   }
 
-  public async getMerges() {
+  public async getMerges(): Promise<Merge[]> {
     return await dbfind(this.db, {});
   }
 
