@@ -5,7 +5,7 @@
   "main": "build/main.js",
   "bin": "build/main.js",
   "dependencies": {
-    "bootstrap": "^4.1.1",
+    "bootstrap": "^4.3.1",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "ip": "^1.1.5",
