@@ -51,7 +51,7 @@
     "pkg": "^4.3.1",
     "pre-commit": "^1.2.2",
     "puppeteer": "^1.3.0",
-    "ts-loader": "^4.3.0",
+    "ts-loader": "^9.4.2",
     "ts-node": "^6.0.3",
     "ts-node-dev": "^1.0.0-pre.22",
     "tslint": "^5.9.1",
@@ -59,8 +59,8 @@
     "typedoc": "^0.11.1",
     "typescript": "^2.7.2",
     "uglifyjs-webpack-plugin": "^1.2.5",
-    "webpack": "^4.8.3",
-    "webpack-cli": "^2.1.3"
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   },
   "scripts": {
     "test": "mocha \"test/**/*.ts\" --require ts-node/register",
