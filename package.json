@@ -60,7 +60,7 @@
     "typescript": "^2.7.2",
     "uglifyjs-webpack-plugin": "^1.2.5",
     "webpack": "^4.8.3",
-    "webpack-cli": "^2.1.3"
+    "webpack-cli": "^5.0.1"
   },
   "scripts": {
     "test": "mocha \"test/**/*.ts\" --require ts-node/register",
